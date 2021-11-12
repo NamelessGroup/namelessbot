@@ -27,7 +27,9 @@ class RecurringTask:
         """
         if self.weekday.value == weekday.value and self.hour == hour and self.minute == minute:
             return 0
-        elif self.weekday.value > weekday.value or (self.weekday.value == weekday.value and self.hour > hour) or (self.weekday.value == weekday.value and self.hour == hour and self.minute > minute):
+        elif self.weekday.value > weekday.value or\
+                (self.weekday.value == weekday.value and self.hour > hour) or\
+                (self.weekday.value == weekday.value and self.hour == hour and self.minute > minute):
             return 1
         else:
             return -1

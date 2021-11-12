@@ -11,7 +11,7 @@ import mensa
 import datetime
 import configmanager
 
-configmanager.readFile()
+configmanager.read_file()
 client = discord.Client()
 
 recurring_tasks = [
