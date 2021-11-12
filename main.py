@@ -3,6 +3,7 @@ from discord.ext import tasks
 
 import mittwoch
 import joke
+import reminders
 
 from recurringtask import RecurringTask
 from weekday import Weekday
@@ -14,11 +15,17 @@ configmanager.readFile()
 client = discord.Client()
 
 recurring_tasks = [
-    RecurringTask(Weekday.WEDNESDAY, 10, 0, mensa.timer_mensa, client),   # Mensa - Wednesday
-    RecurringTask(Weekday.THURSDAY, 10, 0, mensa.timer_mensa, client),    # Mensa - Thursday
-    RecurringTask(Weekday.FRIDAY, 10, 0, mensa.timer_mensa, client),      # Mensa - Friday
+    # Mensa -- Send Mensa plan
+    RecurringTask(Weekday.WEDNESDAY, 10, 0, mensa.timer_mensa, client),
+    RecurringTask(Weekday.THURSDAY, 10, 0, mensa.timer_mensa, client),
+    RecurringTask(Weekday.FRIDAY, 10, 0, mensa.timer_mensa, client),
 
-    RecurringTask(Weekday.WEDNESDAY, 12, 0, mittwoch.mittwoch, client),    # Mittwoch - Wednesday
+    # Mittwoch -- Send meme
+    RecurringTask(Weekday.WEDNESDAY, 12, 0, mittwoch.mittwoch, client),
+
+    # Reminders -- Remind us to work
+    RecurringTask(Weekday.MONDAY, 14, 0, reminders.task_reminder, client, "GBI Übungsblatt"),
+    RecurringTask(Weekday.TUESDAY, 18, 0, reminders.task_reminder, client, "HM Übungsblatt"),
 ]
 commands = {
     "mensa": mensa.command_mensa,
