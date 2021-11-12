@@ -8,10 +8,13 @@ class RecurringTask:
         self.args = args
 
     async def run(self):
-        if len(self.args) == 0:
-            await self.function()
-        else:
-            await self.function(self.args)
+        try:
+            if len(self.args) == 0:
+                await self.function()
+            else:
+                await self.function(self.args)
+        except Exception:
+            return
 
     def compare_time(self, weekday, hour, minute):
         """"Compare this RecurringTask object to another time e.
@@ -24,7 +27,9 @@ class RecurringTask:
         """
         if self.weekday.value == weekday.value and self.hour == hour and self.minute == minute:
             return 0
-        elif self.weekday.value > weekday.value or (self.weekday.value == weekday.value and self.hour > hour) or (self.weekday.value == weekday.value and self.hour == hour and self.minute > minute):
+        elif self.weekday.value > weekday.value or\
+                (self.weekday.value == weekday.value and self.hour > hour) or\
+                (self.weekday.value == weekday.value and self.hour == hour and self.minute > minute):
             return 1
         else:
             return -1
