@@ -1,7 +1,9 @@
 import discord
 from discord.ext import tasks
 
+import mittwoch
 import joke
+
 from recurringtask import RecurringTask
 from weekday import Weekday
 import mensa
@@ -15,9 +17,12 @@ recurring_tasks = [
     RecurringTask(Weekday.WEDNESDAY, 10, 0, mensa.timer_mensa, client),   # Mensa - Wednesday
     RecurringTask(Weekday.THURSDAY, 10, 0, mensa.timer_mensa, client),    # Mensa - Thursday
     RecurringTask(Weekday.FRIDAY, 10, 0, mensa.timer_mensa, client),      # Mensa - Friday
+
+    RecurringTask(Weekday.WEDNESDAY, 12, 0, mittwoch.mittwoch, client),    # Mittwoch - Wednesday
 ]
 commands = {
     "mensa": mensa.command_mensa,
+   #"alarrrrrm": arrrrr.command_alarrrrrm,
     "joke": joke.command_joke
 }
 command_prefix = "!"
