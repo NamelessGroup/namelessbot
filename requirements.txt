@@ -1,0 +1,13 @@
+aiohttp==3.7.4.post0
+async-timeout==3.0.1
+attrs==21.2.0
+beautifulsoup4==4.10.0
+chardet==4.0.0
+discord.py==1.7.3
+idna==3.3
+lxml==4.6.4
+multidict==5.2.0
+soupsieve==2.3
+tabulate==0.8.9
+typing-extensions==3.10.0.2
+yarl==1.7.0
