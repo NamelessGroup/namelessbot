@@ -2,6 +2,8 @@ import discord
 from discord.ext import tasks
 
 import mittwoch
+import joke
+
 from recurringtask import RecurringTask
 from weekday import Weekday
 import mensa
@@ -21,6 +23,7 @@ recurring_tasks = [
 commands = {
     "mensa": mensa.command_mensa,
    #"alarrrrrm": arrrrr.command_alarrrrrm,
+    "joke": joke.command_joke
 }
 command_prefix = "!"
 
