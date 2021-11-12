@@ -3,6 +3,7 @@ from discord.ext import tasks
 
 import mittwoch
 import joke
+import arrrrr
 
 from recurringtask import RecurringTask
 from weekday import Weekday
@@ -22,8 +23,8 @@ recurring_tasks = [
 ]
 commands = {
     "mensa": mensa.command_mensa,
-   #"alarrrrrm": arrrrr.command_alarrrrrm,
-    "joke": joke.command_joke
+    #"alarrrrrm": arrrrr.command_alarrrrrm,
+    "joke": joke.command_joke,
 }
 command_prefix = "!"
 
@@ -43,6 +44,8 @@ async def on_message(message):
         args = message.content.split(" ")
         if args[0][1:] in commands:
             await commands[args[0][1:]](message, client)
+
+    await arrrrr.ar(message, client)
 
 
 @tasks.loop(minutes=1)
