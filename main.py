@@ -16,7 +16,7 @@ recurring_tasks = [
     RecurringTask(Weekday.THURSDAY, 10, 0, mensa.timer_mensa, client),    # Mensa - Thursday
     RecurringTask(Weekday.FRIDAY, 10, 0, mensa.timer_mensa, client),      # Mensa - Friday
 
-    RecurringTask(Weekday.FRIDAY, 15, 5, mittwoch.mittwoch, client),    # Mittwoch - Wednesday
+    RecurringTask(Weekday.WEDNESDAY, 12, 0, mittwoch.mittwoch, client),    # Mittwoch - Wednesday
 ]
 commands = {
     "mensa": mensa.command_mensa,
