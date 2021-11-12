@@ -85,6 +85,7 @@ class Jokes():
         for x in end:
             self.rw.writefile([self.stdva], [x])
         self.update()
+        return id
 
     def telljoke(self, jid="-1"):
         tid = 0
@@ -94,7 +95,7 @@ class Jokes():
         if (jid == -1):
             resid = random.randint(0, tid)
         else:
-            resid = jid
+            resid = int(jid)
         for x in self.jokes:
             if (int(x[0]) == resid):
                 return (x[1], resid)
@@ -109,10 +110,9 @@ class Jokes():
 
     pass
 
-
+jok = Jokes()
 
 async def command_joke(message, client):
-    jok = Jokes()
     if message.author == client.user:
         return
     print("From " + str(message.author.id) + " with " + str(message.content))
@@ -160,7 +160,8 @@ async def command_joke(message, client):
                 splitcom[2] = int(splitcom[2])
             except ValueError:
                 await message.reply("Invalid Argument")
-            jok.remjoke(splitcom[2])
+            ret = jok.remjoke(splitcom[2])
+            await message.reply("Joke with id: " + str(ret) + " deleted!")
         if splitcom[1] == "update":
             jok.update()
 
