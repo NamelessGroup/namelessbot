@@ -13,7 +13,7 @@ async def mittwoch(args):
     await channel.send(file=File('assets/img/mittwoch.jpg'))
 
 
-async def command_mittwoch(message):
+async def command_mittwoch(message, client):
     today = datetime.datetime.today().weekday()
     if today == 2:
         await message.channel.send('Heute ist Mittwoch!')
