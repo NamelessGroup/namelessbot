@@ -22,4 +22,4 @@ async def command_mittwoch(message, client):
             days = 2 - today
         else:
             days = 9 - today
-        await message.channel.send('Der nächste Mittwoch ist in ' + days + " Tagen!")
+        await message.channel.send('Der nächste Mittwoch ist in ' + str(days) + " Tagen!")
