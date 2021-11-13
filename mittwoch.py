@@ -5,7 +5,7 @@ from discord import File
 
 async def mittwoch(args):
     client = args[0]
-    channelId = configmanager.get("announcementChannel")
+    channelId = configmanager.get("announcement_channel")
     channel = client.get_channel(channelId)
     if channel is None:
         channel = await client.fetch_channel(channelId)
