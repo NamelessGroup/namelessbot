@@ -23,6 +23,7 @@ recurring_tasks = [
 ]
 commands = {
     "mensa": mensa.command_mensa,
+    "mittwoch": mittwoch.command_mittwoch,
     #"alarrrrrm": arrrrr.command_alarrrrrm,
     "joke": joke.command_joke,
 }
