@@ -11,7 +11,7 @@ import mensa
 import datetime
 import configmanager
 
-configmanager.read_file()
+await configmanager.read_config()
 client = discord.Client()
 
 recurring_tasks = [
@@ -59,4 +59,4 @@ async def loop():
         if task.compare_time(Weekday(d.weekday()), d.hour, d.minute) == 0:
             await task.run()
 
-client.run(configmanager.get("botToken"))
+client.run(configmanager.get("bot_token"))
