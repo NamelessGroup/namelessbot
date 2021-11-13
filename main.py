@@ -46,7 +46,7 @@ async def on_message(message):
         if args[0][1:] in commands:
             await commands[args[0][1:]](message, client)
 
-    await arrrrr.ar(message, client)
+    await arrrrr.ar(message)
 
 
 @tasks.loop(minutes=1)
