@@ -20,7 +20,7 @@ async def command_alarrrrrm(message):
         await message.channel.send('Ungültiger Voice Channel')
 
 
-async def ar(message, client):
+async def ar(message):
     if message.channel.category.name == "Textkanäle":
         if re.findall("[aA]r{1,4}(?!r)", message.content):
             nachricht = message.content

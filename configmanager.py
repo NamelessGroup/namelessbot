@@ -6,17 +6,21 @@ configs = {
     "private": {}
 }
 
-async def read_config():
+def read_config():
     """Reads the private & global configs into memory."""
     global configs
-    configs["global"] = json.loads(await read_file("config.json"))
-    configs["private"] = json.loads(await read_file("local_config.json"))
+    # Temporary fix by mo
+    with open("config/config.json") as f:
+        configs["global"] = json.loads(f.read())
+        f.close()
+    with open("config/local_config.json") as f:
+        configs["private"] = json.loads(f.read())
 
 
 async def write_config():
     """Writes the private & global configs to disk."""
     await write_file("config.json", json.dumps(configs["global"]))
-    await write_file("local_config.json", json.dumps(configs["private"]))
+    await write_file("config/local_config.json", json.dumps(configs["private"]))
 
 
 async def read_file(path):
