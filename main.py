@@ -32,6 +32,7 @@ commands = {
     "mensa": mensa.command_mensa,
     "mittwoch": mittwoch.command_mittwoch,
     #"alarrrrrm": arrrrr.command_alarrrrrm,
+    "vote": vote.command_vote,
     "joke": joke.command_joke,
 }
 command_prefix = "!"

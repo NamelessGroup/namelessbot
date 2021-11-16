@@ -21,7 +21,7 @@ async def command_alarrrrrm(message):
 
 
 async def ar(message, client):
-    if message.author != client.user and message.channel.category.name == "Textkanäle":
+    if message.channel.category.name == "Textkanäle":
         if re.findall("[aA]r{1,4}(?!r)", message.content):
             nachricht = message.content
             nachricht = re.sub("[aA]r{1,4}(?!r)", "arrrrr", nachricht)
