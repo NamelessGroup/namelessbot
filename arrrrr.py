@@ -3,7 +3,7 @@ import asyncio
 import re
 
 
-async def command_alarrrrrm(message):
+async def command_alarrrrrm(message, client):
     user = message.author
     voice = user.voice
     if voice != None:
