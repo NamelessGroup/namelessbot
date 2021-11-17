@@ -20,7 +20,7 @@ def read_config():
 async def write_config():
     """Writes the private & global configs to disk."""
     await write_file("config.json", json.dumps(configs["global"]))
-    await write_file("config/local_config.json", json.dumps(configs["private"]))
+    await write_file("local_config.json", json.dumps(configs["private"]))
 
 
 async def read_file(path):
