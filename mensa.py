@@ -4,67 +4,65 @@ from tabulate import tabulate
 
 
 async def command_mensa(message, client):
-    pass
+    await send_mensa_data(message.channel)
 
 
 async def timer_mensa(args):
     client = args[0]
-    channelId = configmanager.get("announcementChannel")
-    channel = client.get_channel(channelId)
+    channel_id = configmanager.get("announcement_channel")
+    channel = client.get_channel(channel_id)
     if channel is None:
-        channel = await client.fetch_channel(channelId)
+        channel = await client.fetch_channel(channel_id)
     await send_mensa_data(channel)
 
 
 async def send_mensa_data(channel):
     try:
-        mensaData = mensaparser.get_food_plan()
+        mensa_data = mensaparser.get_food_plan()
     except Exception:
         return
-    tabledata = []
-    for line in mensaData:
-        if len(mensaData[line]) == 0:
+    table_data = []
+    for line in mensa_data:
+        if len(mensa_data[line]) == 0:
             continue
-        lineName = line.split("\n")[0]
-        for food in mensaData[line]:
+        line_name = line.split("\n")[0]
+        for food in mensa_data[line]:
             if len(food[0]) > 32:
                 price = food[1]
-                splitFood = food[0].split(" ")
-                splitFood.reverse()
+                split_food = food[0].split(" ")
+                split_food.reverse()
                 temp = ""
-                while len(splitFood) > 0:
-                    if (len(temp) + len(splitFood[0]) > 50):
-                        tabledata.append([lineName, temp, price])
-                        if (lineName != ""):
-                            lineName = ""
-                        if (price != ""):
+                while len(split_food) > 0:
+                    if len(temp) + len(split_food[0]) > 50:
+                        table_data.append([line_name, temp, price])
+                        if line_name != "":
+                            line_name = ""
+                        if price != "":
                             price = ""
-                        temp = splitFood.pop()
+                        temp = split_food.pop()
                     else:
-                        temp += " " + splitFood.pop()
-                tabledata.append([lineName, temp, price])
-                if (lineName != ""):
-                    lineName = ""
-                if (price != ""):
-                    price = ""
+                        temp += " " + split_food.pop()
+                table_data.append([line_name, temp, price])
+                if line_name != "":
+                    line_name = ""
             else:
-                tabledata.append([lineName, food[0], food[1]])
-                if (lineName != ""):
-                    lineName = ""
-        tabledata.append(["", "", ""])
-    tabledata.pop(len(tabledata) - 1)
+                table_data.append([line_name, food[0], food[1]])
+                if line_name != "":
+                    line_name = ""
+        table_data.append(["", "", ""])
+    table_data.pop(len(table_data) - 1)
 
-    table = tabulate(tabledata, tablefmt="pretty")
-    if (len(table) > 1900):
-        tableLines = table.split("\n")
-        tableLines.reverse()
-        currentLine = ":fork_knife_plate: Mensaessen für heute: ```"
-        while len(tableLines) > 0:
-            if (len(currentLine) + len(tableLines[0]) > 1900):
-                await channel.send(currentLine + "```")
-                currentLine = "```" + tableLines.pop()
+    table = tabulate(table_data, tablefmt="pretty")
+    if len(table) > 1900:
+        table_lines = table.split("\n")
+        table_lines.reverse()
+        current_line = ":fork_knife_plate: Mensaessen für heute: ```"
+        while len(table_lines) > 0:
+            if len(current_line) + len(table_lines[0]) > 1900:
+                await channel.send(current_line + "```")
+                current_line = "```" + table_lines.pop()
             else:
-                currentLine += "\n" + tableLines.pop()
-        await channel.send(currentLine + "```")
+                current_line += "\n" + table_lines.pop()
+        await channel.send(current_line + "```")
     else:
         await channel.send(":fork_knife_plate: Mensaessen für heute: ```" + table + "```")

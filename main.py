@@ -3,6 +3,8 @@ from discord.ext import tasks
 
 import mittwoch
 import joke
+import reminders
+import arrrrr
 
 from recurringtask import RecurringTask
 from weekday import Weekday
@@ -10,27 +12,34 @@ import mensa
 import datetime
 import configmanager
 
-configmanager.readFile()
+await configmanager.read_config()
 client = discord.Client()
 
 recurring_tasks = [
-    RecurringTask(Weekday.WEDNESDAY, 10, 0, mensa.timer_mensa, client),   # Mensa - Wednesday
-    RecurringTask(Weekday.THURSDAY, 10, 0, mensa.timer_mensa, client),    # Mensa - Thursday
-    RecurringTask(Weekday.FRIDAY, 10, 0, mensa.timer_mensa, client),      # Mensa - Friday
+    # Mensa -- Send Mensa plan
+    RecurringTask(Weekday.WEDNESDAY, 10, 0, mensa.timer_mensa, client),
+    RecurringTask(Weekday.THURSDAY, 10, 0, mensa.timer_mensa, client),
+    RecurringTask(Weekday.FRIDAY, 10, 0, mensa.timer_mensa, client),
 
-    RecurringTask(Weekday.WEDNESDAY, 12, 0, mittwoch.mittwoch, client),    # Mittwoch - Wednesday
+    # Mittwoch -- Send meme
+    RecurringTask(Weekday.WEDNESDAY, 12, 0, mittwoch.mittwoch, client),
+
+    # Reminders -- Remind us to work
+    RecurringTask(Weekday.MONDAY, 14, 0, reminders.task_reminder, client, "GBI Übungsblatt"),
+    RecurringTask(Weekday.TUESDAY, 18, 0, reminders.task_reminder, client, "HM Übungsblatt"),
 ]
 commands = {
     "mensa": mensa.command_mensa,
-   #"alarrrrrm": arrrrr.command_alarrrrrm,
-    "joke": joke.command_joke
+    "mittwoch": mittwoch.command_mittwoch,
+    #"alarrrrrm": arrrrr.command_alarrrrrm,
+    "joke": joke.command_joke,
 }
 command_prefix = "!"
 
 
 @client.event
 async def on_ready():
-    print("Yes")
+    print("NamelessBot started.")
     loop.start()
 
 
@@ -44,6 +53,8 @@ async def on_message(message):
         if args[0][1:] in commands:
             await commands[args[0][1:]](message, client)
 
+    await arrrrr.ar(message)
+
 
 @tasks.loop(minutes=1)
 async def loop():
@@ -52,4 +63,4 @@ async def loop():
         if task.compare_time(Weekday(d.weekday()), d.hour, d.minute) == 0:
             await task.run()
 
-client.run(configmanager.get("botToken"))
+client.run(configmanager.get("bot_token"))
