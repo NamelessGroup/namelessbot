@@ -150,4 +150,4 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-local_config.json
+config/local_config.json
