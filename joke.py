@@ -1,118 +1,114 @@
-import discord
 import json
 import random
+from configmanager import write_file, read_file
 
 
-class ReaderWriter():
+class ReaderWriter:
     src = ""
 
     def __init__(self, f):
         self.src = f
 
-    def readfile(self, va):
+    async def readfile(self, va):
         ret = []
-        with open(self.src, "r") as file:
-            for x in file:
-                a = json.loads(x)
-                z = []
-                for n in va:
-                    z.append(a[n])
-                ret.append(z)
+        f_back = await read_file(self.src)
+        f_split = f_back.split('||')
+        for x in f_split:
+            print(x)
+            if x == "":
+                break
+            a = json.loads(x)
+            z = []
+            for n in va:
+                z.append(a[n])
+            ret.append(z)
         return ret
 
-    def writefile(self, id, va):  # id value
-        with open(self.src, "w") as file:
-            j = 0
-            for x in id:
-                wr = "{"
-                i = 0
-                for n in x:
-                    wr = wr + '"' + n + '":"' + va[j][i] + '"'
-                    if (i < len(x) - 1):
-                        wr = wr + ","
-                    i = i + 1
-                wr = wr + "}\n"
-                file.write(wr)
-                j = j + 1
+    async def deletefile(self):
+        await write_file(self.src,'')
 
-    def deletefile(self):
-        with open(self.src, "w") as file:
-            file.write("")
-
-    def appendfile(self, id, val):
-        with open(self.src, "a") as file:
-            for x in id:
-                j = 0
-                wr = "{"
-                i = 0
-                for n in x:
-                    wr = wr + '"' + n + '":"' + val[j][i] + '"'
-                    if (i < len(x) - 1):
-                        wr = wr + ","
-                    i = i + 1
-                wr = wr + "}\n"
-                file.write(wr)
-                j = j + 1;
+    async def writearray(self, va, ar):
+        end = ""
+        for x in ar:
+            if x == "":
+                break
+            print(x)
+            dic = dict()
+            i = 0
+            for y in va:
+                dic[y] = x[i]
+                i += 1
+            tstr = json.dumps(dic)
+            end += tstr + '||'
+        await write_file(self.src, end)
 
 
-class Jokes():
-    rw = ReaderWriter("src\\joke")
+class Jokes:
+    rw = ReaderWriter("jokes")
     stdva = ['id', 'joke']
     jokes = []
+    intial = 0
 
     def __init__(self):
-        self.update()
+        pass
 
-    def addjoke(self, jo):
+    async def addjoke(self, jo):
+        await self.initial()
         tid = 0
-        if (self.jokes != []):
+        if not self.jokes == []:
             for x in self.jokes:
                 for b in self.jokes:
                     print((b[0], tid))
-                    if (int(b[0]) == tid):
+                    if int(b[0]) == tid:
                         tid += 1
-        self.rw.appendfile([self.stdva], [[str(tid), jo]])
-        self.update()
+        self.jokes.append([str(tid),jo])
+        await self.rw.writearray(self.stdva, self.jokes)
+        await self.update()
         return tid
 
-    def remjoke(self, id):
-        beg = self.rw.readfile(self.stdva)
-        end = []
-        for x in beg:
-            if (int(x[0]) != id):
-                end.append(x)
-        self.rw.deletefile()
-        for x in end:
-            self.rw.writefile([self.stdva], [x])
-        self.update()
+    async def remjoke(self, idz):
+        await self.initial()
+        await self.update()
+        i = 0
+        for x in self.jokes:
+            if x[0] == str(idz):
+                self.jokes.pop(i)
+            i += 1
+        await self.rw.writearray(self.stdva, self.jokes)
+        await self.update()
+        return idz
 
-    def telljoke(self, jid="-1"):
+    async def telljoke(self, jid=-1):
         tid = 0
         for x in self.jokes:
-            if (int(x[0]) > int(tid)):
+            if int(x[0]) > int(tid):
                 tid = int(x[0])
-        if (jid == -1):
+        if jid == -1:
             resid = random.randint(0, tid)
         else:
-            resid = jid
+            resid = int(jid)
         for x in self.jokes:
-            if (int(x[0]) == resid):
+            if int(x[0]) == resid:
                 return (x[1], resid)
-        if (self.jokes == [] or jid != -1):
+        if self.jokes == [] or jid != -1:
             return -1
-        elif (jid == -1):
+        elif jid == -1:
             return self.telljoke()
 
-    def update(self):
-        self.jokes = self.rw.readfile(self.stdva)
+    async def update(self):
+        self.jokes = await self.rw.readfile(self.stdva)
         # print(self.jokes)
 
-    pass
+    async def initial(self):
+        if(self.initial == 0):
+            await self.update()
+            self.initial = 1
 
+
+jok = Jokes()
 
 
 async def command_joke(message, client):
-    jok = Jokes()
     if message.author == client.user:
         return
     print("From " + str(message.author.id) + " with " + str(message.content))
@@ -129,38 +125,39 @@ async def command_joke(message, client):
     com = message.content[1:]
     splitcom = com.split()
     # Commands for joke class
-    if (splitcom[0] == "joke"):
+    if splitcom[0] == "joke":
         if splitcom[1] == "tell":
-            if (len(splitcom) < 3):
+            if len(splitcom) < 3:
                 tid = -1
             else:
                 tid = splitcom[2]
-            ret = jok.telljoke(tid)
+            ret = await jok.telljoke(tid)
             # print(ret)
             if ret == -1:
                 await message.reply("Index not forgiven or no item in list!")
             else:
                 await message.reply(ret[0] + " (" + str(ret[1]) + ")")
         if splitcom[1] == "add":
-            jokfilter = False
+            jokfilter = True
             j = ""
             for i in range(2, len(splitcom)):
                 j = j + splitcom[i]
-                if (i < len(splitcom) - 1):
+                if i < len(splitcom) - 1:
                     j = j + " "
-            j.replace('"', '')
+            j = j.replace('"', '')
+            j = j.replace("||", "")
             if jokfilter:
-                j.replace("/", "")
-                j.replace("\\", "")
-                j.replace(";", "")
-            zid = jok.addjoke(j)
+                j = j.replace("/", "")
+                j = j.replace("\\", "")
+                j = j.replace(";", "")
+            zid = await jok.addjoke(j)
             await message.reply("Your Joke has been added. The id is: " + str(zid))
         if splitcom[1] == "del":
             try:
                 splitcom[2] = int(splitcom[2])
             except ValueError:
                 await message.reply("Invalid Argument")
-            jok.remjoke(splitcom[2])
+            ret = await jok.remjoke(splitcom[2])
+            await message.reply("Joke with id: " + str(ret) + " deleted!")
         if splitcom[1] == "update":
-            jok.update()
-
+            await jok.update()
