@@ -6,11 +6,12 @@ configs = {
     "private": {}
 }
 
-async def read_config():
+
+def read_config():
     """Reads the private & global configs into memory."""
     global configs
-    configs["global"] = json.loads(await read_file("config.json"))
-    configs["private"] = json.loads(await read_file("local_config.json"))
+    configs["global"] = json.loads(read_file_sync("config.json"))
+    configs["private"] = json.loads(read_file_sync("local_config.json"))
 
 
 async def write_config():
@@ -26,9 +27,22 @@ async def read_file(path):
     :returns: The file contents
     :rtype: string
     """
-    async with aiofiles.open("/config/" + path) as f:
+    async with aiofiles.open("config/" + path) as f:
         content = await f.read()
         await f.close()
+        return content
+
+
+def read_file_sync(path):
+    """Reads a file from the config directory and returns it synchronous.
+
+    :param string path: The filename to open, including the ending.
+    :returns: The file contents
+    :rtype: string
+    """
+    with open("config/" + path) as f:
+        content = f.read()
+        f.close()
         return content
 
 

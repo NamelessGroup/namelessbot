@@ -12,7 +12,7 @@ import mensa
 import datetime
 import configmanager
 
-await configmanager.read_config()
+configmanager.read_config()
 client = discord.Client()
 
 recurring_tasks = [
@@ -27,6 +27,7 @@ recurring_tasks = [
     # Reminders -- Remind us to work
     RecurringTask(Weekday.MONDAY, 14, 0, reminders.task_reminder, client, "GBI Übungsblatt"),
     RecurringTask(Weekday.TUESDAY, 18, 0, reminders.task_reminder, client, "HM Übungsblatt"),
+    RecurringTask(Weekday.WEDNESDAY, 9, 56, reminders.task_reminder, client, "yes")
 ]
 commands = {
     "mensa": mensa.command_mensa,
