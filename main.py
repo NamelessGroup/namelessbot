@@ -57,6 +57,8 @@ async def on_message(message):
             await commands[args[0][1:]](message, client)
 
     await arrrrr.ar(message)
+    await joke.jokereact(message)
+
 
 
 @tasks.loop(minutes=1)
