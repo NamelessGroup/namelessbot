@@ -66,3 +66,4 @@ async def send_mensa_data(channel):
         await channel.send(current_line + "```")
     else:
         await channel.send(":fork_knife_plate: Mensaessen für heute: ```" + table + "```")
+

@@ -17,8 +17,8 @@ def read_config():
 
 async def write_config():
     """Writes the private & global configs to disk."""
-    await write_file("config.json", json.dumps(configs["global"]))
-    await write_file("local_config.json", json.dumps(configs["private"]))
+    await write_file("config/local_config.json", json.dumps(configs["global"]))
+    await write_file("config/local_config.json", json.dumps(configs["private"]))
 
 
 async def read_file(path):
@@ -52,7 +52,7 @@ async def write_file(path, content):
 
     :param string path: The file name to write to, including the ending.
     :param string content: The contents to write"""
-    async with aiofiles.open("/config/" + path, 'w') as f:
+    async with aiofiles.open("config/" + path, 'w') as f:
         await f.write(content)
         await f.close()
 

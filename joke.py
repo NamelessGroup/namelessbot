@@ -1,6 +1,9 @@
 import json
+import os
 import random
 from configmanager import write_file, read_file
+from pathlib import Path
+import random
 
 
 class ReaderWriter:
@@ -8,6 +11,9 @@ class ReaderWriter:
 
     def __init__(self, f):
         self.src = f
+        p = os.path.join("config","jokes")
+        if not os.path.isfile(p):
+            Path(p).touch()
 
     async def readfile(self, va):
         ret = []
@@ -161,3 +167,27 @@ async def command_joke(message, client):
             await message.reply("Joke with id: " + str(ret) + " deleted!")
         if splitcom[1] == "update":
             await jok.update()
+
+
+async def jokereact(mes):
+    con =  mes.content.lower()
+    arpot = 0
+    if "arrrrr" in con:
+        arpot = 100
+    else:
+        for x in con:
+            if x == 'a' or x == 'r':
+                arpot += 5
+    print(arpot)
+    if arpot < 100:
+        if random.randint(0,100) > arpot:
+            return
+
+    ret = await jok.telljoke()
+    if ret == -1:
+        await mes.reply("Index not forgiven or no item in list!")
+    else:
+        await mes.reply(ret[0] + " (" + str(ret[1]) + ")")
+
+
+
