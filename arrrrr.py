@@ -22,8 +22,8 @@ async def command_alarrrrrm(message, client):
 
 async def ar(message):
     if message.channel.category.name == "Textkanäle":
-        if re.findall("[aA]r{1,4}(?!r)", message.content):
+        if re.findall("[aA][rR]{1,4}(?![rR])", message.content):
             nachricht = message.content
-            nachricht = re.sub("[aA]r{1,4}(?!r)", "arrrrr", nachricht)
+            nachricht = re.sub("[aA][rR]{1,4}(?![rR])", "arrrrr", nachricht)
             await message.reply("```Alarrrrrm deine Nachricht ist falsch! \nHier ist die Richtige Version: \n\n" + nachricht + "```")
 
