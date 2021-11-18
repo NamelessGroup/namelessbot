@@ -20,7 +20,7 @@ class ReaderWriter:
         f_back = await read_file(self.src)
         f_split = f_back.split('||')
         for x in f_split:
-            print(x)
+            #print(x)
             if x == "":
                 break
             a = json.loads(x)
@@ -38,7 +38,7 @@ class ReaderWriter:
         for x in ar:
             if x == "":
                 break
-            print(x)
+            #print(x)
             dic = dict()
             i = 0
             for y in va:
@@ -117,7 +117,7 @@ jok = Jokes()
 async def command_joke(message, client):
     if message.author == client.user:
         return
-    print("From " + str(message.author.id) + " with " + str(message.content))
+    #print("From " + str(message.author.id) + " with " + str(message.content))
     if "arrrrr" in message.content.lower():
         ret = jok.telljoke(-1)
         # print(ret)
@@ -170,15 +170,14 @@ async def command_joke(message, client):
 
 
 async def jokereact(mes):
-    con =  mes.content.lower()
+    con = mes.content.lower()
     arpot = 0
     if "arrrrr" in con:
         arpot = 100
     else:
         for x in con:
             if x == 'a' or x == 'r':
-                arpot += 5
-    print(arpot)
+                arpot += 10
     if arpot < 100:
         if random.randint(0,100) > arpot:
             return
