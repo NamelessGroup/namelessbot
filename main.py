@@ -15,9 +15,9 @@ client = discord.Client()
 
 recurring_tasks = [
     # Mensa -- Send Mensa plan
-    RecurringTask(Weekday.WEDNESDAY, 10, 0, mensa.timer_mensa, client),
-    RecurringTask(Weekday.THURSDAY, 10, 0, mensa.timer_mensa, client),
-    RecurringTask(Weekday.FRIDAY, 10, 0, mensa.timer_mensa, client),
+    RecurringTask(Weekday.WEDNESDAY, 9, 34, mensa.timer_mensa, client),
+    RecurringTask(Weekday.THURSDAY, 9, 34, mensa.timer_mensa, client),
+    RecurringTask(Weekday.FRIDAY, 9, 34, mensa.timer_mensa, client),
 
     # Mittwoch -- Send meme
     RecurringTask(Weekday.WEDNESDAY, 12, 0, mittwoch.mittwoch, client),
