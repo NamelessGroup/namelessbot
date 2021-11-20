@@ -1,17 +1,14 @@
 import discord
 from discord.ext import tasks
 
-import mittwoch
-import joke
-import reminders
-import arrrrr
-import vote
+# from modules.martin import joke
+from modules.fabian import arrrrr, mittwoch, vote
 
-from recurringtask import RecurringTask
-from weekday import Weekday
-import mensa
+from lib.recurringtask import RecurringTask
+from lib.weekday import Weekday
+from modules.moritz import mensa, reminders
 import datetime
-import configmanager
+from lib import configmanager
 
 configmanager.read_config()
 client = discord.Client()
@@ -35,7 +32,7 @@ commands = {
     "mittwoch": mittwoch.command_mittwoch,
     #"alarrrrrm": arrrrr.command_alarrrrrm,
     "vote": vote.command_vote,
-    "joke": joke.command_joke,
+    # "joke": joke.command_joke,
 }
 command_prefix = "!"
 

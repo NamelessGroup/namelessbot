@@ -1,4 +1,4 @@
-import configmanager
+from lib import configmanager
 
 
 async def task_reminder(client, message):

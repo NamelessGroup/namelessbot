@@ -1,5 +1,5 @@
-import configmanager
-import mensaparser
+from lib import configmanager
+import modules.moritz.mensaparser as mensaparser
 from tabulate import tabulate
 
 

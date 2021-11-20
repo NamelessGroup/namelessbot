@@ -1,7 +1,6 @@
 import json
 import os
-import random
-from configmanager import write_file, read_file
+from lib.configmanager import write_file, read_file
 from pathlib import Path
 import random
 
@@ -11,7 +10,7 @@ class ReaderWriter:
 
     def __init__(self, f):
         self.src = f
-        p = os.path.join("config","jokes")
+        p = os.path.join("../../config", "jokes")
         if not os.path.isfile(p):
             Path(p).touch()
 

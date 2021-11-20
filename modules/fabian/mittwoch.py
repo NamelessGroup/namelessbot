@@ -1,4 +1,4 @@
-import configmanager
+from lib import configmanager
 import datetime
 from discord import File
 
