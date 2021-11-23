@@ -17,7 +17,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -150,4 +149,4 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-config.json
+config/local_config.json

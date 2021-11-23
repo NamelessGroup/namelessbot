@@ -1,5 +1,5 @@
-import configmanager
-import mensaparser
+from lib import configmanager
+import modules.moritz.mensaparser as mensaparser
 from tabulate import tabulate
 
 
@@ -7,9 +7,8 @@ async def command_mensa(message, client):
     await send_mensa_data(message.channel)
 
 
-async def timer_mensa(args):
-    client = args[0]
-    channel_id = configmanager.get("announcementChannel")
+async def timer_mensa(client):
+    channel_id = configmanager.get("announcement_channel")
     channel = client.get_channel(channel_id)
     if channel is None:
         channel = await client.fetch_channel(channel_id)
@@ -66,3 +65,4 @@ async def send_mensa_data(channel):
         await channel.send(current_line + "```")
     else:
         await channel.send(":fork_knife_plate: Mensaessen für heute: ```" + table + "```")
+
