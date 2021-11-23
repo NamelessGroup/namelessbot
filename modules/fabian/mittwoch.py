@@ -3,8 +3,7 @@ import datetime
 from discord import File
 
 
-async def mittwoch(args):
-    client = args[0]
+async def mittwoch(client):
     channelId = configmanager.get("announcement_channel")
     channel = client.get_channel(channelId)
     if channel is None:

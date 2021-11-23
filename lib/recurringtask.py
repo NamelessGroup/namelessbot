@@ -12,7 +12,7 @@ class RecurringTask:
             if len(self.args) == 0:
                 await self.function()
             else:
-                await self.function(self.args)
+                await self.function(*self.args)
         except Exception as e:
             print("Caught exception: " + str(e))
             return
