@@ -23,8 +23,8 @@ recurring_tasks = [
     RecurringTask(Weekday.WEDNESDAY, 12, 0, mittwoch.mittwoch, client),
 
     # Reminders -- Remind us to work
-    RecurringTask(Weekday.MONDAY, 14, 0, reminders.task_reminder, client, "GBI Übungsblatt"),
-    RecurringTask(Weekday.TUESDAY, 18, 0, reminders.task_reminder, client, "HM Übungsblatt"),
+    RecurringTask(Weekday.MONDAY, 15, 0, reminders.task_reminder, client, "GBI Übungsblatt"),
+    RecurringTask(Weekday.TUESDAY, 17, 0, reminders.task_reminder, client, "HM Übungsblatt"),
 ]
 commands = {
     "mensa": mensa.command_mensa,
@@ -53,7 +53,7 @@ async def on_message(message):
             await commands[args[0][1:]](message, client)
 
     await arrrrr.ar(message)
-    await joke.jokereact(message)
+    # await joke.jokereact(message)
 
 
 
