@@ -57,6 +57,13 @@ async def on_message(message):
     # await joke.jokereact(message)
 
 
+@client.event
+async def on_reaction_add(reaction, user):
+    if user == client.user:
+        return
+
+    await koeri.koeri_add_reaction(reaction, user, client)
+
 
 @tasks.loop(minutes=1)
 async def loop():
