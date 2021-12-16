@@ -6,7 +6,7 @@ from modules.fabian import arrrrr, mittwoch, vote
 
 from lib.recurringtask import RecurringTask
 from lib.weekday import Weekday
-from modules.moritz import mensa, reminders
+from modules.moritz import mensa, reminders, koeri
 import datetime
 from lib import configmanager
 
@@ -32,6 +32,7 @@ commands = {
     #"alarrrrrm": arrrrr.command_alarrrrrm,
     "vote": vote.command_vote,
     # "joke": joke.command_joke,
+    "koeri": koeri.koeri_command
 }
 command_prefix = "!"
 
