@@ -41,16 +41,58 @@ async def set_rating(user, number, rating):
         config = {}
     if str(user) not in config:
         config[str(user)] = {}
-        return False
     config[str(user)][str(number)] = rating
     await lib.configmanager.write("koeri", config, "private")
 
 
+async def koeri_ratings(user):
+    config = lib.configmanager.get("koeri")
+    if config is None:
+        await lib.configmanager.write("koeri", {}, "private")
+        config = {}
+    if str(user) not in config:
+        return "Du musst zunächst koeri essen!"
+    s = "```"
+    for i in config[str(user)]:
+        s += "(" + str(i) + ") " + number_to_seasonings(i) + " | " + str(config[str(user)][str(i)]) + "\n"
+    s += "```"
+    return s
+
+
+def number_to_seasonings(number):
+    s = "{0:b}".format(int(number))
+    while len(s) < 7:
+        s = "0" + s
+    result = ""
+    for (idx, i) in enumerate(s):
+        if i == "1":
+            result += "Gewürz " + str(idx) + ", "
+    return result[:-2]
+
+
 async def koeri_command(message, client):
-    if message.content == "!koeri fill":
-        for i in range(1, 63):
-            if not await has_had_combination(message.author.id, i):
-                await add_combination(message.author.id, i)
+    if message.content == "!koeri ratings":
+        await message.reply(await koeri_ratings(message.author.id))
+        return
+    if message.content.startswith("!koeri rate"):
+        params = message.content.split(" ")
+        if len(params) != 4:
+            await message.reply("Bitte benutze korrekte Syntax.")
+            return
+        try:
+            number = int(params[2])
+            rating = int(params[3])
+        except ValueError:
+            await message.reply("Bitte gib zwei Zahlen an.")
+            return
+        if number > 63 or number < 1:
+            await message.reply("Bitte bewerte Nummer 1-63.")
+            return
+        if rating > 5 or rating < 1:
+            await message.reply("Bitte bewerte mit 1-5.")
+            return
+        await set_rating(message.author.id, number, rating)
+        await message.reply("Kombination " + str(number) + " bewertet mit " + str(rating) + ".")
         return
 
     number = random.randint(1, max_possible_combinations-1)
@@ -62,15 +104,9 @@ async def koeri_command(message, client):
         number %= 64
         if number == 0:
             number = 1
-    s = "{0:b}".format(number)
-    while len(s) < 7:
-        s = "0" + s
-    result = ""
-    for (idx, i) in enumerate(s):
-        if i == "1":
-            result += "Gewürz " + str(idx) + ", "
+    result = number_to_seasonings(number)
     await add_combination(message.author.id, number)
-    newMessage = await message.reply("Koeri-Kombination: " + result[:-2] + " (" + str(number) + ")\nBewertung: -1")
+    newMessage = await message.reply("Koeri-Kombination: " + result + " (" + str(number) + ")\nBewertung: -1")
     await newMessage.add_reaction("1️⃣")
     await newMessage.add_reaction("2️⃣")
     await newMessage.add_reaction("3️⃣")
