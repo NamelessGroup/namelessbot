@@ -106,12 +106,12 @@ async def koeri_command(message, client):
             number = 1
     result = number_to_seasonings(number)
     await add_combination(message.author.id, number)
-    newMessage = await message.reply("Koeri-Kombination: " + result + " (" + str(number) + ")\nBewertung: -1")
-    await newMessage.add_reaction("1️⃣")
-    await newMessage.add_reaction("2️⃣")
-    await newMessage.add_reaction("3️⃣")
-    await newMessage.add_reaction("4️⃣")
-    await newMessage.add_reaction("5️⃣")
+    new_message = await message.reply("Koeri-Kombination: " + result + " (" + str(number) + ")\nBewertung: -1")
+    await new_message.add_reaction("1️⃣")
+    await new_message.add_reaction("2️⃣")
+    await new_message.add_reaction("3️⃣")
+    await new_message.add_reaction("4️⃣")
+    await new_message.add_reaction("5️⃣")
 
 
 async def koeri_add_reaction(reaction, user, client):
@@ -119,9 +119,9 @@ async def koeri_add_reaction(reaction, user, client):
         return
     if not reaction.message.content.startswith("Koeri-Kombination"):
         return
-    originalMessageId = reaction.message.reference.message_id
-    originalChannelId = reaction.message.reference.channel_id
-    if user.id != (await client.get_channel(originalChannelId).fetch_message(originalMessageId)).author.id:
+    original_message_id = reaction.message.reference.message_id
+    original_channel_id = reaction.message.reference.channel_id
+    if user.id != (await client.get_channel(original_channel_id).fetch_message(original_message_id)).author.id:
         return
     rating = -1
     if reaction.emoji == "1️⃣":
@@ -138,5 +138,5 @@ async def koeri_add_reaction(reaction, user, client):
         message = reaction.message.content
         number = message.split("(")[1].split(")")[0]
         await set_rating(user.id, number, rating)
-        newMessage = message.split("\n")[0] + "\nBewertung: " + str(rating)
-        await reaction.message.edit(content=newMessage)
+        new_message = message.split("\n")[0] + "\nBewertung: " + str(rating)
+        await reaction.message.edit(content=new_message)

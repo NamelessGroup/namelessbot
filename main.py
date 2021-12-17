@@ -23,13 +23,12 @@ recurring_tasks = [
     RecurringTask(Weekday.WEDNESDAY, 12, 0, mittwoch.mittwoch, client),
 
     # Reminders -- Remind us to work
-    RecurringTask(Weekday.MONDAY, 15, 0, reminders.task_reminder, client, "GBI Übungsblatt"),
-    RecurringTask(Weekday.TUESDAY, 17, 0, reminders.task_reminder, client, "HM Übungsblatt"),
+    RecurringTask(Weekday.MONDAY, 15, 0, reminders.task_reminder, client, "GBI Übungsblatt")
 ]
 commands = {
     "mensa": mensa.command_mensa,
     "mittwoch": mittwoch.command_mittwoch,
-    #"alarrrrrm": arrrrr.command_alarrrrrm,
+    #  "alarrrrrm": arrrrr.command_alarrrrrm,
     "vote": vote.command_vote,
     # "joke": joke.command_joke,
     "koeri": koeri.koeri_command
