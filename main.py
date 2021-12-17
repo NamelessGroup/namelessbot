@@ -6,7 +6,7 @@ from modules.fabian import arrrrr, mittwoch, vote
 
 from lib.recurringtask import RecurringTask
 from lib.weekday import Weekday
-from modules.moritz import mensa, reminders
+from modules.moritz import mensa, reminders, koeri
 import datetime
 from lib import configmanager
 
@@ -23,15 +23,15 @@ recurring_tasks = [
     RecurringTask(Weekday.WEDNESDAY, 12, 0, mittwoch.mittwoch, client),
 
     # Reminders -- Remind us to work
-    RecurringTask(Weekday.MONDAY, 14, 0, reminders.task_reminder, client, "GBI Übungsblatt"),
-    RecurringTask(Weekday.TUESDAY, 18, 0, reminders.task_reminder, client, "HM Übungsblatt"),
+    RecurringTask(Weekday.MONDAY, 15, 0, reminders.task_reminder, client, "GBI Übungsblatt")
 ]
 commands = {
     "mensa": mensa.command_mensa,
     "mittwoch": mittwoch.command_mittwoch,
-    #"alarrrrrm": arrrrr.command_alarrrrrm,
+    #  "alarrrrrm": arrrrr.command_alarrrrrm,
     "vote": vote.command_vote,
     # "joke": joke.command_joke,
+    "koeri": koeri.koeri_command
 }
 command_prefix = "!"
 
@@ -53,8 +53,15 @@ async def on_message(message):
             await commands[args[0][1:]](message, client)
 
     await arrrrr.ar(message)
-    await joke.jokereact(message)
+    # await joke.jokereact(message)
 
+
+@client.event
+async def on_reaction_add(reaction, user):
+    if user == client.user:
+        return
+
+    await koeri.koeri_add_reaction(reaction, user, client)
 
 
 @tasks.loop(minutes=1)
