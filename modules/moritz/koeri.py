@@ -1,7 +1,8 @@
 import lib.configmanager
 import random
 
-max_possible_combinations = 64
+max_possible_combinations = 128
+legendary_combinations = [63, 127]
 
 
 async def has_had_combination(user, number):
@@ -16,13 +17,7 @@ async def has_had_combination(user, number):
         return str(number) in config[str(user)]
 
 
-async def add_combination(user, number):
-    config = lib.configmanager.get("koeri")
-    config[str(user)][str(number)] = -1
-    await lib.configmanager.write("koeri", config, "private")
-
-
-async def had_every_combination(user):
+async def had_every_combination(user, include_legendary=False):
     config = lib.configmanager.get("koeri")
     if config is None:
         await lib.configmanager.write("koeri", {}, "private")
@@ -31,7 +26,7 @@ async def had_every_combination(user):
         config[str(user)] = {}
         return False
     else:
-        return len(config[str(user)]) >= 63
+        return len(config[str(user)]) >= max_possible_combinations-1-len(legendary_combinations)
 
 
 async def set_rating(user, number, rating):
@@ -66,7 +61,10 @@ def number_to_seasonings(number):
     result = ""
     for (idx, i) in enumerate(s):
         if i == "1":
-            result += "Gewürz " + str(idx) + ", "
+            if idx == 0:
+                result += "Salz, "
+            else:
+                result += "Gewürz " + str(idx) + ", "
     return result[:-2]
 
 
@@ -85,8 +83,8 @@ async def koeri_command(message, client):
         except ValueError:
             await message.reply("Bitte gib zwei Zahlen an.")
             return
-        if number > 63 or number < 1:
-            await message.reply("Bitte bewerte Nummer 1-63.")
+        if number > max_possible_combinations-1 or number < 1:
+            await message.reply("Bitte bewerte Nummer 1-" + str(max_possible_combinations-1) + ".")
             return
         if rating > 5 or rating < 1:
             await message.reply("Bitte bewerte mit 1-5.")
@@ -96,16 +94,18 @@ async def koeri_command(message, client):
         return
 
     number = random.randint(1, max_possible_combinations-1)
-    if await had_every_combination(message.author.id):
+    if await had_every_combination(message.author.id, True):
         await message.reply("Du Legende hast das koeriwerk durchgespielt")
         return
-    while await has_had_combination(message.author.id, number):
+    elif await had_every_combination(message.author.id):
+        await message.reply("Zeit für eine der legendären Kombinationen")
+    while await has_had_combination(message.author.id, number) or (number in legendary_combinations
+                                                                   and had_every_combination(message.author.id)):
         number += 1
-        number %= 64
+        number %= max_possible_combinations
         if number == 0:
             number = 1
     result = number_to_seasonings(number)
-    await add_combination(message.author.id, number)
     new_message = await message.reply("Koeri-Kombination: " + result + " (" + str(number) + ")\nBewertung: -1")
     await new_message.add_reaction("1️⃣")
     await new_message.add_reaction("2️⃣")
