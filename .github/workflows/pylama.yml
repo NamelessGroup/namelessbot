@@ -9,7 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      uses: actions/setup-python@v2
-        - cache: 'pip'
+      - uses: actions/setup-python@v2
+        with:
+          cache: 'pip'
       - run: pip install -r requirements.txt
       - run: pylama
