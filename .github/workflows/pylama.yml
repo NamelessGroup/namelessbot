@@ -16,4 +16,4 @@ jobs:
         with:
           reviewdog_version: latest
       - run: pip install -r requirements.txt
-      - run: pylama | reviewdog -efm="%f:%l:%c %m"
+      - run: pylama | reviewdog -efm="%f:%l:%c %m" -diff="git diff FETCH_HEAD"
