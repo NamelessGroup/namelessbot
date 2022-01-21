@@ -104,7 +104,7 @@ async def koeri_command(message, client):
     elif await had_every_combination(author_id):
         await message.channel.send("https://i.redd.it/ain9jl82md381.jpg")
     while await has_had_combination(author_id, number) or (number in legendary_combinations
-                                                                   and not await had_every_combination(author_id)):
+                                                           and not await had_every_combination(author_id)):
         number += 1
         number %= max_possible_combinations
         if number == 0:

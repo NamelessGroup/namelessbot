@@ -97,4 +97,3 @@ async def write(key, value, config_scope=""):
         # if something invalid is passed, it's probably bad, throw something
         raise ValueError()
     await write_config()
-   

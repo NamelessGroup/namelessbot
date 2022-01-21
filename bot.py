@@ -1,3 +1,4 @@
+# pylama:skip=1
 statuses = {
     "6-0:0": {"type": discord.ActivityType.watching, "message": "sich das GBI Blatt an", "status": discord.Status.dnd},
     "0-20:0": {"type": discord.ActivityType.playing, "message": "verzweifelt am GBI Blatt rum", "status": discord.Status.online},

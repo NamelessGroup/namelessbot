@@ -19,7 +19,7 @@ class ReaderWriter:
         f_back = await read_file(self.src)
         f_split = f_back.split('||')
         for x in f_split:
-            #print(x)
+            # print(x)
             if x == "":
                 break
             a = json.loads(x)
@@ -30,14 +30,14 @@ class ReaderWriter:
         return ret
 
     async def deletefile(self):
-        await write_file(self.src,'')
+        await write_file(self.src, '')
 
     async def writearray(self, va, ar):
         end = ""
         for x in ar:
             if x == "":
                 break
-            #print(x)
+            # print(x)
             dic = dict()
             i = 0
             for y in va:
@@ -66,7 +66,7 @@ class Jokes:
                     print((b[0], tid))
                     if int(b[0]) == tid:
                         tid += 1
-        self.jokes.append([str(tid),jo])
+        self.jokes.append([str(tid), jo])
         await self.rw.writearray(self.stdva, self.jokes)
         await self.update()
         return tid
@@ -116,7 +116,7 @@ jok = Jokes()
 async def command_joke(message, client):
     if message.author == client.user:
         return
-    #print("From " + str(message.author.id) + " with " + str(message.content))
+    # print("From " + str(message.author.id) + " with " + str(message.content))
     if "arrrrr" in message.content.lower():
         ret = jok.telljoke(-1)
         # print(ret)
@@ -178,7 +178,7 @@ async def jokereact(mes):
             if x == 'a' or x == 'r':
                 arpot += 10
     if arpot < 100:
-        if random.randint(0,100) > arpot:
+        if random.randint(0, 100) > arpot:
             return
 
     ret = await jok.telljoke()
@@ -186,6 +186,3 @@ async def jokereact(mes):
         await mes.reply("Index not forgiven or no item in list!")
     else:
         await mes.reply(ret[0] + " (" + str(ret[1]) + ")")
-
-
-
