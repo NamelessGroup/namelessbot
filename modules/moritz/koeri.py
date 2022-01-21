@@ -26,7 +26,10 @@ async def had_every_combination(user, include_legendary=False):
         config[str(user)] = {}
         return False
     else:
-        return len(config[str(user)]) >= max_possible_combinations-1-len(legendary_combinations)
+        if include_legendary:
+            return len(config[str(user)]) >= max_possible_combinations - 1
+        else:
+            return len(config[str(user)]) >= max_possible_combinations - 1 - len(legendary_combinations)
 
 
 async def set_rating(user, number, rating):
@@ -69,8 +72,9 @@ def number_to_seasonings(number):
 
 
 async def koeri_command(message, client):
+    author_id = message.author.id
     if message.content == "!koeri ratings":
-        await message.reply(await koeri_ratings(message.author.id))
+        await message.reply(await koeri_ratings(author_id))
         return
     if message.content.startswith("!koeri rate"):
         params = message.content.split(" ")
@@ -83,24 +87,24 @@ async def koeri_command(message, client):
         except ValueError:
             await message.reply("Bitte gib zwei Zahlen an.")
             return
-        if number > max_possible_combinations-1 or number < 1:
-            await message.reply("Bitte bewerte Nummer 1-" + str(max_possible_combinations-1) + ".")
+        if number > max_possible_combinations - 1 or number < 1:
+            await message.reply("Bitte bewerte Nummer 1-" + str(max_possible_combinations - 1) + ".")
             return
         if rating > 5 or rating < 1:
             await message.reply("Bitte bewerte mit 1-5.")
             return
-        await set_rating(message.author.id, number, rating)
+        await set_rating(author_id, number, rating)
         await message.reply("Kombination " + str(number) + " bewertet mit " + str(rating) + ".")
         return
 
-    number = random.randint(1, max_possible_combinations-1)
-    if await had_every_combination(message.author.id, True):
+    number = random.randint(1, max_possible_combinations - 1)
+    if await had_every_combination(author_id, True):
         await message.reply("Du Legende hast das koeriwerk durchgespielt")
         return
-    elif await had_every_combination(message.author.id):
-        await message.reply("Zeit für eine der legendären Kombinationen")
-    while await has_had_combination(message.author.id, number) or (number in legendary_combinations
-                                                                   and had_every_combination(message.author.id)):
+    elif await had_every_combination(author_id):
+        await message.channel.send("https://i.redd.it/ain9jl82md381.jpg")
+    while await has_had_combination(author_id, number) or (number in legendary_combinations
+                                                                   and not await had_every_combination(author_id)):
         number += 1
         number %= max_possible_combinations
         if number == 0:
