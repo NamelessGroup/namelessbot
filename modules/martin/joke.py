@@ -113,6 +113,8 @@ class Jokes:
 jok = Jokes()
 
 
+# pylama:ignore=C901
+# Ignoring code complexity since this will (hopefully) be redone
 async def command_joke(message, client):
     if message.author == client.user:
         return
