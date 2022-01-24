@@ -10,7 +10,7 @@ class ReaderWriter:
 
     def __init__(self, f):
         self.src = f
-        p = os.path.join("../../config", "jokes")
+        p = os.path.join("config", "jokes")
         if not os.path.isfile(p):
             Path(p).touch()
 
@@ -118,14 +118,6 @@ jok = Jokes()
 async def command_joke(message, client):
     if message.author == client.user:
         return
-    # print("From " + str(message.author.id) + " with " + str(message.content))
-    if "arrrrr" in message.content.lower():
-        ret = jok.telljoke(-1)
-        # print(ret)
-        if ret == -1:
-            await message.reply("Index not forgiven or no item in list!")
-        else:
-            await message.reply(ret[0] + " (" + str(ret[1]) + ")")
     if not message.content.startswith("!"):
         return
     # await message.reply("Valid Command")
@@ -178,7 +170,7 @@ async def jokereact(mes):
     else:
         for x in con:
             if x == 'a' or x == 'r':
-                arpot += 10
+                arpot += 5
     if arpot < 100:
         if random.randint(0, 100) > arpot:
             return
