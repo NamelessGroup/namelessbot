@@ -8,7 +8,7 @@ async def command_mensa(message, client):
 
 
 async def timer_mensa(client):
-    channel_id = configmanager.get("announcement_channel")
+    channel_id = configmanager.get("announcement_channel", "config")
     channel = client.get_channel(channel_id)
     if channel is None:
         channel = await client.fetch_channel(channel_id)

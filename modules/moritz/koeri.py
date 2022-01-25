@@ -6,49 +6,35 @@ legendary_combinations = [63, 127]
 
 
 async def has_had_combination(user, number):
-    config = lib.configmanager.get("koeri")
+    config = lib.configmanager.get(str(user), "koeri")
     if config is None:
-        await lib.configmanager.write("koeri", {}, "private")
-        config = {}
-    if str(user) not in config:
-        config[str(user)] = {}
         return False
     else:
-        return str(number) in config[str(user)]
+        return str(number) in config
 
 
 async def had_every_combination(user, include_legendary=False):
-    config = lib.configmanager.get("koeri")
+    config = lib.configmanager.get(str(user), "koeri")
     if config is None:
-        await lib.configmanager.write("koeri", {}, "private")
-        config = {}
-    if str(user) not in config:
-        config[str(user)] = {}
         return False
     else:
         if include_legendary:
-            return len(config[str(user)]) >= max_possible_combinations - 1
+            return len(config) >= max_possible_combinations - 1
         else:
-            return len(config[str(user)]) >= max_possible_combinations - 1 - len(legendary_combinations)
+            return len(config) >= max_possible_combinations - 1 - len(legendary_combinations)
 
 
 async def set_rating(user, number, rating):
-    config = lib.configmanager.get("koeri")
+    config = lib.configmanager.get(str(user), "koeri")
     if config is None:
-        await lib.configmanager.write("koeri", {}, "private")
         config = {}
-    if str(user) not in config:
-        config[str(user)] = {}
-    config[str(user)][str(number)] = rating
-    await lib.configmanager.write("koeri", config, "private")
+    config[str(number)] = rating
+    await lib.configmanager.write(str(user), config, "koeri")
 
 
 async def koeri_ratings(user):
-    config = lib.configmanager.get("koeri")
+    config = lib.configmanager.get(str(user), "koeri")
     if config is None:
-        await lib.configmanager.write("koeri", {}, "private")
-        config = {}
-    if str(user) not in config:
         return "Du musst zunächst koeri essen!"
     s = "```"
     for i in config[str(user)]:
