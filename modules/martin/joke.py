@@ -52,7 +52,7 @@ class Jokes:
     rw = ReaderWriter("jokes")
     stdva = ['id', 'joke']
     jokes = []
-    intial = 0
+    init = 0
 
     def __init__(self):
         pass
@@ -105,9 +105,9 @@ class Jokes:
         # print(self.jokes)
 
     async def initial(self):
-        if(self.initial == 0):
+        if(self.init == 0):
             await self.update()
-            self.initial = 1
+            self.init = 1
 
 
 jok = Jokes()
