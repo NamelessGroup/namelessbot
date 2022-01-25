@@ -71,4 +71,4 @@ async def loop():
         if task.compare_time(Weekday(d.weekday()), d.hour, d.minute) == 0:
             await task.run()
 
-client.run(configmanager.get("bot_token"))
+client.run(configmanager.get("bot_token", "config"))
