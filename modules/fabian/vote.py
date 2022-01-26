@@ -2,6 +2,7 @@ import re
 import asyncio
 import discord
 
+
 async def command_vote(message, client):
     emoji1 = '✅'
     emoji2 = '❌'
@@ -21,4 +22,3 @@ async def command_vote(message, client):
         await nachricht2.reply("Der Vote ist vorbei und ist gescheitert!")
     else:
         await nachricht2.reply("Der Vote ist vorbei und es gab keine einstimmigkeit!")
-

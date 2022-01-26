@@ -1,100 +1,110 @@
 import json
 import aiofiles
+from pathlib import Path
 
-configs = {
-    "global": {},
-    "private": {}
-}
+configs = {}
 
 
 def read_config():
-    """Reads the private & global configs into memory."""
+    """
+    Reads all (template)-configs into memory.
+    If a config exists in config/templates and doesn't exist in the config directory, the template is loaded.
+    If a config exists in both the config/templates and the config directory, the one in the config directory is loaded.
+    """
     global configs
-    configs["global"] = json.loads(read_file_sync("config.json"))
-    configs["private"] = json.loads(read_file_sync("local_config.json"))
+
+    configs_to_load = []
+    for path in Path().glob("./config/templates/*.json"):
+        configs_to_load.append(path)
+    for path in Path().glob("./config/*.json"):
+        for template in configs_to_load:
+            if template.name == path.name:
+                configs_to_load.remove(template)
+                configs_to_load.append(path)
+
+    for config in configs_to_load:
+        configs[config.stem] = json.loads(read_file_sync(str(config), ""))
 
 
 async def write_config():
-    """Writes the private & global configs to disk."""
-    await write_file("../config/local_config.json", json.dumps(configs["global"]))
-    await write_file("../config/local_config.json", json.dumps(configs["private"]))
+    """Writes all configs to disk."""
+    for config in configs:
+        await write_file(config + ".json", json.dumps(configs[config]))
 
 
-async def read_file(path):
+async def read_file(path, root="config/"):
     """Reads a file from the config directory and returns it.
 
     :param string path: The filename to open, including the ending.
+    :param string root: Path root, defaults to config/
     :returns: The file contents
     :rtype: string
     """
-    async with aiofiles.open("config/" + path) as f:
+    async with aiofiles.open(root + path) as f:
         content = await f.read()
         await f.close()
         return content
 
 
-def read_file_sync(path):
+def read_file_sync(path, root="config/"):
     """Reads a file from the config directory and returns it synchronous.
 
     :param string path: The filename to open, including the ending.
+    :param string root: Path root, defaults to config/
     :returns: The file contents
     :rtype: string
     """
-    with open("config/" + path) as f:
+    with open(root + path) as f:
         content = f.read()
         f.close()
         return content
 
 
-async def write_file(path, content):
+async def write_file(path, content, root="config/"):
     """Writes contents into a file on the disk.
 
     :param string path: The file name to write to, including the ending.
-    :param string content: The contents to write"""
-    async with aiofiles.open("config/" + path, 'w') as f:
+    :param string root: Path root, defaults to config/
+    :param string content: The contents to write
+    """
+    async with aiofiles.open(root + path, 'w') as f:
         await f.write(content)
         await f.close()
 
 
-def get(key):
-    """Get a key from the config. If the key exists in the private config, that will be used, if not,
-    the value will be pulled global config if it exists. If it exists nowhere, this function will return None.
+def get(key, config):
+    """Get a key from a config.
+    The key is tried to be read from the supplied config.
+    If the config doesn't exist, a ValueError will be raised.
+    If the key doesn't exist, Null will be returned.
 
     :param string key: The key to look up
+    :param string config: Config to look up at
+    :raises :class:`ValueError`: Config doesn't exist
     :returns: Value, if it exists, otherwise None
     :rtype: Union[any, None]"""
-    if key in configs["private"]:
-        return configs["private"][key]
-    elif key in configs["global"]:
-        return configs["global"][key]
+    if config in configs:
+        if key in configs[config]:
+            return configs[config][key]
+        else:
+            return None
     else:
-        return None
+        raise ValueError()
 
 
-async def write(key, value, config_scope=""):
-    """Write a key to the config.
-    If a config scope is supplied, that will be used. If not, the function will try to guess:
-    If the key exists in the private config, override that, otherwise write it to the global config.
+async def write(key, value, config):
+    """Write a key to the supplied config.
+    If the supplied config doesn't exist, a ValueError will be raised.
 
     :param string key: The key to write to
     :param any value: The value to write
-    :param string config_scope: either 'private' or 'global'
-    :raises: :class:`ValueError`: Invalid config_scope
+    :param string config: The config to write to
+    :raises: :class:`ValueError`: Config doesn't exist
     """
     global configs
-    # if there is a scope: use that
-    if config_scope == "private":
-        configs["private"][key] = value
-    elif config_scope == "global":
-        configs["global"][key] = value
-    elif config_scope == "":
-        # if no scope supplied: try to guess (if its in private, use that)
-        if key in configs["private"]:
-            configs["private"][key] = value
-        else:
-            configs["global"][key] = value
+
+    if config in configs:
+        configs[config][key] = value
     else:
-        # if something invalid is passed, it's probably bad, throw something
         raise ValueError()
     await write_config()
-   

@@ -1,7 +1,7 @@
 import discord
 from discord.ext import tasks
 
-# from modules.martin import joke
+from modules.martin import joke
 from modules.fabian import arrrrr, mittwoch, vote
 
 from lib.recurringtask import RecurringTask
@@ -30,7 +30,7 @@ commands = {
     "mittwoch": mittwoch.command_mittwoch,
     #  "alarrrrrm": arrrrr.command_alarrrrrm,
     "vote": vote.command_vote,
-    # "joke": joke.command_joke,
+    "joke": joke.command_joke,
     "koeri": koeri.koeri_command
 }
 command_prefix = "!"
@@ -53,7 +53,7 @@ async def on_message(message):
             await commands[args[0][1:]](message, client)
 
     await arrrrr.ar(message)
-    # await joke.jokereact(message)
+    await joke.jokereact(message)
 
 
 @client.event
@@ -71,4 +71,4 @@ async def loop():
         if task.compare_time(Weekday(d.weekday()), d.hour, d.minute) == 0:
             await task.run()
 
-client.run(configmanager.get("bot_token"))
+client.run(configmanager.get("bot_token", "config"))

@@ -10,7 +10,7 @@ class ReaderWriter:
 
     def __init__(self, f):
         self.src = f
-        p = os.path.join("../../config", "jokes")
+        p = os.path.join("config", "jokes")
         if not os.path.isfile(p):
             Path(p).touch()
 
@@ -19,7 +19,7 @@ class ReaderWriter:
         f_back = await read_file(self.src)
         f_split = f_back.split('||')
         for x in f_split:
-            #print(x)
+            # print(x)
             if x == "":
                 break
             a = json.loads(x)
@@ -30,14 +30,14 @@ class ReaderWriter:
         return ret
 
     async def deletefile(self):
-        await write_file(self.src,'')
+        await write_file(self.src, '')
 
     async def writearray(self, va, ar):
         end = ""
         for x in ar:
             if x == "":
                 break
-            #print(x)
+            # print(x)
             dic = dict()
             i = 0
             for y in va:
@@ -52,7 +52,7 @@ class Jokes:
     rw = ReaderWriter("jokes")
     stdva = ['id', 'joke']
     jokes = []
-    intial = 0
+    init = 0
 
     def __init__(self):
         pass
@@ -66,7 +66,7 @@ class Jokes:
                     print((b[0], tid))
                     if int(b[0]) == tid:
                         tid += 1
-        self.jokes.append([str(tid),jo])
+        self.jokes.append([str(tid), jo])
         await self.rw.writearray(self.stdva, self.jokes)
         await self.update()
         return tid
@@ -105,25 +105,19 @@ class Jokes:
         # print(self.jokes)
 
     async def initial(self):
-        if(self.initial == 0):
+        if(self.init == 0):
             await self.update()
-            self.initial = 1
+            self.init = 1
 
 
 jok = Jokes()
 
 
+# pylama:ignore=C901
+# Ignoring code complexity since this will (hopefully) be redone
 async def command_joke(message, client):
     if message.author == client.user:
         return
-    #print("From " + str(message.author.id) + " with " + str(message.content))
-    if "arrrrr" in message.content.lower():
-        ret = jok.telljoke(-1)
-        # print(ret)
-        if ret == -1:
-            await message.reply("Index not forgiven or no item in list!")
-        else:
-            await message.reply(ret[0] + " (" + str(ret[1]) + ")")
     if not message.content.startswith("!"):
         return
     # await message.reply("Valid Command")
@@ -176,9 +170,9 @@ async def jokereact(mes):
     else:
         for x in con:
             if x == 'a' or x == 'r':
-                arpot += 10
+                arpot += 5
     if arpot < 100:
-        if random.randint(0,100) > arpot:
+        if random.randint(0, 100) > arpot:
             return
 
     ret = await jok.telljoke()
@@ -186,6 +180,3 @@ async def jokereact(mes):
         await mes.reply("Index not forgiven or no item in list!")
     else:
         await mes.reply(ret[0] + " (" + str(ret[1]) + ")")
-
-
-

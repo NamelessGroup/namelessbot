@@ -8,18 +8,14 @@ async def command_mensa(message, client):
 
 
 async def timer_mensa(client):
-    channel_id = configmanager.get("announcement_channel")
+    channel_id = configmanager.get("announcement_channel", "config")
     channel = client.get_channel(channel_id)
     if channel is None:
         channel = await client.fetch_channel(channel_id)
     await send_mensa_data(channel)
 
 
-async def send_mensa_data(channel):
-    try:
-        mensa_data = mensaparser.get_food_plan()
-    except Exception:
-        return
+def mensa_data_to_table(mensa_data):
     table_data = []
     for line in mensa_data:
         if len(mensa_data[line]) == 0:
@@ -50,7 +46,16 @@ async def send_mensa_data(channel):
                     line_name = ""
         table_data.append(["", "", ""])
     table_data.pop(len(table_data) - 1)
+    return table_data
 
+
+async def send_mensa_data(channel):
+    try:
+        mensa_data = mensaparser.get_food_plan()
+    except Exception:
+        return
+
+    table_data = mensa_data_to_table(mensa_data)
     table = tabulate(table_data, tablefmt="pretty")
     if len(table) > 1900:
         table_lines = table.split("\n")
@@ -65,4 +70,3 @@ async def send_mensa_data(channel):
         await channel.send(current_line + "```")
     else:
         await channel.send(":fork_knife_plate: Mensaessen für heute: ```" + table + "```")
-

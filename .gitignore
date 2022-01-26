@@ -148,4 +148,5 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-config/local_config.json
+config/*
+!config/templates/
