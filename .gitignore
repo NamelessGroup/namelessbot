@@ -149,3 +149,4 @@ crashlytics-build.properties
 fabric.properties
 
 config/*
+!config/templates/
