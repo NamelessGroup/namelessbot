@@ -133,7 +133,7 @@ async def command_joke(message, client):
             ret = await jok.telljoke(tid)
             # print(ret)
             if ret == -1:
-                await message.reply("Index not forgiven or no item in list!")
+                await message.reply("Index not assigned or no item in list!")
             else:
                 await message.reply(ret[0] + " (" + str(ret[1]) + ")")
         if splitcom[1] == "add":
@@ -170,7 +170,7 @@ async def jokereact(mes):
     else:
         for x in con:
             if x == 'a' or x == 'r':
-                arpot += 5
+                arpot += 1
     if arpot < 100:
         if random.randint(0, 100) > arpot:
             return
