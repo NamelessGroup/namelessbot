@@ -1,7 +1,12 @@
+import {Client, Message} from "discord.js";
+
 export interface IChatCommandList {
     [key: string]: IChatCommandHandler
 }
 
 export interface IChatCommandHandler {
-    handler: Function
+    handler: ChatCommandExecutor
 }
+
+export type TaskExecutor = (client: Client, ...args: any[]) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type ChatCommandExecutor = (message: Message) => Promise<void>;

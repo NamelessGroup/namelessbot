@@ -1,4 +1,5 @@
 import {Client} from "discord.js";
+import {TaskExecutor} from "../types";
 
 export enum Weekday {
     MONDAY,
@@ -14,10 +15,10 @@ export class RecurringTask {
     private readonly weekday: Weekday;
     private readonly hour: number;
     private readonly minute: number;
-    private readonly runner: Function;
-    private readonly arguments: any;
+    private readonly runner: TaskExecutor;
+    private readonly arguments: unknown[];
 
-    constructor(weekday: Weekday, hour: number, minute: number, runner: Function, functionArguments?: unknown[]) {
+    constructor(weekday: Weekday, hour: number, minute: number, runner: TaskExecutor, functionArguments?: unknown[]) {
         this.weekday = weekday;
         this.hour = hour;
         this.minute = minute;
@@ -38,7 +39,7 @@ export class RecurringTask {
         }
     }
 
-    compare_time(weekday: Weekday, hour: number, minute: number): number {
+    compareTime(weekday: Weekday, hour: number, minute: number): number {
         if(this.weekday === weekday && this.hour === hour && this.minute === minute) {
             return 0;
         }

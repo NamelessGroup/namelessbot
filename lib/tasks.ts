@@ -12,7 +12,7 @@ const TASKS = [
 export async function checkForTasks(client: Client) {
     const now = DateTime.now().setZone("Europe/Berlin");
     for(const t of TASKS) {
-        if(t.compare_time(now.weekday-1, now.hour, now.minute) === 0) {
+        if(t.compareTime(now.weekday-1, now.hour, now.minute) === 0) {
             await t.run(client);
         }
     }

@@ -7,7 +7,7 @@ export default async function messageCreate(message: Message) {
     }
 
     if(message.content.startsWith(CHAT_COMMAND_PREFIX)) {
-        let command = message.content.split(" ");
+        const command = message.content.split(" ");
         if(CHAT_COMMANDS[command[0].substring(1)] !== undefined) {
             await CHAT_COMMANDS[command[0].substring(1)].handler(message);
         }
