@@ -1,0 +1,25 @@
+{
+  "name": "namelessbot",
+  "version": "2.0.0dev",
+  "main": "index.js",
+  "repository": "https://github.com/NamelessGroup/namelessbot",
+  "contributors": [
+    "c0derMo",
+    "Kr0noxy",
+    "MartinKrausewitz",
+    "myphyk"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^17.0.16",
+    "ts-node": "^10.5.0",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0"
+  },
+  "scripts": {
+    "start": "ts-node index.ts"
+  }
+}
