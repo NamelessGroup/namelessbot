@@ -1,9 +1,5 @@
 import {Client} from "discord.js";
 import {TaskExecutor} from "../types";
-import {TASKS} from "./tasks";
-import {DateTime} from "luxon";
-
-let taskLoop: NodeJS.Timer;
 
 export enum Weekday {
     MONDAY,
