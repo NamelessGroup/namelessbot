@@ -1,7 +1,7 @@
 import {Client, Intents} from 'discord.js';
 import 'dotenv/config'
-import messageCreate from "./listeners/messageCreate";
 import { checkForTasks } from "./lib/tasks";
+import {addListeners} from "./lib/listeners";
 
 const INTENTS = [
     Intents.FLAGS.GUILD_MESSAGES,
@@ -15,7 +15,7 @@ client.on("ready", (client) => {
 });
 
 // Event handlers
-client.on("messageCreate", messageCreate);
+addListeners(client, true);
 
 // Recurring tasks
 setInterval(checkForTasks, 60000, client);
