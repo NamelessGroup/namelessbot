@@ -1,7 +1,7 @@
 import {Client, Intents} from 'discord.js';
 import 'dotenv/config'
-import { checkForTasks } from "./lib/tasks";
 import {addListeners} from "./lib/listeners";
+import {startRecurringTaskLoop} from "./lib/recurringtask";
 
 const INTENTS = [
     Intents.FLAGS.GUILD_MESSAGES,
@@ -18,6 +18,6 @@ client.on("ready", (client) => {
 addListeners(client, true);
 
 // Recurring tasks
-setInterval(checkForTasks, 60000, client);
+startRecurringTaskLoop(client);
 
 void client.login(process.env.DISCORD_TOKEN);

@@ -1,5 +1,8 @@
 import {Client} from "discord.js";
 import {TaskExecutor} from "../types";
+import {checkForTasks} from "./tasks";
+
+let taskLoop: NodeJS.Timer;
 
 export enum Weekday {
     MONDAY,
@@ -51,4 +54,12 @@ export class RecurringTask {
             return -1
         }
     }
+}
+
+export function startRecurringTaskLoop(client: Client): void {
+    taskLoop = setInterval(checkForTasks, 60000, client);
+}
+
+export function stopRecurringTaskLoop(): void {
+    clearInterval(taskLoop);
 }
