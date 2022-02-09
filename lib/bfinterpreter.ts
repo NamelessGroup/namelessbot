@@ -1,13 +1,22 @@
+enum InterpreterMode {
+    InputBehindComma,
+    RequestInput
+}
+
 class BrainfuckInterpreter {
     posarray: number[] = new Array(1);
     negarray: number[] = new Array(0);
     pointer: number = 0;
     endString: string;
     readonly code: string;
+    interpreterMode:InterpreterMode = InterpreterMode.InputBehindComma;
 
-    constructor(c: string) {
+    constructor(c: string, im?: InterpreterMode) {
         this.code = c
         this.posarray[0] = 0
+        if (im != undefined) {
+            this.interpreterMode = im;
+        }
         this.checkCode();
         this.execute()
     }
@@ -58,6 +67,14 @@ class BrainfuckInterpreter {
                     break;
                 }
                 case ',': {
+                    if (this.interpreterMode == InterpreterMode.InputBehindComma) {
+                        ++i;
+                        if (this.pointer < 0) {
+                            this.negarray[-this.pointer] = charar[i].charCodeAt(0);
+                        } else {
+                            this.posarray[this.pointer] = charar[i].charCodeAt(0);
+                        }
+                    }
                     break;
                 }
                 case '[': {
