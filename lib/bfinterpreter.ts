@@ -43,7 +43,7 @@ class BrainfuckInterpreter {
 
     execute() {
         const charar = this.code.split("");
-        let brackkets = new Array(0);
+        let brackets = new Array(0);
         for (let i = 0; i < charar.length; i++) {
             switch (charar[i]) {
                 case '+': {
@@ -78,12 +78,35 @@ class BrainfuckInterpreter {
                     break;
                 }
                 case '[': {
-                    brackkets.push(i);
+                    if (this.pointer < 0) {
+                        if (this.negarray[-this.pointer] == 0) {
+                            i = this.findNextMatchingBracket(charar, i);
+                        } else {
+                            brackets.push(i);
+                        }
+                    } else {
+                        if (this.posarray[this.pointer] == 0) {
+                            i = this.findNextMatchingBracket(charar, i);
+                        } else {
+                            brackets.push(i);
+                        }
+                    }
                     break;
                 }
                 case ']': {
-                    i = brackkets.pop();
-                    break;
+                    if (this.pointer < 0) {
+                        if (this.negarray[-this.pointer] == 0) {
+                            i = brackets.pop();
+                        } else {
+                            brackets.pop();
+                        }
+                    } else {
+                        if (this.posarray[this.pointer] == 0) {
+                            i = brackets.pop();
+                        } else {
+                            brackets.pop();
+                        }
+                    }
                 }
             }
         }
@@ -126,6 +149,21 @@ class BrainfuckInterpreter {
         } else {
             this.endString += String.fromCharCode(this.posarray[this.pointer]);
         }
+    }
+
+    findNextMatchingBracket(array:string[], index:number) {
+        let counter:number = 0
+        for (let i = index; i < array.length; i++) {
+            if (array[i] == "[") {
+                ++counter;
+            } else if(array[i] == "]") {
+                --counter;
+            }
+            if(counter == 0) {
+                return i;
+            }
+        }
+        throw new SyntaxError("Brackets");
     }
 
 }
