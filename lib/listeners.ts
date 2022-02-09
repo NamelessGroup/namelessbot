@@ -9,7 +9,11 @@ const LISTENERS: IEventListener[] = [
 export function addListeners(client: Client, includeElevated: boolean = false): void {
     for(const l of LISTENERS) {
         if(!l.elevated || includeElevated) {
-            client.on(l.event, l.handler);
+            if(l.once) {
+                client.once(l.event, l.handler);
+            } else {
+                client.on(l.event, l.handler);
+            }
         }
     }
 }

@@ -10,8 +10,9 @@ export interface IChatCommandHandler {
 
 export interface IEventListener {
     event: string;
-    elevated: boolean;
+    elevated?: boolean;
     handler: EventHandler;
+    once?: boolean;
 }
 
 export type EventHandler = (...args: any[]) => Promise<void>;  // eslint-disable-line @typescript-eslint/no-explicit-any
