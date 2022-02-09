@@ -1,6 +1,7 @@
 import {Client} from "discord.js";
 import {TaskExecutor} from "../types";
-import {checkForTasks} from "./tasks";
+import {TASKS} from "./tasks";
+import {DateTime} from "luxon";
 
 let taskLoop: NodeJS.Timer;
 
@@ -54,12 +55,4 @@ export class RecurringTask {
             return -1
         }
     }
-}
-
-export function startRecurringTaskLoop(client: Client): void {
-    taskLoop = setInterval(checkForTasks, 60000, client);
-}
-
-export function stopRecurringTaskLoop(): void {
-    clearInterval(taskLoop);
 }

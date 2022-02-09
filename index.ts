@@ -1,7 +1,7 @@
 import {Client, Intents} from 'discord.js';
 import 'dotenv/config'
 import {addListeners} from "./lib/listeners";
-import {startRecurringTaskLoop} from "./lib/recurringtask";
+import {startRecurringTaskLoop} from "./lib/taskRunner";
 
 const INTENTS = [
     Intents.FLAGS.GUILD_MESSAGES,
