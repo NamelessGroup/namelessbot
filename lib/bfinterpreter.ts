@@ -1,13 +1,13 @@
-enum InterpreterMode {
+export enum InterpreterMode {
     InputBehindComma,
     RequestInput
 }
 
-class BrainfuckInterpreter {
+export class BrainfuckInterpreter {
     posarray: number[] = new Array(1);
     negarray: number[] = new Array(0);
-    pointer: number = 0;
-    endString: string;
+    pointer = 0;
+    endString = "";
     readonly code: string;
     interpreterMode:InterpreterMode = InterpreterMode.InputBehindComma;
 
@@ -23,7 +23,7 @@ class BrainfuckInterpreter {
 
     checkCode() {
         const charar = this.code.split("");
-        let counter:number = 0;
+        let counter = 0;
         for (let i = 0; i < charar.length; i++) {
             if(charar[i] == "[") {
                 ++counter;
@@ -43,7 +43,7 @@ class BrainfuckInterpreter {
 
     execute() {
         const charar = this.code.split("");
-        let brackets = new Array(0);
+        const brackets = new Array(0);
         for (let i = 0; i < charar.length; i++) {
             switch (charar[i]) {
                 case '+': {
@@ -80,28 +80,28 @@ class BrainfuckInterpreter {
                 case '[': {
                     if (this.pointer < 0) {
                         if (this.negarray[-this.pointer] == 0) {
-                            i = this.findNextMatchingBracket(charar, i);
+                            i = this.findNextMatchingBracket(i);
                         } else {
-                            brackets.push(i);
+                            brackets.push(i-1);
                         }
                     } else {
                         if (this.posarray[this.pointer] == 0) {
-                            i = this.findNextMatchingBracket(charar, i);
+                            i = this.findNextMatchingBracket(i);
                         } else {
-                            brackets.push(i);
+                            brackets.push(i-1);
                         }
                     }
                     break;
                 }
                 case ']': {
                     if (this.pointer < 0) {
-                        if (this.negarray[-this.pointer] == 0) {
+                        if (this.negarray[-this.pointer] != 0) {
                             i = brackets.pop();
                         } else {
                             brackets.pop();
                         }
                     } else {
-                        if (this.posarray[this.pointer] == 0) {
+                        if (this.posarray[this.pointer] != 0) {
                             i = brackets.pop();
                         } else {
                             brackets.pop();
@@ -151,12 +151,12 @@ class BrainfuckInterpreter {
         }
     }
 
-    findNextMatchingBracket(array:string[], index:number) {
-        let counter:number = 0
-        for (let i = index; i < array.length; i++) {
-            if (array[i] == "[") {
+    findNextMatchingBracket(index:number) {
+        let counter = 0
+        for (let i = index; i < this.code.length; i++) {
+            if (this.code[i] == "[") {
                 ++counter;
-            } else if(array[i] == "]") {
+            } else if(this.code[i] == "]") {
                 --counter;
             }
             if(counter == 0) {
@@ -164,6 +164,10 @@ class BrainfuckInterpreter {
             }
         }
         throw new SyntaxError("Brackets");
+    }
+
+    get() {
+        return this.endString;
     }
 
 }
