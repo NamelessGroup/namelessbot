@@ -151,3 +151,4 @@ config/*
 !config/templates/
 
 node_modules
+docs
