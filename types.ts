@@ -1,4 +1,4 @@
-import {Client, Message} from "discord.js";
+import {ApplicationCommandData, Client, CommandInteraction, Message} from "discord.js";
 
 export interface IChatCommandList {
     [key: string]: IChatCommandHandler
@@ -13,6 +13,11 @@ export interface IEventListener {
     elevated?: boolean;
     handler: EventHandler;
     once?: boolean;
+}
+
+export interface ISlashCommand {
+    command: ApplicationCommandData;
+    handler(interaction: CommandInteraction): void;
 }
 
 export type EventHandler = (...args: any[]) => Promise<void>;  // eslint-disable-line @typescript-eslint/no-explicit-any

@@ -1,9 +1,14 @@
-import chatCommands from "../listeners/chatCommands";
 import {Client} from "discord.js";
 import {IEventListener} from "../types";
 
+import registerSlashCommands from "../listeners/registerSlashCommands";
+import chatCommands from "../listeners/chatCommands";
+import handleSlashCommands from "../listeners/handleSlashCommands";
+
 const LISTENERS: IEventListener[] = [
-    chatCommands
+    chatCommands,
+    registerSlashCommands,
+    handleSlashCommands
 ]
 
 export function addListeners(client: Client, includeElevated: boolean = false): void {
