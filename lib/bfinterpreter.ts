@@ -1,4 +1,5 @@
 import {CommandInteraction, MessageActionRow, MessageSelectMenu} from "discord.js";
+import {destroy} from "../slashCommands/brainfuck";
 
 export enum InterpreterMode {
     INPUT_BEHIND_COMMA,
@@ -10,17 +11,23 @@ export class BrainfuckInterpreter {
     negarray: number[] = new Array(0);
     pointer = 0;
     endString = "";
-    readonly code: string;
+
+    readonly code: string[];
+    iterator = 0;
+
     interpreterMode:InterpreterMode = InterpreterMode.INPUT_BEHIND_COMMA;
     interaction:CommandInteraction | undefined;
+    id;
 
-    constructor(c: string, im?: InterpreterMode, ci?:CommandInteraction ) {
-        this.code = c
+    nextChar: string;
+
+    constructor(i: number, c: string, im?: InterpreterMode, ci?:CommandInteraction ) {
+        this.id = i;
+        this.code = c.split("");
         this.posarray[0] = 0
         if (im != undefined) {
             this.interpreterMode = im;
         }
-        this.interpreterMode = InterpreterMode.INPUT_BEHIND_COMMA;
         this.interaction = ci;
 
         this.checkCode();
@@ -30,12 +37,11 @@ export class BrainfuckInterpreter {
         if (this.interaction == undefined && this.interpreterMode == InterpreterMode.REQUEST_INPUT) {
             throw new SyntaxError("Error")
         }
-        const charar = this.code.split("");
         let counter = 0;
-        for (let i = 0; i < charar.length; i++) {
-            if(charar[i] == "[") {
+        for (let i = 0; i < this.code.length; i++) {
+            if(this.code[i] == "[") {
                 ++counter;
-            } else if( charar[i] == "]") {
+            } else if( this.code[i] == "]") {
                 --counter;
             }
             if(counter < 0) {
@@ -50,10 +56,10 @@ export class BrainfuckInterpreter {
     }
 
     async execute() {
-        const charar = this.code.split("");
         const brackets = new Array(0);
-        for (let i = 0; i < charar.length; i++) {
-            switch (charar[i]) {
+        let dontDestroy = false;
+        for (this.iterator; this.iterator < this.code.length; this.iterator++) {
+            switch (this.code[this.iterator]) {
                 case '+': {
                     this.inc();
                     break;
@@ -76,14 +82,14 @@ export class BrainfuckInterpreter {
                 }
                 case ',': {
                     if (this.interpreterMode == InterpreterMode.INPUT_BEHIND_COMMA) {
-                        ++i;
-                        if (this.pointer < 0) {
-                            this.negarray[-this.pointer] = charar[i].charCodeAt(0);
-                        } else {
-                            this.posarray[this.pointer] = charar[i].charCodeAt(0);
-                        }
+                        ++this.iterator;
+                        this.writeChar(this.code[this.iterator])
                     } else if (this.interpreterMode == InterpreterMode.REQUEST_INPUT) {
-                        const row = new MessageActionRow().addComponents(new MessageSelectMenu().setCustomId("bfoptmenu")
+                        if (this.nextChar != undefined) {
+                            this.writeChar(this.nextChar)
+                            continue;
+                        }
+                        const row = new MessageActionRow().addComponents(new MessageSelectMenu().setCustomId("brainfuck"+this.id)
                             .addOptions([
                                 {
                                     label: "A",
@@ -91,22 +97,23 @@ export class BrainfuckInterpreter {
                                     value: "A"
                                 }
                             ]));
-                        await this.interaction.followUp({content: " "+this.endString, components:[row]})
+                        await this.interaction.followUp({content: this.endString == "" ? "Input is requested: " : this.endString, components:[row]})
+                        dontDestroy = true;
+                        break;
                     }
-                    break;
                 }
                 case '[': {
                     if (this.pointer < 0) {
                         if (this.negarray[-this.pointer] == 0) {
-                            i = this.findNextMatchingBracket(i);
+                            this.iterator = this.findNextMatchingBracket(this.iterator);
                         } else {
-                            brackets.push(i-1);
+                            brackets.push(this.iterator-1);
                         }
                     } else {
                         if (this.posarray[this.pointer] == 0) {
-                            i = this.findNextMatchingBracket(i);
+                            this.iterator = this.findNextMatchingBracket(this.iterator);
                         } else {
-                            brackets.push(i-1);
+                            brackets.push(this.iterator-1);
                         }
                     }
                     break;
@@ -114,21 +121,37 @@ export class BrainfuckInterpreter {
                 case ']': {
                     if (this.pointer < 0) {
                         if (this.negarray[-this.pointer] != 0) {
-                            i = brackets.pop();
+                            this.iterator = brackets.pop();
                         } else {
                             brackets.pop();
                         }
                     } else {
                         if (this.posarray[this.pointer] != 0) {
-                            i = brackets.pop();
+                            this.iterator = brackets.pop();
                         } else {
                             brackets.pop();
                         }
                     }
                 }
             }
+            if (dontDestroy) {
+                break;
+            }
         }
+        if (dontDestroy) return;
+        destroy(this.id,this.interaction)
 
+    }
+
+    writeChar(c:string) {
+        if (c.length != 1) {
+            throw new SyntaxError("tomuchinput");
+        }
+        if (this.pointer < 0) {
+            this.negarray[-this.pointer] = c.charCodeAt(0);
+        } else {
+            this.posarray[this.pointer] = c.charCodeAt(0);
+        }
     }
 
     inc() {
@@ -186,6 +209,13 @@ export class BrainfuckInterpreter {
 
     get() {
         return this.endString;
+    }
+
+    setNextChar(c: string) {
+        if (c.length != 1) {
+            throw new SyntaxError("tomuchinput");
+        }
+        this.nextChar = c;
     }
 
 }

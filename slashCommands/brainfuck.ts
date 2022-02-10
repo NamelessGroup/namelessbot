@@ -3,6 +3,8 @@ import {CommandInteraction} from "discord.js";
 import {ISlashCommand} from "../types";
 import {BrainfuckInterpreter, InterpreterMode} from "../lib/bfinterpreter";
 
+export let bfint:BrainfuckInterpreter[] = [];
+
 export default {
     command: {
         name: "brainfuck",
@@ -30,9 +32,27 @@ export default {
         } else {
             s = InterpreterMode.INPUT_BEHIND_COMMA;
         }
-        const b = new BrainfuckInterpreter(interaction.options.getString("brainfuck_code"),
+        const id = bfint.length;
+        const b = new BrainfuckInterpreter(id , interaction.options.getString("brainfuck_code"),
             s as InterpreterMode, interaction);
+        bfint.push(b);
         await b.execute();
-        await interaction.followUp("Brainfuck says: `" + b.get() + "`");
     }
 } as ISlashCommand
+
+export function destroy(id: number, interaction: CommandInteraction) {
+    console.log("Destroying: " + id)
+    let out = bfint[id].get();
+    bfint[id] = undefined;
+    if (out == "") {
+        void interaction.followUp("No more Output");
+    }
+    void interaction.followUp(out);
+    for (let i = bfint.length - 1; i >= 0; --i) {
+        if (bfint[i] == undefined) {
+            bfint.pop();
+        } else {
+            break;
+        }
+    }
+}
