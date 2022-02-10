@@ -1,4 +1,4 @@
-import {CommandInteraction} from "discord.js";
+import {CommandInteraction, MessageActionRow, MessageSelectMenu} from "discord.js";
 
 export enum InterpreterMode {
     INPUT_BEHIND_COMMA,
@@ -12,6 +12,7 @@ export class BrainfuckInterpreter {
     endString = "";
     readonly code: string;
     interpreterMode:InterpreterMode = InterpreterMode.INPUT_BEHIND_COMMA;
+    interaction:CommandInteraction | undefined;
 
     constructor(c: string, im?: InterpreterMode, ci?:CommandInteraction ) {
         this.code = c
@@ -19,11 +20,16 @@ export class BrainfuckInterpreter {
         if (im != undefined) {
             this.interpreterMode = im;
         }
+        this.interpreterMode = InterpreterMode.INPUT_BEHIND_COMMA;
+        this.interaction = ci;
+
         this.checkCode();
-        this.execute()
     }
 
     checkCode() {
+        if (this.interaction == undefined && this.interpreterMode == InterpreterMode.REQUEST_INPUT) {
+            throw new SyntaxError("Error")
+        }
         const charar = this.code.split("");
         let counter = 0;
         for (let i = 0; i < charar.length; i++) {
@@ -43,7 +49,7 @@ export class BrainfuckInterpreter {
         }
     }
 
-    execute() {
+    async execute() {
         const charar = this.code.split("");
         const brackets = new Array(0);
         for (let i = 0; i < charar.length; i++) {
@@ -76,6 +82,16 @@ export class BrainfuckInterpreter {
                         } else {
                             this.posarray[this.pointer] = charar[i].charCodeAt(0);
                         }
+                    } else if (this.interpreterMode == InterpreterMode.REQUEST_INPUT) {
+                        const row = new MessageActionRow().addComponents(new MessageSelectMenu().setCustomId("bfoptmenu")
+                            .addOptions([
+                                {
+                                    label: "A",
+                                    description: "A",
+                                    value: "A"
+                                }
+                            ]));
+                        await this.interaction.followUp({content: " "+this.endString, components:[row]})
                     }
                     break;
                 }

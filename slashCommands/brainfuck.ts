@@ -32,6 +32,7 @@ export default {
         }
         const b = new BrainfuckInterpreter(interaction.options.getString("brainfuck_code"),
             s as InterpreterMode, interaction);
+        await b.execute();
         await interaction.followUp("Brainfuck says: `" + b.get() + "`");
     }
 } as ISlashCommand
