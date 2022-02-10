@@ -15,6 +15,11 @@ client.on("ready", (client) => {
     console.log(`Logged in as ${client.user.tag}`);
 });
 
+// Graceful shutdown
+process.on('SIGINT', () => {
+    client.destroy();
+})
+
 // Event handlers
 addListeners(client, true);
 
