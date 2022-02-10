@@ -2,6 +2,7 @@ import {Client, Intents} from 'discord.js';
 import 'dotenv/config'
 import {addListeners} from "./lib/listeners";
 import {startRecurringTaskLoop} from "./lib/taskRunner";
+import {readConfig} from "./lib/configmanager";
 
 const INTENTS = [
     Intents.FLAGS.GUILD_MESSAGES,
@@ -20,4 +21,7 @@ addListeners(client, true);
 // Recurring tasks
 startRecurringTaskLoop(client);
 
-void client.login(process.env.DISCORD_TOKEN);
+// Reading config
+readConfig().then(() => {
+    void client.login(process.env.DISCORD_TOKEN);
+});

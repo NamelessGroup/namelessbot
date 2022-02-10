@@ -23,3 +23,11 @@ export interface ISlashCommand {
 export type EventHandler = (...args: any[]) => Promise<void>;  // eslint-disable-line @typescript-eslint/no-explicit-any
 export type TaskExecutor = (client: Client, ...args: any[]) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
 export type ChatCommandExecutor = (message: Message) => Promise<void>;
+
+export interface ConfigList {
+    [configName: string]: Config
+}
+
+export interface Config {
+    [key: string]: unknown
+}

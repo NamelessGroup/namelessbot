@@ -11,7 +11,7 @@ const LISTENERS: IEventListener[] = [
     handleSlashCommands
 ]
 
-export function addListeners(client: Client, includeElevated: boolean = false): void {
+export function addListeners(client: Client, includeElevated = false): void {
     for(const l of LISTENERS) {
         if(!l.elevated || includeElevated) {
             if(l.once) {
@@ -23,7 +23,7 @@ export function addListeners(client: Client, includeElevated: boolean = false): 
     }
 }
 
-export function removeListeners(client: Client, includeElevated: boolean = false): void {
+export function removeListeners(client: Client, includeElevated = false): void {
     for(const l of LISTENERS) {
         if(!l.elevated || includeElevated) {
             client.removeListener(l.event, l.handler);
