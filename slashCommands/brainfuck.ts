@@ -1,7 +1,7 @@
 import {ApplicationCommandOptionTypes} from "discord.js/typings/enums";
 import {CommandInteraction} from "discord.js";
 import {ISlashCommand} from "../types";
-import {BrainfuckInterpreter} from "../lib/bfinterpreter";
+import {BrainfuckInterpreter, InterpreterMode} from "../lib/bfinterpreter";
 
 export default {
     command: {
@@ -10,19 +10,28 @@ export default {
         options: [
             {
                 type: ApplicationCommandOptionTypes.STRING,
-                name: "test_argument",
+                name: "brainfuck_code",
                 description: "Some test argument",
+                required: true,
+            },
+            {
+                type: ApplicationCommandOptionTypes.BOOLEAN,
+                name: "interaction",
+                description: "Interaction",
             }
         ]
     },
     handler: async function(interaction: CommandInteraction) {
-        let s:string = "";
-        if ( interaction.options.getString("test_argument") == null) {
-            return;
+        let s: boolean | InterpreterMode = interaction.options.getBoolean("interaction");
+        if (s == null) {
+            s = undefined
+        } else if (s == true) {
+            s = InterpreterMode.REQUEST_INPUT;
         } else {
-            s = interaction.options.getString("test_argument") as string;
+            s = InterpreterMode.INPUT_BEHIND_COMMA;
         }
-        const b = new BrainfuckInterpreter(s)
+        const b = new BrainfuckInterpreter(interaction.options.getString("brainfuck_code"),
+            s as InterpreterMode, interaction);
         await interaction.followUp("Brainfuck says: `" + b.get() + "`");
     }
 } as ISlashCommand

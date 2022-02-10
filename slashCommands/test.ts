@@ -15,6 +15,7 @@ export default {
         ]
     },
     handler: async function(interaction: CommandInteraction) {
+        console.log(interaction.options.data);
         await interaction.followUp("You typed: `" + interaction.options.getString("test_argument") + "`");
     }
 } as ISlashCommand

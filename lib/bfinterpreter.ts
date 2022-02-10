@@ -1,3 +1,5 @@
+import {CommandInteraction} from "discord.js";
+
 export enum InterpreterMode {
     INPUT_BEHIND_COMMA,
     REQUEST_INPUT
@@ -11,7 +13,7 @@ export class BrainfuckInterpreter {
     readonly code: string;
     interpreterMode:InterpreterMode = InterpreterMode.INPUT_BEHIND_COMMA;
 
-    constructor(c: string, im?: InterpreterMode) {
+    constructor(c: string, im?: InterpreterMode, ci?:CommandInteraction ) {
         this.code = c
         this.posarray[0] = 0
         if (im != undefined) {
