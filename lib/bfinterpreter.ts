@@ -1,6 +1,6 @@
 export enum InterpreterMode {
-    InputBehindComma,
-    RequestInput
+    INPUT_BEHIND_COMMA,
+    REQUEST_INPUT
 }
 
 export class BrainfuckInterpreter {
@@ -9,7 +9,7 @@ export class BrainfuckInterpreter {
     pointer = 0;
     endString = "";
     readonly code: string;
-    interpreterMode:InterpreterMode = InterpreterMode.InputBehindComma;
+    interpreterMode:InterpreterMode = InterpreterMode.INPUT_BEHIND_COMMA;
 
     constructor(c: string, im?: InterpreterMode) {
         this.code = c
@@ -67,7 +67,7 @@ export class BrainfuckInterpreter {
                     break;
                 }
                 case ',': {
-                    if (this.interpreterMode == InterpreterMode.InputBehindComma) {
+                    if (this.interpreterMode == InterpreterMode.INPUT_BEHIND_COMMA) {
                         ++i;
                         if (this.pointer < 0) {
                             this.negarray[-this.pointer] = charar[i].charCodeAt(0);

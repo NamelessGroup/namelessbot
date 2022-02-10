@@ -2,6 +2,7 @@ import {IChatCommandList, ISlashCommand} from "../types";
 
 import test from "../messageCommands/test";
 import testSlash from "../slashCommands/test";
+import brainFUCK from "../slashCommands/brainfuck";
 
 export const CHAT_COMMAND_PREFIX = "!";
 
@@ -10,5 +11,5 @@ export const CHAT_COMMANDS: IChatCommandList = {
 }
 
 export const SLASH_COMMANDS: ISlashCommand[] = [
-    testSlash
+    testSlash, brainFUCK
 ]
