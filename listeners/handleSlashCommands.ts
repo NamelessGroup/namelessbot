@@ -7,8 +7,6 @@ export default {
     handler: async (interaction: Interaction) => {
         if(!interaction.isCommand()) return;
 
-        await interaction.deferReply();
-
         const commands = SLASH_COMMANDS.filter((c) => {
             return c.command.name === (interaction as CommandInteraction).commandName
         });

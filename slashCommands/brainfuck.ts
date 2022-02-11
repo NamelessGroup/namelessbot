@@ -36,6 +36,7 @@ export default {
         ]
     },
     handler: async function(interaction: CommandInteraction) {
+        await interaction.deferReply();
         let s: boolean | InterpreterMode = interaction.options.getBoolean("interaction");
         if (s == null) {
             s = undefined
