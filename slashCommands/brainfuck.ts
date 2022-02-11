@@ -4,6 +4,13 @@ import {ISlashCommand} from "../types";
 import {BrainfuckInterpreter, InterpreterMode} from "../lib/bfinterpreter";
 
 export let bfint:BrainfuckInterpreter[] = [];
+export const MAX_INTERPRETER_INDEX_LENGTH = 1;
+let lastIndex = 0;
+
+
+export function incIndex() {
+    return ++lastIndex;
+}
 
 export default {
     command: {
@@ -20,6 +27,11 @@ export default {
                 type: ApplicationCommandOptionTypes.BOOLEAN,
                 name: "interaction",
                 description: "Interaction",
+            },
+            {
+                type:  ApplicationCommandOptionTypes.STRING,
+                name: "regex",
+                description: "Regex for Char input"
             }
         ]
     },
@@ -33,8 +45,14 @@ export default {
             s = InterpreterMode.INPUT_BEHIND_COMMA;
         }
         const id = bfint.length;
-        const b = new BrainfuckInterpreter(id , interaction.options.getString("brainfuck_code"),
-            s as InterpreterMode, interaction);
+        if (id == 10 ** MAX_INTERPRETER_INDEX_LENGTH - 1) {
+            await interaction.editReply("To much interpreters running");
+
+            await interaction.deleteReply();
+            return
+        }
+        const b = new BrainfuckInterpreter(id, interaction.options.getString("brainfuck_code"),
+            s as InterpreterMode, interaction, interaction.options.getString("regex"));
         bfint.push(b);
         await b.execute();
     }
@@ -42,7 +60,7 @@ export default {
 
 export function destroy(id: number, interaction: CommandInteraction) {
     console.log("Destroying: " + id)
-    let out = bfint[id].get();
+    const out = bfint[id].get();
     bfint[id] = undefined;
     if (out == "") {
         void interaction.followUp("No more Output");

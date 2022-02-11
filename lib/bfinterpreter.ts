@@ -1,10 +1,11 @@
 import {CommandInteraction, MessageActionRow, MessageSelectMenu} from "discord.js";
-import {destroy} from "../slashCommands/brainfuck";
+import {destroy, incIndex} from "../slashCommands/brainfuck";
 
 export enum InterpreterMode {
     INPUT_BEHIND_COMMA,
     REQUEST_INPUT
 }
+
 
 export class BrainfuckInterpreter {
     posarray: number[] = new Array(1);
@@ -18,10 +19,22 @@ export class BrainfuckInterpreter {
     interpreterMode:InterpreterMode = InterpreterMode.INPUT_BEHIND_COMMA;
     interaction:CommandInteraction | undefined;
     id;
+    inputRange;
+    options = undefined;
 
     nextChar: string;
 
-    constructor(i: number, c: string, im?: InterpreterMode, ci?:CommandInteraction ) {
+
+    /**
+     * Constructor for the brainfuck interpreter, program needs to be started with execute()
+     *
+     * @param i the id of the interpreter = pos in bfint-Array
+     * @param c the code that should be executed
+     * @param im optional interpreter mode, default is the INPUT_BEHIND_COMMA
+     * @param ci optional CommandInteraction is required if the interpreter mode is REQUEST_INPUT
+     * @param ir input range takes regex, that describes the possible input chars
+     */
+    constructor(i: number, c: string, im?: InterpreterMode, ci?:CommandInteraction, ir?:string) {
         this.id = i;
         this.code = c.split("");
         this.posarray[0] = 0
@@ -29,12 +42,18 @@ export class BrainfuckInterpreter {
             this.interpreterMode = im;
         }
         this.interaction = ci;
-
+        this.inputRange = ir
         this.checkCode();
     }
 
+    /**
+     * checks if the constructor params are correct, is automatically called by the constructor
+     *
+     * @throws SyntaxError if a param has errors
+     */
     checkCode() {
-        if (this.interaction == undefined && this.interpreterMode == InterpreterMode.REQUEST_INPUT) {
+        if (this.interaction == undefined && this.interpreterMode == InterpreterMode.REQUEST_INPUT
+            && this.inputRange == undefined) {
             throw new SyntaxError("Error")
         }
         let counter = 0;
@@ -85,18 +104,18 @@ export class BrainfuckInterpreter {
                         this.writeChar(this.code[this.iterator])
                     } else if (this.interpreterMode == InterpreterMode.REQUEST_INPUT) {
                         if (this.nextChar != undefined) {
-                            this.writeChar(this.nextChar)
+                            this.writeChar(this.nextChar);
+                            this.nextChar = undefined;
                             continue;
                         }
-                        const row = new MessageActionRow().addComponents(new MessageSelectMenu().setCustomId("brainfuck"+this.id)
-                            .addOptions([
-                                {
-                                    label: "A",
-                                    description: "A",
-                                    value: "A"
-                                }
-                            ]));
-                        await this.interaction.followUp({content: this.endString == "" ? "Input is requested: " : this.endString, components:[row]})
+                        if (this.options == undefined) this.buildOptions();
+                        if (this.options == []) return;
+                        const row = new MessageActionRow().addComponents(new MessageSelectMenu().setCustomId("brainfuck"+this.id + incIndex())
+                            .addOptions(this.options));
+
+
+                        await this.interaction.editReply({content: this.endString == "" ? "Input is requested: " : this.endString, components:[row]})
+                        this.endString = "";
                         return;
                     }
                     break;
@@ -211,6 +230,22 @@ export class BrainfuckInterpreter {
             throw new SyntaxError("tomuchinput");
         }
         this.nextChar = c;
+    }
+
+    buildOptions() {
+        this.options = []
+        const regex = new RegExp(this.inputRange);
+        for (let i = 0; i < 128; ++i) {
+            const c = String.fromCharCode(i)
+            if (regex.test(c)) this.options.push(
+                {
+                    label: c,
+                    description: c,
+                    value: c,
+                }
+            );
+        }
+        if (this.options == []) throw new SyntaxError("Error");
     }
 
 }
