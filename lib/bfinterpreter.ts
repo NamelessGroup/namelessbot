@@ -57,7 +57,6 @@ export class BrainfuckInterpreter {
 
     async execute() {
         const brackets = new Array(0);
-        let dontDestroy = false;
         for (this.iterator; this.iterator < this.code.length; this.iterator++) {
             switch (this.code[this.iterator]) {
                 case '+': {
@@ -98,9 +97,9 @@ export class BrainfuckInterpreter {
                                 }
                             ]));
                         await this.interaction.followUp({content: this.endString == "" ? "Input is requested: " : this.endString, components:[row]})
-                        dontDestroy = true;
-                        break;
+                        return;
                     }
+                    break;
                 }
                 case '[': {
                     if (this.pointer < 0) {
@@ -134,12 +133,8 @@ export class BrainfuckInterpreter {
                     }
                 }
             }
-            if (dontDestroy) {
-                break;
-            }
         }
-        if (dontDestroy) return;
-        destroy(this.id,this.interaction)
+        destroy(this.id, this.interaction)
 
     }
 
