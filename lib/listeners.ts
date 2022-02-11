@@ -4,13 +4,13 @@ import {IEventListener} from "../types";
 import registerSlashCommands from "../listeners/registerSlashCommands";
 import chatCommands from "../listeners/chatCommands";
 import handleSlashCommands from "../listeners/handleSlashCommands";
-import handleSelectionMenu from "../listeners/handleSelectionMenu";
+import bfSelectionMenu from "../listeners/bfSelectionMenu";
 
 const LISTENERS: IEventListener[] = [
     chatCommands,
     registerSlashCommands,
     handleSlashCommands,
-    handleSelectionMenu
+    bfSelectionMenu
 ]
 
 export function addListeners(client: Client, includeElevated = false): void {
