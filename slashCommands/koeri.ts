@@ -20,9 +20,9 @@ const maxPossibleCombinations = 128;
 const legendaryCombinations = [63, 127];
 
 function _getRateOptions(): MessageSelectOptionData[] {
-    const numbers = [1,2,3,4,5,6,7,8,9,10];
-    let result: MessageSelectOptionData[] = [];
-    for(let num of numbers) {
+    const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const result: MessageSelectOptionData[] = [];
+    for(const num of numbers) {
         result.push({
             label: num.toString(),
             value: num.toString()
@@ -65,7 +65,7 @@ function _combinationToSeasonings(combination: number) {
     }
     let result = "";
     const sSplit = s.split("");
-    for(let i in sSplit) {
+    for(const i in sSplit) {
         if(sSplit[i] === "1") {
             if(i === "0") {
                 result += "Salz, ";
@@ -84,7 +84,7 @@ function _combinationToAmountSeasonings(combination: number): number {
     }
     let result = 0;
     const sSplit = s.split("");
-    for(let i in sSplit) {
+    for(const i in sSplit) {
         if(sSplit[i] === "1") {
             result += 1;
         }
@@ -141,7 +141,7 @@ const command = {
     ]
 } as ApplicationCommandData;
 
-const handler = async (interaction: CommandInteraction) => {
+async function handler(interaction: CommandInteraction) {
     if(interaction.options.getSubcommand() === "generate") {
         await interaction.deferReply();
         if(_hadEveryCombination(interaction.user.id, true)) {
@@ -201,14 +201,14 @@ const handler = async (interaction: CommandInteraction) => {
             return;
         }
         let longestCombination = 0;
-        let combinations: IStringKoeriList = {};
-        for(let combination in userCfg) {
-            let str = _combinationToSeasonings(parseInt(combination));
+        const combinations: IStringKoeriList = {};
+        for(const combination in userCfg) {
+            const str = _combinationToSeasonings(parseInt(combination));
             if(str.length > longestCombination) longestCombination = str.length;
             combinations[str] = userCfg[combination];
         }
         let result = "```";
-        for(let combination in combinations) {
+        for(const combination in combinations) {
             result += combination.padEnd(longestCombination, " ") + " | " + combinations[combination] + "\n";
         }
         result += "```";

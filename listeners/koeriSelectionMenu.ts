@@ -8,7 +8,7 @@ export default {
     elevated: true,
     handler: async function(interaction: Interaction) {
         if(!interaction.isSelectMenu()) return;
-        let match = REGEX.exec(interaction.customId);
+        const match = REGEX.exec(interaction.customId);
         if(!match) return;
         await interaction.deferReply({ ephemeral: true });
         if(interaction.user.id !== match[1]) {
