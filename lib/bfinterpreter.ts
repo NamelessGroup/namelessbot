@@ -13,7 +13,7 @@ export class BrainfuckInterpreter {
     pointer = 0;
     endString = "";
 
-    readonly code: string[];
+    readonly code: string;
     iterator = 0;
 
     interpreterMode:InterpreterMode = InterpreterMode.INPUT_BEHIND_COMMA;
@@ -36,7 +36,7 @@ export class BrainfuckInterpreter {
      */
     constructor(i: number, c: string, im?: InterpreterMode, ci?:CommandInteraction, ir?:string) {
         this.id = i;
-        this.code = c.split("");
+        this.code = c;
         this.posarray[0] = 0
         if (im != undefined) {
             this.interpreterMode = im;
@@ -99,6 +99,7 @@ export class BrainfuckInterpreter {
                     break;
                 }
                 case ',': {
+                    console.log("input")
                     if (this.interpreterMode == InterpreterMode.INPUT_BEHIND_COMMA) {
                         ++this.iterator;
                         this.writeChar(this.code[this.iterator])
