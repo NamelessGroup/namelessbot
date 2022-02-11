@@ -5,12 +5,14 @@ import registerSlashCommands from "../listeners/registerSlashCommands";
 import chatCommands from "../listeners/chatCommands";
 import handleSlashCommands from "../listeners/handleSlashCommands";
 import bfSelectionMenu from "../listeners/bfSelectionMenu";
+import koeriSelectionMenu from "../listeners/koeriSelectionMenu";
 
 const LISTENERS: IEventListener[] = [
     chatCommands,
     registerSlashCommands,
     handleSlashCommands,
-    bfSelectionMenu
+    bfSelectionMenu,
+    koeriSelectionMenu
 ]
 
 export function addListeners(client: Client, includeElevated = false): void {

@@ -1,14 +1,35 @@
 import {ApplicationCommandOptionTypes} from "discord.js/typings/enums";
 import {ISlashCommand} from "../types";
-import {ApplicationCommandData, CommandInteraction, Snowflake} from "discord.js";
+import {
+    ApplicationCommandData,
+    CommandInteraction,
+    MessageSelectOptionData,
+    Snowflake
+} from "discord.js";
 import {get, write} from "../lib/configmanager";
 
 interface IKoeriList {
     [combination: number]: number
 }
 
+interface IStringKoeriList {
+    [combination: string]: number
+}
+
 const maxPossibleCombinations = 128;
 const legendaryCombinations = [63, 127];
+
+function _getRateOptions(): MessageSelectOptionData[] {
+    const numbers = [1,2,3,4,5,6,7,8,9,10];
+    let result: MessageSelectOptionData[] = [];
+    for(let num of numbers) {
+        result.push({
+            label: num.toString(),
+            value: num.toString()
+        });
+    }
+    return result;
+}
 
 function _randint(lowerBound: number, upperBound: number) {
     return Math.floor(Math.random() * (upperBound - lowerBound + 1) + lowerBound);
@@ -30,7 +51,7 @@ function _hadEveryCombination(userId: Snowflake, includeLegendary=false): boolea
     }
 }
 
-async function _setRating(userId: Snowflake, combination: number, rating: number): Promise<void> {
+export async function setRating(userId: Snowflake, combination: number, rating: number): Promise<void> {
     let userCfg = get(userId, "koeri") as IKoeriList;
     if(userCfg === undefined) userCfg = {};
     userCfg[combination] = rating;
@@ -46,7 +67,7 @@ function _combinationToSeasonings(combination: number) {
     const sSplit = s.split("");
     for(let i in sSplit) {
         if(sSplit[i] === "1") {
-            if(i as unknown as number === 0) {
+            if(i === "0") {
                 result += "Salz, ";
             } else {
                 result += "Gewürz " + i + ", "
@@ -121,8 +142,8 @@ const command = {
 } as ApplicationCommandData;
 
 const handler = async (interaction: CommandInteraction) => {
-    console.log(interaction.options.data);
     if(interaction.options.getSubcommand() === "generate") {
+        await interaction.deferReply();
         if(_hadEveryCombination(interaction.user.id, true)) {
             await interaction.followUp("Du Legende hast das koeriwerk durchgespielt!");
             return;
@@ -140,11 +161,59 @@ const handler = async (interaction: CommandInteraction) => {
             if(combination === 0) {
                 combination = 1;
             }
+            if(combination === startingCombination) {
+                await interaction.followUp("Du hattest bereits alle Kombinationen mit dieser Anzahl Gewürze.");
+                return;
+            }
         }
-        await interaction.followUp(_combinationToSeasonings(combination));
+        await interaction.followUp({
+            content: `Koeri-Kombination: ${_combinationToSeasonings(combination)}`,
+            components: [
+                {
+                    type: "ACTION_ROW",
+                    components: [
+                        {
+                            type: "SELECT_MENU",
+                            customId: `koeri-u${interaction.user.id}$${combination}`,
+                            options: _getRateOptions(),
+                            placeholder: "Bewertung"
+                        }
+                    ]
+                }
+            ]
+        });
         return;
     }
-    await interaction.followUp("No koeri for you yet");
+    if(interaction.options.getSubcommand() === "rate") {
+        await interaction.deferReply({ ephemeral: true });
+        await setRating(interaction.user.id, interaction.options.getInteger("combination"), interaction.options.getInteger("rating"));
+        await interaction.followUp({
+            ephemeral: true,
+            content: `Kombination ${interaction.options.getInteger("combination")} bewertet mit ${interaction.options.getInteger("rating")}`
+        });
+        return;
+    }
+    if(interaction.options.getSubcommand() === "ratings") {
+        await interaction.deferReply();
+        const userCfg = get(interaction.user.id, "koeri") as IKoeriList;
+        if(userCfg === undefined) {
+            await interaction.followUp("Du musst zunächst koeri essen!");
+            return;
+        }
+        let longestCombination = 0;
+        let combinations: IStringKoeriList = {};
+        for(let combination in userCfg) {
+            let str = _combinationToSeasonings(parseInt(combination));
+            if(str.length > longestCombination) longestCombination = str.length;
+            combinations[str] = userCfg[combination];
+        }
+        let result = "```";
+        for(let combination in combinations) {
+            result += combination.padEnd(longestCombination, " ") + " | " + combinations[combination] + "\n";
+        }
+        result += "```";
+        await interaction.followUp(result);
+    }
 }
 
 export default {
