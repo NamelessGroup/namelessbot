@@ -12,6 +12,7 @@ export default {
         options: []
     },
     handler: async function(interaction: CommandInteraction) {
+        await interaction.deferReply();
         const id = bfint.length;
         if (id == 10 ** MAX_INTERPRETER_INDEX_LENGTH - 1) {
             await interaction.editReply("To much interpreters running");

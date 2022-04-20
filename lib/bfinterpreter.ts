@@ -24,6 +24,8 @@ export class BrainfuckInterpreter {
 
     nextChar: string;
 
+    brackets:number[];
+
 
     /**
      * Constructor for the brainfuck interpreter, program needs to be started with execute()
@@ -44,6 +46,7 @@ export class BrainfuckInterpreter {
         this.interaction = ci;
         this.inputRange = ir
         this.checkCode();
+        this.brackets = new Array(0)
     }
 
     /**
@@ -75,7 +78,6 @@ export class BrainfuckInterpreter {
     }
 
     async execute() {
-        const brackets = new Array(0);
         for (this.iterator; this.iterator < this.code.length; this.iterator++) {
             switch (this.code[this.iterator]) {
                 case '+': {
@@ -126,13 +128,13 @@ export class BrainfuckInterpreter {
                         if (this.negarray[-this.pointer] == 0) {
                             this.iterator = this.findNextMatchingBracket(this.iterator);
                         } else {
-                            brackets.push(this.iterator-1);
+                            this.brackets.push(this.iterator-1);
                         }
                     } else {
                         if (this.posarray[this.pointer] == 0) {
                             this.iterator = this.findNextMatchingBracket(this.iterator);
                         } else {
-                            brackets.push(this.iterator-1);
+                            this.brackets.push(this.iterator-1);
                         }
                     }
                     break;
@@ -140,15 +142,15 @@ export class BrainfuckInterpreter {
                 case ']': {
                     if (this.pointer < 0) {
                         if (this.negarray[-this.pointer] != 0) {
-                            this.iterator = brackets.pop();
+                            this.iterator = this.brackets.pop();
                         } else {
-                            brackets.pop();
+                            this.brackets.pop();
                         }
                     } else {
                         if (this.posarray[this.pointer] != 0) {
-                            this.iterator = brackets.pop();
+                            this.iterator = this.brackets.pop();
                         } else {
-                            brackets.pop();
+                            this.brackets.pop();
                         }
                     }
                 }
@@ -238,13 +240,15 @@ export class BrainfuckInterpreter {
         const regex = new RegExp(this.inputRange);
         for (let i = 0; i < 128; ++i) {
             const c = String.fromCharCode(i)
-            if (regex.test(c)) this.options.push(
-                {
-                    label: c,
-                    description: c,
-                    value: c,
-                }
-            );
+            if (regex.test(c)) {
+                this.options.push(
+                    {
+                        label: c,
+                        description: c,
+                        value: c,
+                    }
+                );
+            }
         }
         if (this.options == []) throw new SyntaxError("Error");
     }

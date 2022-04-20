@@ -65,8 +65,9 @@ export function destroy(id: number, interaction: CommandInteraction) {
     bfint[id] = undefined;
     if (out == "") {
         void interaction.followUp("No more Output");
+    } else{
+        void interaction.followUp(out);
     }
-    void interaction.followUp(out);
     for (let i = bfint.length - 1; i >= 0; --i) {
         if (bfint[i] == undefined) {
             bfint.pop();
