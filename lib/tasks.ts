@@ -6,5 +6,9 @@ import mensa from "../tasks/mensa";
 
 export const TASKS = [
     //new RecurringTask(Weekday.TUESDAY, 21, 47, reminder, ["MOAR ARGUMENTS"]),
-    //new RecurringTask(Weekday.FRIDAY, 14, 40, mensa)
+
+    // Mensa-Plans
+    new RecurringTask(Weekday.MONDAY, 9, 48, mensa),
+    new RecurringTask(Weekday.WEDNESDAY, 9, 48, mensa),
+    new RecurringTask(Weekday.FRIDAY, 9, 48, mensa)
 ]
