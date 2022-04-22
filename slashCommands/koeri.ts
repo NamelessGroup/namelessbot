@@ -16,8 +16,8 @@ interface IStringKoeriList {
     [combination: string]: number
 }
 
-const maxPossibleCombinations = 128;
-const legendaryCombinations = [63, 127];
+const maxPossibleCombinations = 64;
+const legendaryCombinations = [63];
 
 function _getRateOptions(): MessageSelectOptionData[] {
     const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -67,11 +67,7 @@ function _combinationToSeasonings(combination: number) {
     const sSplit = s.split("");
     for(const i in sSplit) {
         if(sSplit[i] === "1") {
-            if(i === "0") {
-                result += "Salz, ";
-            } else {
-                result += "Gewürz " + i + ", "
-            }
+            result += "Gewürz " + i + ", "
         }
     }
     return result.substring(0, result.length-2);
