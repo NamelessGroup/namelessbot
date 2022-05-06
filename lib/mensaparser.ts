@@ -40,7 +40,11 @@ export async function getMensaData(): Promise<FoodPlan> {
         for (let j = 0; j < foods.length; j++) {
             try {
                 const food = foods.item(j);
-                const name = parseTextHTML(food.querySelector('.bg>b').innerHTML);
+                let name = parseTextHTML(food.querySelector('.bg>b').innerHTML);
+                const details = food.querySelector('.bg>span');
+                if (details) {
+                    name += " " + parseTextHTML(details.innerHTML);
+                }
                 const price = parseTextHTML(food.querySelector('.price_1').innerHTML);
                 foodList.push({name, price});
             // eslint-disable-next-line no-empty
