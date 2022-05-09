@@ -6,7 +6,8 @@ import {readConfig} from "./lib/configmanager";
 
 const INTENTS = [
     Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILDS
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MESSAGE_REACTIONS
 ]
 
 const client = new Client({intents: INTENTS});

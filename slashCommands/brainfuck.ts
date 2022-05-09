@@ -3,7 +3,7 @@ import {CommandInteraction} from "discord.js";
 import {ISlashCommand} from "../types";
 import {BrainfuckInterpreter, InterpreterMode} from "../lib/bfinterpreter";
 
-export let bfint:BrainfuckInterpreter[] = [];
+export const bfint:BrainfuckInterpreter[] = [];
 export const MAX_INTERPRETER_INDEX_LENGTH = 1;
 let lastIndex = 0;
 

@@ -103,7 +103,7 @@ export class BrainfuckInterpreter {
                 case ',': {
                     console.log("input")
                     if (this.interpreterMode == InterpreterMode.INPUT_BEHIND_COMMA) {
-                        ++this.iterator;
+                        this.iterator += 1;
                         this.writeChar(this.code[this.iterator])
                     } else if (this.interpreterMode == InterpreterMode.REQUEST_INPUT) {
                         if (this.nextChar != undefined) {
