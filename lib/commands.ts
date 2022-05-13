@@ -7,6 +7,7 @@ import koeri from "../slashCommands/koeri";
 import tictactoe from "../slashCommands/tictactoe";
 import mensa from "../slashCommands/mensa";
 import vote from "../slashCommands/vote";
+import truthtable from "../slashCommands/truthtable";
 
 export const CHAT_COMMAND_PREFIX = "!";
 
@@ -15,5 +16,5 @@ export const CHAT_COMMANDS: IChatCommandList = {
 }
 
 export const SLASH_COMMANDS: ISlashCommand[] = [
-    testSlash, brainFUCK, koeri, tictactoe, mensa, vote
+    testSlash, brainFUCK, koeri, tictactoe, mensa, vote, truthtable
 ]
