@@ -28,7 +28,7 @@ export default {
             for (let variable of truthTable.variables) {
                 table += ` ${variable} |`
             }
-            table += " Result\n"
+            table += "| Result\n"
             for (let result of truthTable.results) {
                 for (let assig in result.assignment) {
                     const padding = (truthTable.variables[assig].length - 1) / 2
@@ -41,7 +41,7 @@ export default {
                 table += "\n";
             }
             table += "```"
-            await interaction.followUp("TruthTable for `" + interaction.options.getString("boolean_expression") + "`:\n" + table);
+            await interaction.followUp("TruthTable for `" + parsedExpression.ast.toString(parsedExpression.variables) + "`:\n" + table);
         } catch(e) {
             await interaction.followUp("`" + e.toString() + "`");
         }

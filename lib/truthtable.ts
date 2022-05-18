@@ -13,7 +13,7 @@ class TrueNode implements Node {
         return true;
     }
     toString(variables: string[]): string {
-        return "&#8868;";
+        return "T";
     }
 }
 
@@ -22,7 +22,7 @@ class FalseNode implements Node {
         return false;
     }
     toString(variables: string[]): string {
-        return "&#8869;";
+        return "F";
     }
 }
 
@@ -35,7 +35,7 @@ class NegateNode implements Node {
         return !this.underlying.evaluate(assignment);
     }
     toString(variables: string[]): string {
-        return "&not;" + this.underlying.toString(variables);
+        return "!" + this.underlying.toString(variables);
     }
 }
 
@@ -50,7 +50,7 @@ class AndNode implements Node {
         return this.lhs.evaluate(assignment) && this.rhs.evaluate(assignment);
     }
     toString(variables: string[]): string {
-        return "(" + this.lhs.toString(variables) + " &and; " + this.rhs.toString(variables);
+        return "(" + this.lhs.toString(variables) + " & " + this.rhs.toString(variables) + ")";
     }
 }
 
@@ -65,7 +65,7 @@ class OrNode implements Node {
         return this.lhs.evaluate(assignment) || this.rhs.evaluate(assignment);
     }
     toString(variables: string[]): string {
-        return "(" + this.lhs.toString(variables) + " &or; " + this.rhs.toString(variables);
+        return "(" + this.lhs.toString(variables) + " | " + this.rhs.toString(variables) + ")";
     }
 }
 
@@ -80,7 +80,7 @@ class ImpliesNode implements Node {
         return !this.lhs.evaluate(assignment) || this.rhs.evaluate(assignment);
     }
     toString(variables: string[]): string {
-        return "(" + this.lhs.toString(variables) + " &rarr; " + this.rhs.toString(variables);
+        return "(" + this.lhs.toString(variables) + " -> " + this.rhs.toString(variables) + ")";
     }
 }
 
@@ -95,7 +95,7 @@ class IffNode implements Node {
         return this.lhs.evaluate(assignment) === this.rhs.evaluate(assignment);
     }
     toString(variables: string[]): string {
-        return "(" + this.lhs.toString(variables) + " &harr; " + this.rhs.toString(variables);
+        return "(" + this.lhs.toString(variables) + " <-> " + this.rhs.toString(variables) + ")";
     }
 }
 
@@ -204,17 +204,27 @@ function readVariable(str: string, index: number): string {
         result += str.charAt(index);
         index++;
     }
-    if (result === "and" || result === "or" ||
-        result === "not" || result === "iff" || result === "implies" ||
-        result === "true" || result === "false") return null;
+    if (["and", "or", "not", "iff", "implies", "true", "false", "nimplies", "implies", "nequals",
+        "equals", "nand", "niff", "neql", "eql", "nor"]. includes(result)) return null;
     return result;
 }
 
 function readOperator(str: string, index: number): string {
+    // Eight-char operators
+    if (index < str.length - 7) {
+        let eightChars = str.substring(index, index + 8);
+        if (eightChars === "nimplies") return eightChars;
+    }
+
     // Seven-char operators
     if (index < str.length - 6) {
         let sevenChars = str.substring(index, index + 7);
-        if (sevenChars === "implies") return sevenChars;
+        if (sevenChars === "implies" || sevenChars === "nequals") return sevenChars;
+    }
+
+    if (index < str.length - 5) {
+        let sixChars = str.substring(index, index + 6);
+        if (sixChars === "equals") return sixChars;
     }
 
     // Five-char operators
@@ -226,15 +236,13 @@ function readOperator(str: string, index: number): string {
     // Four-char operators
     if (index < str.length - 3) {
         let fourChars = str.substring(index, index + 4);
-        if (fourChars === "true") return fourChars;
+        if (["true", "nand", "niff", "neql", "!<=>", "!<->"].includes(fourChars)) return fourChars;
     }
 
     // Three-char operators
     if (index < str.length - 2) {
        let threeChars = str.substring(index, index + 3);
-       if (threeChars === "<->" || threeChars === "and" ||
-           threeChars === "<=>" || threeChars === "not" ||
-           threeChars === "iff") return threeChars;
+       if (["<->", "and", "<=>", "not", "iff", "eql", "nor", "!->", "!=>", "-!>", "=!>", "<!>", "!&&", "!||", "!\\/", "!/\\"].includes(threeChars)) return threeChars;
     }
 
     // Two-char operators
@@ -242,7 +250,7 @@ function readOperator(str: string, index: number): string {
         let twoChars = str.substring(index, index + 2);
         if (twoChars === "/\\" || twoChars === "\\/" || twoChars === "->" ||
             twoChars === "&&"  || twoChars === "||"  || twoChars === "or" ||
-            twoChars === "=>") return twoChars;
+            twoChars === "=>"  || twoChars === "!&"  || twoChars === "!|") return twoChars;
     }
 
     // Single-char operators
@@ -255,10 +263,14 @@ function translate(input: string): string {
     if (input === "/\\" || input === "&&" || input === "and") return "&";
     if (input === "\\/" || input === "||" || input === "or") return "|";
     if (input === "=>"  || input === "implies") return "->";
-    if (input === "<=>" || input === "iff") return "<->";
+    if (input === "<=>" || input === "iff" || input === "equals" || input === "eql") return "<->";
     if (input === "not" || input === "~") return "!";
     if (input === "true") return "T";
     if (input === "false") return "F";
+    if (input === "!&&" || input === "!/\\" || input === "nand") return "!&";
+    if (input === "!||" || input === "!\\/" || input === "nor") return "!|";
+    if (input === "<!>" || input === "niff" || input === "nequals" || input === "neql" || input === "!<=>") return "!<->";
+    if (input === "-!>" || input === "=!>" || input === "!=>" || input === "nimplies") return "!->";
     return input;
 }
 
@@ -420,15 +432,19 @@ function isBinaryOperator(token: Token): boolean {
     return token.type === "<->" ||
         token.type === "->" ||
         token.type === "|" ||
-        token.type === "&";
+        token.type === "&" ||
+        token.type === "!&" ||
+        token.type === "!|" ||
+        token.type === "!->" ||
+        token.type === "!<->";
 }
 
 function priorityOf(token: Token): number {
     if (token.type === EOF_TOKEN) return -1;
-    if (token.type === "<->") return 0;
-    if (token.type === "->")  return 1;
-    if (token.type === "|") return 2;
-    if (token.type === "&") return 3;
+    if (token.type === "<->" || token.type === "!<->") return 0;
+    if (token.type === "->" || token.type === "!->")  return 1;
+    if (token.type === "|" || token.type === "!|") return 2;
+    if (token.type === "&" || token.type === "!&") return 3;
     throw new Error(`Unreachable code error: Should never need the priority of ${token.type}`);
 }
 
@@ -437,6 +453,10 @@ function createOperatorNode(lhs: Node, token: Token, rhs: Node): Node {
     if (token.type === "->") return new ImpliesNode(lhs, rhs);
     if (token.type === "|") return new OrNode(lhs, rhs);
     if (token.type === "&") return new AndNode(lhs, rhs);
+    if (token.type === "!<->") return new NegateNode(new IffNode(lhs, rhs));
+    if (token.type === "!->") return new NegateNode(new ImpliesNode(lhs, rhs));
+    if (token.type === "!|") return new NegateNode(new OrNode(lhs, rhs));
+    if (token.type === "!&") return new NegateNode(new AndNode(lhs, rhs));
     throw new Error(`Unreachable code error: Should never create an operator node from ${token.type}`);
 }
 
