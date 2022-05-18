@@ -67,7 +67,7 @@ function _combinationToSeasonings(combination: number) {
     const sSplit = s.split("");
     for(const i in sSplit) {
         if(sSplit[i] === "1") {
-            result += "Gewürz " + i + ", "
+            result += "Gewürz " + (parseInt(i) - 1) + ", "
         }
     }
     return result.substring(0, result.length-2);

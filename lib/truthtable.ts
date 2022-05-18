@@ -164,7 +164,7 @@ function scan(input: string): ScanResult {
             if (variable) {
                 variableSet[variable] = true;
                 tokens.push(makeVariableToken(variable, i, i + variable.length));
-                i++;
+                i += variable.length;
             } else if (operator) {
                 tokens.push(makeIdentityToken(operator, i));
                 i += operator.length;
@@ -463,7 +463,7 @@ export function generateTruthTable(parseResult: ParserResult): TruthTable {
     }
 
     do {
-        results.push({ assignment, result: parseResult.ast.evaluate(assignment) });
+        results.push({ assignment: [...assignment], result: parseResult.ast.evaluate(assignment) });
     } while (nextAssignment(assignment));
 
     return {

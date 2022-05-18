@@ -31,18 +31,19 @@ export default {
             table += " Result\n"
             for (let result of truthTable.results) {
                 for (let assig in result.assignment) {
-                    table += " ".repeat(Math.floor(truthTable.variables[assig].length / 2) + 1)
+                    const padding = (truthTable.variables[assig].length - 1) / 2
+                    table += " ".repeat(Math.floor(padding) + 1)
                     table += result.assignment[assig] ? "T" : "F";
-                    table += " ".repeat(Math.floor(truthTable.variables[assig].length / 2) + 1) + "|"
+                    table += " ".repeat(Math.ceil(padding) + 1) + "|"
                 }
-                table += "    "
+                table += "|    "
                 table += result.result ? "T" : "F";
                 table += "\n";
             }
             table += "```"
-            await interaction.followUp("TruthTable for " + interaction.options.getString("boolean_expression") + ":\n" + table);
+            await interaction.followUp("TruthTable for `" + interaction.options.getString("boolean_expression") + "`:\n" + table);
         } catch(e) {
-            await interaction.followUp("Error: `" + e.toString() + "`");
+            await interaction.followUp("`" + e.toString() + "`");
         }
     }
 } as ISlashCommand
