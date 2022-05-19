@@ -20,17 +20,17 @@ export default {
         await interaction.deferReply();
 
         try {
-            let parsedExpression = parse(interaction.options.getString("boolean_expression"));
-            let truthTable = generateTruthTable(parsedExpression);
+            const parsedExpression = parse(interaction.options.getString("boolean_expression"));
+            const truthTable = generateTruthTable(parsedExpression);
 
             // Building the table
             let table = "```\n"
-            for (let variable of truthTable.variables) {
+            for (const variable of truthTable.variables) {
                 table += ` ${variable} |`
             }
             table += "| Result\n"
-            for (let result of truthTable.results) {
-                for (let assig in result.assignment) {
+            for (const result of truthTable.results) {
+                for (const assig in result.assignment) {
                     const padding = (truthTable.variables[assig].length - 1) / 2
                     table += " ".repeat(Math.floor(padding) + 1)
                     table += result.assignment[assig] ? "T" : "F";

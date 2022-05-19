@@ -1,6 +1,9 @@
-// All credits for this go to
-// https://web.stanford.edu/class/cs103/tools/truth-table-tool/
-// Code stolen to a large amount and just adopted & typescript-ified
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/*
+ * All credits for this go to
+ * https://web.stanford.edu/class/cs103/tools/truth-table-tool/
+ * Code stolen to a large amount and just adopted & typescript-ified
+ */
 
 //region AST Classes
 interface Node {
@@ -134,23 +137,25 @@ const EOF_TOKEN = "$"
 function scan(input: string): ScanResult {
 
     // Check for illegal characters
-    const okayChars = /[A-Za-z_\d\\\/<>\-~^()\s&|=!\u2227\u2228\u2192\u2194\u22A4\u22A5\u00AC]/;
+    const okayChars = /[A-Za-z_\d\\/<>\-~^()\s&|=!\u2227\u2228\u2192\u2194\u22A4\u22A5\u00AC]/;
     for (let i = 0; i < input.length; i++) {
         if (!okayChars.test(input.charAt(i))) {
             throw new Error(`Illegal character '${input.charAt(i)}' at position ${i+1}`);
         }
     }
 
-    // Append a special $ marker to the end of the input. This will serve as our
-    // EOF marker and eliminates a lot of special cases in input handling.
+    /*
+     * Append a special $ marker to the end of the input. This will serve as our
+     * EOF marker and eliminates a lot of special cases in input handling.
+     */
 
     input += EOF_TOKEN;
     let i = 0;
-    let variableSet: { [variable: string]: boolean } = {};
-    let tokens: Token[] = [];
+    const variableSet: { [variable: string]: boolean } = {};
+    const tokens: Token[] = [];
 
-    while(true) {
-        let curr = input.charAt(i);
+    while(i <= input.length) {
+        const curr = input.charAt(i);
 
         if (curr === EOF_TOKEN) {
             tokens.push(makeIdentityToken(curr, i));
@@ -205,49 +210,49 @@ function readVariable(str: string, index: number): string {
         index++;
     }
     if (["and", "or", "not", "iff", "implies", "true", "false", "nimplies", "implies", "nequals",
-        "equals", "nand", "niff", "neql", "eql", "nor"]. includes(result)) return null;
+         "equals", "nand", "niff", "neql", "eql", "nor"]. includes(result)) return null;
     return result;
 }
 
 function readOperator(str: string, index: number): string {
     // Eight-char operators
     if (index < str.length - 7) {
-        let eightChars = str.substring(index, index + 8);
+        const eightChars = str.substring(index, index + 8);
         if (eightChars === "nimplies") return eightChars;
     }
 
     // Seven-char operators
     if (index < str.length - 6) {
-        let sevenChars = str.substring(index, index + 7);
+        const sevenChars = str.substring(index, index + 7);
         if (sevenChars === "implies" || sevenChars === "nequals") return sevenChars;
     }
 
     if (index < str.length - 5) {
-        let sixChars = str.substring(index, index + 6);
+        const sixChars = str.substring(index, index + 6);
         if (sixChars === "equals") return sixChars;
     }
 
     // Five-char operators
     if (index < str.length - 4) {
-        let fiveChars = str.substring(index, index + 5);
+        const fiveChars = str.substring(index, index + 5);
         if (fiveChars === "false") return fiveChars;
     }
 
     // Four-char operators
     if (index < str.length - 3) {
-        let fourChars = str.substring(index, index + 4);
+        const fourChars = str.substring(index, index + 4);
         if (["true", "nand", "niff", "neql", "!<=>", "!<->"].includes(fourChars)) return fourChars;
     }
 
     // Three-char operators
     if (index < str.length - 2) {
-       let threeChars = str.substring(index, index + 3);
-       if (["<->", "and", "<=>", "not", "iff", "eql", "nor", "!->", "!=>", "-!>", "=!>", "<!>", "!&&", "!||", "!\\/", "!/\\"].includes(threeChars)) return threeChars;
+        const threeChars = str.substring(index, index + 3);
+        if (["<->", "and", "<=>", "not", "iff", "eql", "nor", "!->", "!=>", "-!>", "=!>", "<!>", "!&&", "!||", "!\\/", "!/\\"].includes(threeChars)) return threeChars;
     }
 
     // Two-char operators
     if (index < str.length - 1) {
-        let twoChars = str.substring(index, index + 2);
+        const twoChars = str.substring(index, index + 2);
         if (twoChars === "/\\" || twoChars === "\\/" || twoChars === "->" ||
             twoChars === "&&"  || twoChars === "||"  || twoChars === "or" ||
             twoChars === "=>"  || twoChars === "!&"  || twoChars === "!|") return twoChars;
@@ -279,8 +284,8 @@ function isWhitespace(str: string): boolean {
 }
 
 function transformVariableSet(preliminary: PreliniaryScanResult): ScanResult {
-    let variables = [];
-    for (let key in preliminary.variableSet) {
+    const variables = [];
+    for (const key in preliminary.variableSet) {
         variables.push(key);
     }
 
@@ -311,10 +316,11 @@ interface ParserResult {
 }
 
 export function parse(input: string): ParserResult {
-    let scanResult = scan(input);
-    let tokens = scanResult.tokens;
+    const scanResult = scan(input);
+    const tokens = scanResult.tokens;
 
-    /* Use Dijkstra's shunting-yard algorithm to convert from infix to postfix,
+    /*
+     * Use Dijkstra's shunting-yard algorithm to convert from infix to postfix,
      * building the AST as we go. This means we need to track the operators and
      * operands (where the operands stack also includes parentheses.)
      *
@@ -322,10 +328,11 @@ export function parse(input: string): ParserResult {
      * To handle this, we push it onto the operands stack. Whenever we read
      * an operand, we repeatedly pop off negations until none remain.
      */
-    let operators: Token[] = [];
-    let operands: Node[] = [];
+    const operators: Token[] = [];
+    const operands: Node[] = [];
 
-    /* We can be in one of two different states:
+    /*
+     * We can be in one of two different states:
      *
      *  needOperand: We're expecting something that ultimately evaluates to an expression. This can be
      *               T, F, a variable, a negation of something, or a parenthesis.
@@ -335,8 +342,8 @@ export function parse(input: string): ParserResult {
      */
     let needOperand = true;
 
-    for (let i in tokens) {
-        let currToken = tokens[i];
+    for (const i in tokens) {
+        const currToken = tokens[i];
 
         if (needOperand) {
             if (isOperand(currToken)) {
@@ -357,14 +364,15 @@ export function parse(input: string): ParserResult {
             }
         } else {
             if (isBinaryOperator(currToken) || currToken.type === EOF_TOKEN) {
+                // eslint-disable-next-line no-constant-condition
                 while (true) {
                     if (operators.length === 0) break;
                     if (topOf(operators).type === "(") break;
                     if (priorityOf(topOf(operators)) <= priorityOf(currToken)) break;
 
-                    let operator = operators.pop();
-                    let rhs = operands.pop();
-                    let lhs = operands.pop();
+                    const operator = operators.pop();
+                    const rhs = operands.pop();
+                    const lhs = operands.pop();
 
                     addOperand(createOperatorNode(lhs, operator, rhs), operands, operators);
                 }
@@ -373,18 +381,19 @@ export function parse(input: string): ParserResult {
                 needOperand = true;
                 if (currToken.type == EOF_TOKEN) break;
             } else if (currToken.type === ")") {
+                // eslint-disable-next-line no-constant-condition
                 while (true) {
                     if (operators.length === 0) {
                         throw new Error("Missing open parenthesis.");
                     }
-                    let currOp = operators.pop();
+                    const currOp = operators.pop();
                     if (currOp.type === "(") break;
                     if (currOp.type === "!") throw new Error("Useless negation operator.");
-                    let rhs = operands.pop();
-                    let lhs = operands.pop();
+                    const rhs = operands.pop();
+                    const lhs = operands.pop();
                     addOperand(createOperatorNode(lhs, currOp, rhs), operands, operators);
                 }
-                let expr = operands.pop();
+                const expr = operands.pop();
                 addOperand(expr, operands, operators);
             } else {
                 throw new Error("Missing closing parenthesis or binary operator.")
@@ -396,7 +405,7 @@ export function parse(input: string): ParserResult {
     if (operators.pop().type !== EOF_TOKEN) throw new Error("Stack top is not EOF (logic error in parser?)");
 
     if (operators.length !== 0) {
-        let mismatchedOp = operators.pop();
+        const mismatchedOp = operators.pop();
         if (mismatchedOp.type !== "(") throw new Error("Somehow missed an operator factoring in EOF (logic error in parser?)");
         throw new Error("Missing closing parenthesis.");
     }
@@ -475,9 +484,9 @@ interface TruthTable {
 }
 
 export function generateTruthTable(parseResult: ParserResult): TruthTable {
-    let results = [];
+    const results = [];
 
-    let assignment = [];
+    const assignment = [];
     for (let i = 0; i < parseResult.variables.length; i++) {
         assignment.push(false);
     }

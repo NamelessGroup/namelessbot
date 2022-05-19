@@ -87,12 +87,12 @@ export default {
         await reply.react(upEmo);       //react with emote up
         await reply.react(downEmo);     //react with emote down
 
-        const filter = (reaction, user) => { //filter for only getting the up and down emoji
-            return reaction.emoji.name === upEmo || reaction.emoji.name === downEmo && user.id != reply.author.id;
-        };
-
         //reaction controller
-        const collector = reply.createReactionCollector({filter, dispose: true} as ReactionCollectorOptions);
+        const collector = reply.createReactionCollector({
+            filter: (reaction, user) => { //filter for only getting the up and down emoji
+                return reaction.emoji.name === upEmo || reaction.emoji.name === downEmo && user.id != reply.author.id;
+            },
+            dispose: true} as ReactionCollectorOptions);
 
         //on reaction
         collector.on('collect', (reaction, user) => {
