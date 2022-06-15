@@ -224,11 +224,11 @@ async function handler(interaction: CommandInteraction) {
             return;
         }
         const amountCombinationsRated = Object.keys(userCfg).length;
-        const percentage = (amountCombinationsRated / maxPossibleCombinations) * 100;
+        const percentage = (amountCombinationsRated / (maxPossibleCombinations - 1)) * 100;
         let message = "Koeri-Fortschritt:\n`";
         message += "#".repeat(Math.floor(percentage / 5));
         message += ".".repeat(20 - Math.floor(percentage / 5));
-        message += `  ${amountCombinationsRated} / ${maxPossibleCombinations} (${percentage.toFixed(2)}%)`
+        message += `  ${amountCombinationsRated} / ${maxPossibleCombinations - 1} (${percentage.toFixed(2)}%)`
         message += "`";
         await interaction.followUp(message);
         return;
