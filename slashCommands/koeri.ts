@@ -67,7 +67,7 @@ function _combinationToSeasonings(combination: number) {
     const sSplit = s.split("");
     for(const i in sSplit) {
         if(sSplit[i] === "1") {
-            result += "Gewürz " + (parseInt(i) + 1) + ", "
+            result += "Gewürz " + (parseInt(i) - 1 + 2) + ", "
         }
     }
     return result.substring(0, result.length-2);
@@ -133,6 +133,11 @@ const command = {
                     max_value: 7
                 }
             ]
+        },
+        {
+            type: ApplicationCommandOptionTypes.SUB_COMMAND,
+            name: "progress",
+            description: "See your koeri-progress",
         }
     ]
 } as ApplicationCommandData;
@@ -209,7 +214,29 @@ async function handler(interaction: CommandInteraction) {
         }
         result += "```";
         await interaction.followUp(result);
+        return;
     }
+    if(interaction.options.getSubcommand() === "progress") {
+        await interaction.deferReply();
+        const userCfg = get(interaction.user.id, "koeri") as IKoeriList;
+        if(userCfg === undefined) {
+            await interaction.followUp("Du musst zunächst koeri essen!");
+            return;
+        }
+        const amountCombinationsRated = Object.keys(userCfg).length;
+        const percentage = (amountCombinationsRated / maxPossibleCombinations) * 100;
+        let message = "Koeri-Fortschritt:\n`";
+        message += "#".repeat(Math.floor(percentage / 5));
+        message += ".".repeat(20 - Math.floor(percentage / 5));
+        message += `  ${amountCombinationsRated} / ${maxPossibleCombinations} (${percentage.toFixed(2)}%)`
+        message += "`";
+        await interaction.followUp(message);
+        return;
+    }
+    await interaction.followUp({
+        ephemeral: true,
+        content: 'Please enter an subcommand!'
+    });
 }
 
 export default {
