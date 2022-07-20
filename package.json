@@ -1,6 +1,7 @@
 {
   "name": "namelessbot",
   "version": "2.0.0dev",
+  "type": "module",
   "main": "index.js",
   "repository": "https://github.com/NamelessGroup/namelessbot",
   "contributors": [
@@ -11,8 +12,6 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@types/he": "^1.1.2",
-    "@types/jsdom": "^16.2.14",
     "@types/luxon": "^2.0.9",
     "@types/node": "^17.0.16",
     "@typescript-eslint/eslint-plugin": "^5.11.0",
@@ -25,12 +24,11 @@
   "dependencies": {
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
-    "he": "^1.2.0",
-    "jsdom": "^19.0.0",
+    "ka-mensa-fetch": "^3.0.2",
     "luxon": "^2.3.0"
   },
   "scripts": {
-    "start": "ts-node index.ts",
+    "start": "node --loader ts-node/esm --experimental-specifier-resolution=node ./index.ts",
     "lint": "eslint .",
     "doc": "typedoc --out docs/ --entryPointStrategy expand --exclude 'node_modules/**/*' ."
   }
