@@ -1,4 +1,4 @@
-import {MessageEmbed} from "discord.js";
+import {EmbedBuilder} from "discord.js";
 import {CanteenLine, fetchMensa} from "ka-mensa-fetch";
 
 
@@ -13,8 +13,8 @@ export async function getMensaData(): Promise<CanteenLine[]> {
 /**
  * Builds an embed using the supplied food plan
  */
-export function buildMensaEmbed(foodPlan: CanteenLine[]): MessageEmbed {
-    const embed = new MessageEmbed();
+export function buildMensaEmbed(foodPlan: CanteenLine[]): EmbedBuilder {
+    const embed = new EmbedBuilder();
 
     embed.setTitle("Mensaplan vom " + new Date().toLocaleDateString());
     embed.setTimestamp(new Date());
@@ -29,10 +29,10 @@ export function buildMensaEmbed(foodPlan: CanteenLine[]): MessageEmbed {
                     return `_${e.name}_`;
                 }
             }).join("\n");
-            embed.addField(line.name, content, true);
+            embed.addFields({name: line.name, value: content, inline: true});
             count++;
             if (count == 2) {
-                embed.addField('\u200b', '\u200b');
+                embed.addFields({name: '\u200b', value: '\u200b'});
                 count = 0;
             }
         }

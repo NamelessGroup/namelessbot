@@ -1,9 +1,11 @@
-import {ApplicationCommandOptionTypes} from "discord.js/typings/enums";
 import {ISlashCommand} from "../types";
 import {
     ApplicationCommandData,
+    ApplicationCommandOptionType,
     CommandInteraction,
-    MessageSelectOptionData,
+    CommandInteractionOptionResolver,
+    ComponentType,
+    MessageSelectOption,
     Snowflake
 } from "discord.js";
 import {get, write} from "../lib/configmanager";
@@ -19,13 +21,16 @@ interface IStringKoeriList {
 const maxPossibleCombinations = 64;
 const legendaryCombinations = [63];
 
-function _getRateOptions(): MessageSelectOptionData[] {
+function _getRateOptions(): MessageSelectOption[] {
     const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    const result: MessageSelectOptionData[] = [];
+    const result: MessageSelectOption[] = [];
     for(const num of numbers) {
         result.push({
             label: num.toString(),
-            value: num.toString()
+            value: num.toString(),
+            default: false,
+            description: "",
+            emoji: null
         });
     }
     return result;
@@ -93,17 +98,17 @@ const command = {
     description: "Generates combinations of koeri-seasonings",
     options: [
         {
-            type: ApplicationCommandOptionTypes.SUB_COMMAND,
+            type: ApplicationCommandOptionType.Subcommand,
             name: "ratings",
             description: "Display a list of ratings"
         },
         {
-            type: ApplicationCommandOptionTypes.SUB_COMMAND,
+            type: ApplicationCommandOptionType.Subcommand,
             name: "rate",
             description: "Add ratings without generating",
             options: [
                 {
-                    type: ApplicationCommandOptionTypes.INTEGER,
+                    type: ApplicationCommandOptionType.Integer,
                     name: "combination",
                     description: "Combination to rate",
                     min_value: 1,
@@ -111,7 +116,7 @@ const command = {
                     required: true
                 },
                 {
-                    type: ApplicationCommandOptionTypes.INTEGER,
+                    type: ApplicationCommandOptionType.Integer,
                     name: "rating",
                     description: "Rating to save",
                     min_value: 1,
@@ -121,12 +126,12 @@ const command = {
             ]
         },
         {
-            type: ApplicationCommandOptionTypes.SUB_COMMAND,
+            type: ApplicationCommandOptionType.Subcommand,
             name: "generate",
             description: "Generate a seasonings-combination",
             options: [
                 {
-                    type: ApplicationCommandOptionTypes.INTEGER,
+                    type: ApplicationCommandOptionType.Integer,
                     name: "amount_seasonings",
                     description: "Amount of different seasonings",
                     min_value: 1,
@@ -135,7 +140,7 @@ const command = {
             ]
         },
         {
-            type: ApplicationCommandOptionTypes.SUB_COMMAND,
+            type: ApplicationCommandOptionType.Subcommand,
             name: "progress",
             description: "See your koeri-progress",
         }
@@ -143,7 +148,8 @@ const command = {
 } as ApplicationCommandData;
 
 async function handler(interaction: CommandInteraction) {
-    if(interaction.options.getSubcommand() === "generate") {
+    const options = interaction.options as CommandInteractionOptionResolver;
+    if(options.getSubcommand() === "generate") {
         await interaction.deferReply();
         if(_hadEveryCombination(interaction.user.id, true)) {
             await interaction.followUp("Du Legende hast das koeriwerk durchgespielt!");
@@ -156,7 +162,7 @@ async function handler(interaction: CommandInteraction) {
         const startingCombination = combination;
         while(_hasHadCombination(interaction.user.id, combination)
             || (legendaryCombinations.includes(combination) && !_hadEveryCombination(interaction.user.id))
-            || (interaction.options.getInteger("amount_seasonings") !== null && interaction.options.getInteger("amount_seasonings") !== _combinationToAmountSeasonings(combination))) {
+            || (options.getInteger("amount_seasonings") !== null && options.getInteger("amount_seasonings") !== _combinationToAmountSeasonings(combination))) {
             combination += 1
             combination %= maxPossibleCombinations
             if(combination === 0) {
@@ -171,10 +177,10 @@ async function handler(interaction: CommandInteraction) {
             content: `Koeri-Kombination: ${_combinationToSeasonings(combination)}`,
             components: [
                 {
-                    type: "ACTION_ROW",
+                    type: ComponentType.ActionRow,
                     components: [
                         {
-                            type: "SELECT_MENU",
+                            type: ComponentType.StringSelect,
                             customId: `koeri-u${interaction.user.id}$${combination}`,
                             options: _getRateOptions(),
                             placeholder: "Bewertung"
@@ -185,16 +191,16 @@ async function handler(interaction: CommandInteraction) {
         });
         return;
     }
-    if(interaction.options.getSubcommand() === "rate") {
+    if(options.getSubcommand() === "rate") {
         await interaction.deferReply({ ephemeral: true });
-        await setRating(interaction.user.id, interaction.options.getInteger("combination"), interaction.options.getInteger("rating"));
+        await setRating(interaction.user.id, options.getInteger("combination"), options.getInteger("rating"));
         await interaction.followUp({
             ephemeral: true,
-            content: `Kombination ${interaction.options.getInteger("combination")} bewertet mit ${interaction.options.getInteger("rating")}`
+            content: `Kombination ${options.getInteger("combination")} bewertet mit ${options.getInteger("rating")}`
         });
         return;
     }
-    if(interaction.options.getSubcommand() === "ratings") {
+    if(options.getSubcommand() === "ratings") {
         await interaction.deferReply();
         const userCfg = get(interaction.user.id, "koeri") as IKoeriList;
         if(userCfg === undefined) {
@@ -216,7 +222,7 @@ async function handler(interaction: CommandInteraction) {
         await interaction.followUp(result);
         return;
     }
-    if(interaction.options.getSubcommand() === "progress") {
+    if(options.getSubcommand() === "progress") {
         await interaction.deferReply();
         const userCfg = get(interaction.user.id, "koeri") as IKoeriList;
         if(userCfg === undefined) {

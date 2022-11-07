@@ -12,7 +12,11 @@ export default {
         });
 
         for(const c of commands) {
-            await c.handler(interaction as CommandInteraction);
+            try {
+                await c.handler(interaction as CommandInteraction);
+            } catch {
+                await interaction.reply("There was an error while trying to parse your command.");
+            }
         }
     }
 }

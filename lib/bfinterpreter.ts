@@ -1,4 +1,4 @@
-import {CommandInteraction, MessageActionRow, MessageSelectMenu} from "discord.js";
+import {CommandInteraction, ComponentType} from "discord.js";
 import {destroy, incIndex} from "../slashCommands/brainfuck";
 
 export enum InterpreterMode {
@@ -113,11 +113,15 @@ export class BrainfuckInterpreter {
                         }
                         if (this.options == undefined) this.buildOptions();
                         if (this.options == []) return;
-                        const row = new MessageActionRow().addComponents(new MessageSelectMenu().setCustomId("brainfuck"+this.id + incIndex())
-                            .addOptions(this.options));
 
-
-                        await this.interaction.editReply({content: this.endString == "" ? "Input is requested: " : this.endString, components:[row]})
+                        await this.interaction.editReply({content: this.endString == "" ? "Input is requested: " : this.endString, components:[{
+                            type: ComponentType.ActionRow,
+                            components: [{
+                                type: ComponentType.StringSelect,
+                                customId: "brainfuck"+this.id+incIndex(),
+                                options: this.options
+                            }]
+                        }]})
                         this.endString = "";
                         return;
                     }

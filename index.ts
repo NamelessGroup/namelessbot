@@ -1,13 +1,13 @@
-import {Client, Intents} from 'discord.js';
+import {Client, IntentsBitField} from 'discord.js';
 import 'dotenv/config'
 import {addListeners} from "./lib/listeners";
 import {startRecurringTaskLoop} from "./lib/taskRunner";
 import {readConfig} from "./lib/configmanager";
 
 const INTENTS = [
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGE_REACTIONS
+    IntentsBitField.Flags.GuildMessages,
+    IntentsBitField.Flags.Guilds,
+    IntentsBitField.Flags.GuildMessageReactions
 ]
 
 const client = new Client({intents: INTENTS});

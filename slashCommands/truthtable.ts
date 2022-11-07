@@ -1,6 +1,5 @@
 import {ISlashCommand} from "../types";
-import {ApplicationCommandOptionTypes} from "discord.js/typings/enums";
-import {CommandInteraction} from "discord.js";
+import {ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver} from "discord.js";
 import {generateTruthTable, parse} from "../lib/truthtable";
 
 export default {
@@ -9,7 +8,7 @@ export default {
         description: "Generates a truth table from a boolean expression",
         options: [
             {
-                type: ApplicationCommandOptionTypes.STRING,
+                type: ApplicationCommandOptionType.String,
                 name: "boolean_expression",
                 description: "Expression to evaluate",
                 required: true
@@ -18,9 +17,10 @@ export default {
     },
     handler: async function(interaction: CommandInteraction) {
         await interaction.deferReply();
+        const options = interaction.options as CommandInteractionOptionResolver
 
         try {
-            const parsedExpression = parse(interaction.options.getString("boolean_expression"));
+            const parsedExpression = parse(options.getString("boolean_expression"));
             const truthTable = generateTruthTable(parsedExpression);
 
             // Building the table

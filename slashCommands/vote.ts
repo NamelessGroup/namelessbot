@@ -1,8 +1,6 @@
-import {CommandInteraction, Message, MessageEmbed, ReactionCollectorOptions} from "discord.js";
+import {CommandInteraction, Message, EmbedBuilder, ReactionCollectorOptions, ApplicationCommandOptionType, CommandInteractionOptionResolver, Embed} from "discord.js";
 import {ISlashCommand} from "../types";
-import {ApplicationCommandOptionTypes} from "discord.js/typings/enums";
 import {get} from "../lib/configmanager";
-import {JSONOutput} from "typedoc";
 
 
 export default {
@@ -11,19 +9,19 @@ export default {
         description: "Starts a voting.",
         options: [
             {
-                type: ApplicationCommandOptionTypes.STRING,
+                type: ApplicationCommandOptionType.String,
                 name: "name",
                 description: "Give this vote a reason",
                 required: false
             },
             {
-                type: ApplicationCommandOptionTypes.BOOLEAN,
+                type: ApplicationCommandOptionType.Boolean,
                 name: "istimed",
-                description: "Makes this Vote to a Timed Vote.",
+                description: "Makes this vote to a Timed Vote.",
                 required: false,
             },
             {
-                type: ApplicationCommandOptionTypes.INTEGER,
+                type: ApplicationCommandOptionType.Integer,
                 name: "votetime",
                 description: "Time the vote is running in seconds",
                 required: false,
@@ -45,14 +43,14 @@ export default {
         let reactionAr = new Array(0);
 
         // --- Variables with input
+        const options = interaction.options as CommandInteractionOptionResolver;
 
-        let time = interaction.options.getInteger("votetime");
+        let time = options.getInteger("votetime", false);
 
-
-        let timed = interaction.options.getBoolean("istimed");
+        let timed = options.getBoolean("istimed");
         timed = (timed == null) ? false : timed;
 
-        let title = interaction.options.getString("name");
+        let title = options.getString("name");
 
         // --- Check for undefined
 
@@ -81,11 +79,11 @@ export default {
 
         // --- MessageEmbed
 
-        const voteAN = new MessageEmbed()
+        const voteAN = new EmbedBuilder()
             .setTitle((title == "") ? "Simple Voting ": title)
             .setDescription(msg)
             .setColor("#477ce0")
-            .addField("Maximal Runtime", "" + maxLoop * time + " Seconds", true);
+            .addFields({name: "Maximal Runtime", value: "" + maxLoop * time + " Seconds", inline: true});
 
         const reply = await interaction.reply({embeds: [voteAN], fetchReply:true}) as Message;
 
@@ -93,6 +91,7 @@ export default {
         await reply.react(upEmo);       //react with emote up
         await reply.react(downEmo);     //react with emote down
 
+        // eslint-disable-next-line
         const filter = (reaction, user) => { //filter for only getting the up and down emoji
             return user.id != reply.author.id;
         };
@@ -137,7 +136,7 @@ export default {
             //counting the votes a user could vote up and down
             //console.log("Test: " + reactionAr.length + ";" + usedVotes + ";" + timed);
             if (reactionAr.length >= usedVotes && timed == false) {
-                voteAN.addField("Enough Votes", "Vote ending in " + time + " Seconds");
+                voteAN.addFields({ name: "Enough Votes", value: "Vote ending in " + time + " Seconds" });
                 await reply.edit({embeds: [voteAN]});
                 await delay(time * 1000);
                 break;
@@ -184,11 +183,10 @@ async function printVotes(reactionAr, reply, title) {
 
     //finished embed
 
-    const msgEmbed = new MessageEmbed()
+    const msgEmbed = new EmbedBuilder()
         .setColor((down < up) ? "#02B22E" : "#cc0000")
         .setTitle((down < up) ? "Vote accepted" : "Vote failed")
-        .addField("For", upVotes, true)
-        .addField("Against", downVotes, true)
+        .addFields({name: "For", value: upVotes, inline: true}, {name: "Against", value: downVotes, inline: false})
         .setTimestamp();
 
     //if a title were specified it will be displayed

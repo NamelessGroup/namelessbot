@@ -1,6 +1,5 @@
 import {ISlashCommand} from "../types";
-import {ApplicationCommandOptionTypes} from "discord.js/typings/enums";
-import {CommandInteraction} from "discord.js";
+import {ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver} from "discord.js";
 
 export default {
     command: {
@@ -8,7 +7,7 @@ export default {
         description: "This is a test command",
         options: [
             {
-                type: ApplicationCommandOptionTypes.STRING,
+                type: ApplicationCommandOptionType.String,
                 name: "test_argument",
                 description: "Some test argument",
             }
@@ -17,6 +16,7 @@ export default {
     handler: async function(interaction: CommandInteraction) {
         await interaction.deferReply();
         console.log(interaction.options.data);
-        await interaction.followUp("You typed: `" + interaction.options.getString("test_argument") + "`");
+        const options = interaction.options as CommandInteractionOptionResolver;
+        await interaction.followUp("You typed: `" + options.getString("test_argument") + "`");
     }
 } as ISlashCommand

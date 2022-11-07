@@ -1,5 +1,4 @@
-import {ApplicationCommandOptionTypes} from "discord.js/typings/enums";
-import {CommandInteraction} from "discord.js";
+import {ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver} from "discord.js";
 import {ISlashCommand} from "../types";
 import {BrainfuckInterpreter, InterpreterMode} from "../lib/bfinterpreter";
 
@@ -18,18 +17,18 @@ export default {
         description: "A Command to use Brainfuck",
         options: [
             {
-                type: ApplicationCommandOptionTypes.STRING,
+                type: ApplicationCommandOptionType.String,
                 name: "brainfuck_code",
                 description: "Some test argument",
                 required: true,
             },
             {
-                type: ApplicationCommandOptionTypes.BOOLEAN,
+                type: ApplicationCommandOptionType.Boolean,
                 name: "interaction",
                 description: "Interaction",
             },
             {
-                type:  ApplicationCommandOptionTypes.STRING,
+                type:  ApplicationCommandOptionType.String,
                 name: "regex",
                 description: "Regex for Char input"
             }
@@ -37,7 +36,8 @@ export default {
     },
     handler: async function(interaction: CommandInteraction) {
         await interaction.deferReply();
-        let s: boolean | InterpreterMode = interaction.options.getBoolean("interaction");
+        const options = interaction.options as CommandInteractionOptionResolver;
+        let s: boolean | InterpreterMode = options.getBoolean("interaction");
         if (s == null) {
             s = undefined
         } else if (s == true) {
@@ -52,8 +52,8 @@ export default {
             await interaction.deleteReply();
             return
         }
-        const b = new BrainfuckInterpreter(id, interaction.options.getString("brainfuck_code"),
-            s as InterpreterMode, interaction, interaction.options.getString("regex"));
+        const b = new BrainfuckInterpreter(id, options.getString("brainfuck_code"),
+            s as InterpreterMode, interaction, options.getString("regex"));
         bfint.push(b);
         await b.execute();
     }
