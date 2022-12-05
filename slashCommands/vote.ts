@@ -1,4 +1,4 @@
-import {CommandInteraction, Message, EmbedBuilder, ReactionCollectorOptions, ApplicationCommandOptionType, CommandInteractionOptionResolver, Embed} from "discord.js";
+import {CommandInteraction, Message, EmbedBuilder, ReactionCollectorOptions, ApplicationCommandOptionType, CommandInteractionOptionResolver} from "discord.js";
 import {ISlashCommand} from "../types";
 import {get} from "../lib/configmanager";
 
@@ -133,8 +133,6 @@ export default {
         //delay loop
         for (let i = 0; i < maxLoop * time; i++) {
             await delay(1000);
-            //counting the votes a user could vote up and down
-            //console.log("Test: " + reactionAr.length + ";" + usedVotes + ";" + timed);
             if (reactionAr.length >= usedVotes && timed == false) {
                 voteAN.addFields({ name: "Enough Votes", value: "Vote ending in " + time + " Seconds" });
                 await reply.edit({embeds: [voteAN]});

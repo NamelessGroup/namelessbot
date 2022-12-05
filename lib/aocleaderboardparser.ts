@@ -19,7 +19,7 @@ interface aoc_member {
     stars: number
     name: string
     global_score: number
-    completion_per_day: {
+    completion_day_level: {
         [day:number]: {
             1: {
                 get_star_ts: number
@@ -49,10 +49,26 @@ export async function requestLeaderboard(id: number, year: number) {
 }
 
 export async function embedLeaderboard(id:number, year: number) {
-    const members = await requestLeaderboard(2418877, 2022);
+    const members = await requestLeaderboard(id, year);
+    const map = {} as {[key:string]: string}
+    for(const m of members) {
+        map[m.name] = "";
+        console.log(m.completion_day_level)
+        for (const k in m.completion_day_level) {
+            let a = ":eight_pointed_black_star:";
+            if (m.completion_day_level[k]["1"].get_star_ts != 0) {
+                if (m.completion_day_level[k]["2"].get_star_ts != 0) {
+                    a = ":star2:";
+                } else {
+                    a = ":star:";
+                }
+            }
+            map[m.name] = map[m.name] + a;
+        }
+    }
     const embed = new EmbedBuilder().setURL("https://adventofcode.com").setTitle("Advent of Code Leaderboard")
-        .addFields({name:"Ranking", value:members.map(e => {return e.name + ": " + e.local_score + ":star:" }).join("\n")});
-    return embed
+        .addFields({name:"Ranking", value:members.map(e => { return e.name + ": " + e.local_score + map[e.name]  }).join("\n")});
+    return embed;
 }
 
 
