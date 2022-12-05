@@ -262,6 +262,12 @@ function buildAttendanceAction(blocks: CalendarBlock[], weekday: number) : Actio
         let builder = new ActionRowBuilder();
         for (let j = blockCount; blockCount < Math.min(5, blockCount-curCount); j++) {
             // TODO: System für IDS
+
+            /*
+             * Update: id = "attendancetracker-${blockName.toLowerCase().replaceAll(" ", "-")}" ?
+             * Wir brauchen nur irgendeine ID, um einen einzelnen Block zu identifizieren, title lowercase & mit _ statt " " vor
+             * Außerdem: getBlocks() filtert jetzt wieder richtig, deswegen ist getDayBlocks() u.U nicht mehr notwendig
+             */
             builder.addComponents(new ButtonBuilder().setCustomId("TODO").setLabel(blocks[i*5+j].title));
         }
         builders.push(builder);
