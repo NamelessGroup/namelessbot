@@ -5,7 +5,8 @@ module.exports = {
     },
     "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+        "plugin:jsdoc/recommended"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -13,7 +14,8 @@ module.exports = {
         "sourceType": "module"
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "jsdoc"
     ],
     "rules": {
         "no-duplicate-imports": "warn",
@@ -32,6 +34,14 @@ module.exports = {
         "@typescript-eslint/brace-style": ["error", "1tbs", { "allowSingleLine": true }],
         "comma-spacing": ["error", { "before": false, "after": true }],
         "@typescript-eslint/indent": ["error", 4, { "SwitchCase": 1, "ObjectExpression": "first", "ArrayExpression": "first", "MemberExpression": "off" }],
-        "no-trailing-spaces": ["warn", {"skipBlankLines": true}]
+        "no-trailing-spaces": ["warn", {"skipBlankLines": true}],
+        "semi": 1,
+    },
+    "settings": {
+        "jsdoc": {
+            "tagNamePreference": {
+                "augments": "extends"
+            }
+        }
     }
 };
