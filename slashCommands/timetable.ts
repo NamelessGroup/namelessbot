@@ -1,6 +1,12 @@
 import {ISlashCommand} from "../types";
-import {ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver} from "discord.js";
-import { addBlock, getBlocks, removeBlock, updateBlock } from "../lib/attendancetracker";
+import {
+    ApplicationCommandOptionType,
+    CommandInteraction,
+    CommandInteractionOptionResolver,
+    EmbedBuilder,
+    APIEmbedField, ActionRow, ActionRowBuilder, ButtonBuilder
+} from "discord.js";
+import { addBlock, getBlocks, removeBlock, updateBlock, CalendarBlock } from "../lib/attendancetracker";
 import { Weekday } from "../lib/recurringtask";
 
 export default {
@@ -195,7 +201,8 @@ export default {
                 }
             }
         } else if (options.getSubcommand() == "list") {
-            await interaction.followUp({ ephemeral: true, content: JSON.stringify(getBlocks(options.getInteger("weekday"))) })
+            await interaction.followUp({ ephemeral: true, content: JSON.stringify(getBlocks(options.getInteger("weekday"))),
+                embeds:[buildTimeTableEmbed(getBlocks(options.getInteger("weekday")), options.getInteger("weekday"))]});
         } else if (options.getSubcommand() == "add") {
             await addBlock({
                 weekday: options.getInteger("weekday"),
@@ -228,3 +235,66 @@ export default {
         }
     }
 } as ISlashCommand
+
+
+function buildTimeTableEmbed(blocks: CalendarBlock[], weekday?: number) : EmbedBuilder {
+    const embed = new EmbedBuilder();
+
+    embed.setTitle("Stundenplan" + (weekday != undefined ? " für " + dayFromInt(weekday):""));
+
+    if (weekday == undefined) {
+        for (let i = 0; i < 5; i++) {
+            embed.addFields(buildDayField(blocks, i))
+        }
+    } else {
+        embed.addFields(buildDayField(blocks, weekday));
+    }
+
+    return embed;
+}
+
+function buildAttendanceAction(blocks: CalendarBlock[], weekday: number) : ActionRowBuilder[] {
+    let dayBlocks = getDaysBlocks(blocks, weekday);
+    let blockCount = dayBlocks.length;
+    let curCount = 0;
+    let builders = []
+    for (let i = 0; i < Math.ceil(blockCount / 5.0); i++) {
+        let builder = new ActionRowBuilder();
+        for (let j = blockCount; blockCount < Math.min(5, blockCount-curCount); j++) {
+            // TODO: System für IDS
+            builder.addComponents(new ButtonBuilder().setCustomId("TODO").setLabel(blocks[i*5+j].title));
+        }
+        builders.push(builder);
+        curCount += 5;
+    }
+    return builders;
+}
+
+function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField {
+    let value = getDaysBlocks(blocks, weekday).map(
+        e => {return e.startingTime + " - " + e.endingTime + ": " + e.title + "\n";}
+    ).reduce(
+        (p,c,i,a) => {
+            if (c != "") {
+                return p + "\n" + c;
+            }
+            return p
+        }
+    )
+    console.log(value);
+    return {
+        name: dayFromInt(weekday),
+        value: value != "" ? value : "\u200b",
+        inline: true
+    } as APIEmbedField;
+}
+
+function getDaysBlocks(blocks: CalendarBlock[], weekday: number) : CalendarBlock[] {
+    return blocks.filter((e,i,a) => {
+        return e.weekday == weekday;
+    });
+}
+
+function dayFromInt(weekday: number) : string {
+    return ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"][weekday];
+}

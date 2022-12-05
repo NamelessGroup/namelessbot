@@ -1,7 +1,7 @@
 import { get, write } from "./configmanager";
 import { Weekday } from "./recurringtask";
 
-interface CalendarBlock {
+export interface CalendarBlock {
     startingTime: string;
     endingTime: string;
     title: string;
