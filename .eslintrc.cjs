@@ -36,6 +36,14 @@ module.exports = {
         "@typescript-eslint/indent": ["error", 4, { "SwitchCase": 1, "ObjectExpression": "first", "ArrayExpression": "first", "MemberExpression": "off" }],
         "no-trailing-spaces": ["warn", {"skipBlankLines": true}],
         "semi": 1,
+        "jsdoc/require-jsdoc": ["warn", { "require": {
+            "ArrowFunctionExpression": false,
+            "ClassDeclaration": true,
+            "ClassExpression": true,
+            "FunctionDeclaration": true,
+            "FunctionExpression": false,
+            "MethodDefinition": true
+        }, "contexts": [ "ExportDefaultDeclaration" ] }]
     },
     "settings": {
         "jsdoc": {
