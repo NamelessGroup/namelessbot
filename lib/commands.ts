@@ -10,12 +10,21 @@ import vote from "../slashCommands/vote";
 import truthtable from "../slashCommands/truthtable";
 import aoc from "../slashCommands/aoc";
 
+/**
+ * Prefix for message commands
+ */
 export const CHAT_COMMAND_PREFIX = "!";
 
+/**
+ * Array containing all commands invokable via messages
+ */
 export const CHAT_COMMANDS: IChatCommandList = {
     "test": test
 }
 
+/**
+ * Array containing all commands registered as slash commands
+ */
 export const SLASH_COMMANDS: ISlashCommand[] = [
     testSlash, brainFUCK, koeri, tictactoe, mensa, vote, truthtable, aoc
 ]

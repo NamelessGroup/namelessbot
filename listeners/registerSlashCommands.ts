@@ -1,7 +1,12 @@
 import {Client} from "discord.js";
 import {SLASH_COMMANDS} from "../lib/commands";
 import {get} from "../lib/configmanager";
+import { IEventListener } from "../types";
 
+/**
+ * Event handler for registering slash commands.
+ * Will only be ran once, at startup
+ */
 export default {
     event: 'ready',
     once: true,
@@ -14,4 +19,4 @@ export default {
             await client.application.commands.set(SLASH_COMMANDS.map((e) => e.command), DIRECT_GUILD);
         }
     }
-}
+} as IEventListener

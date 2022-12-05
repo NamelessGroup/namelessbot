@@ -3,6 +3,7 @@ import {TaskExecutor} from "../types";
 
 /**
  * Enum representing each weekday
+ * @enum
  */
 export enum Weekday {
     MONDAY,
@@ -14,6 +15,9 @@ export enum Weekday {
     SUNDAY
 }
 
+/**
+ * Base class for recurring tasks, which are supposed to be executed at a certain weekday & time each week.
+ */
 export class RecurringTask {
     private readonly weekday: Weekday;
     private readonly hour: number;

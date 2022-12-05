@@ -15,6 +15,11 @@ const LISTENERS: IEventListener[] = [
     koeriSelectionMenu
 ]
 
+/**
+ * Adds all event listeners to the supplied client.
+ * @param client Client to add listeners to
+ * @param includeElevated If true, elevated listeners will also be added
+ */
 export function addListeners(client: Client, includeElevated = false): void {
     for(const l of LISTENERS) {
         if(!l.elevated || includeElevated) {
@@ -27,6 +32,11 @@ export function addListeners(client: Client, includeElevated = false): void {
     }
 }
 
+/**
+ * Removes all event listeners from the supplied client.
+ * @param client Client to remove listeners from
+ * @param includeElevated If true, elevated listeners will also be removed
+ */
 export function removeListeners(client: Client, includeElevated = false): void {
     for(const l of LISTENERS) {
         if(!l.elevated || includeElevated) {

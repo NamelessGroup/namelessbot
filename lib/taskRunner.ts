@@ -13,10 +13,17 @@ async function checkForTasks(client: Client) {
     }
 }
 
+/**
+ * Starts the {@link RecurringTask} loop
+ * @param client Client to run the tasks with
+ */
 export function startRecurringTaskLoop(client: Client): void {
     taskLoop = setInterval(checkForTasks, 60000, client);
 }
 
+/**
+ * Stops the {@link RecurringTask} loop
+ */
 export function stopRecurringTaskLoop(): void {
     clearInterval(taskLoop);
 }

@@ -4,7 +4,9 @@ import {RecurringTask, Weekday} from "./recurringtask";
 import mensa from "../tasks/mensa";
 import aoc from "../tasks/aoc";
 
-
+/**
+ * Array containing all {@link RecurringTask}s
+ */
 export const TASKS = [
     //new RecurringTask(Weekday.TUESDAY, 21, 47, reminder, ["MOAR ARGUMENTS"]),
 

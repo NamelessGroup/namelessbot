@@ -1,6 +1,10 @@
 import {CommandInteraction, Interaction} from "discord.js";
 import {SLASH_COMMANDS} from "../lib/commands";
+import { IEventListener } from "../types";
 
+/**
+ * Event handler for handling slash commands
+ */
 export default {
     event: 'interactionCreate',
     elevated: true,
@@ -20,4 +24,4 @@ export default {
             }
         }
     }
-}
+} as IEventListener
