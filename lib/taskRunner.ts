@@ -4,6 +4,11 @@ import {TASKS} from "./tasks";
 
 let taskLoop: NodeJS.Timer;
 
+/**
+ * Checks whether any tasks are supposed to be ran now, and runs them
+ * 
+ * @param client Client to run the tasks with
+ */
 async function checkForTasks(client: Client) {
     const now = DateTime.now().setZone("Europe/Berlin");
     for(const t of TASKS) {
@@ -15,6 +20,7 @@ async function checkForTasks(client: Client) {
 
 /**
  * Starts the {@link RecurringTask} loop
+ * 
  * @param client Client to run the tasks with
  */
 export function startRecurringTaskLoop(client: Client): void {

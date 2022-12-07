@@ -20,4 +20,4 @@ export default {
             }
         }
     }
-} as IEventListener
+} as IEventListener;

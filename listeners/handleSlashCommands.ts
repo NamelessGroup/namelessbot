@@ -12,16 +12,16 @@ export default {
         if(!interaction.isCommand()) return;
 
         const commands = SLASH_COMMANDS.filter((c) => {
-            return c.command.name === (interaction as CommandInteraction).commandName
+            return c.command.name === (interaction as CommandInteraction).commandName;
         });
 
         for(const c of commands) {
             try {
                 await c.handler(interaction as CommandInteraction);
             } catch (e) {
-                console.log(e)
+                console.log(e);
                 await interaction.reply("There was an error while trying to parse your command.");
             }
         }
     }
-} as IEventListener
+} as IEventListener;

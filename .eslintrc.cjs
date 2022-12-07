@@ -34,8 +34,8 @@ module.exports = {
         "@typescript-eslint/brace-style": ["error", "1tbs", { "allowSingleLine": true }],
         "comma-spacing": ["error", { "before": false, "after": true }],
         "@typescript-eslint/indent": ["error", 4, { "SwitchCase": 1, "ObjectExpression": "first", "ArrayExpression": "first", "MemberExpression": "off" }],
-        "no-trailing-spaces": ["warn", {"skipBlankLines": true}],
-        "semi": 1,
+        "no-trailing-spaces": ["warn", {"skipBlankLines": true, "ignoreComments": true}],
+        "semi": "warn",
         "jsdoc/require-jsdoc": ["warn", { "require": {
             "ArrowFunctionExpression": false,
             "ClassDeclaration": true,
@@ -43,7 +43,9 @@ module.exports = {
             "FunctionDeclaration": true,
             "FunctionExpression": false,
             "MethodDefinition": true
-        }, "contexts": [ "ExportDefaultDeclaration" ] }]
+        }, "contexts": [ "ExportDefaultDeclaration" ] }],
+        "jsdoc/require-param-type": 0,
+        "jsdoc/require-returns-type": 0
     },
     "settings": {
         "jsdoc": {

@@ -19,4 +19,4 @@ export default {
             await client.application.commands.set(SLASH_COMMANDS.map((e) => e.command), DIRECT_GUILD);
         }
     }
-} as IEventListener
+} as IEventListener;

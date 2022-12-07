@@ -50,6 +50,7 @@ export interface ISlashCommand {
     command: ApplicationCommandData;
     /**
      * Handler to be executed when the command is invoked.
+     *
      * @param interaction Interaction sent to the event handler
      */
     handler(interaction: CommandInteraction): void;
