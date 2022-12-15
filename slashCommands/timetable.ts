@@ -4,7 +4,7 @@ import {
     CommandInteraction,
     CommandInteractionOptionResolver,
     EmbedBuilder,
-    APIEmbedField, ActionRow, ActionRowBuilder, ButtonBuilder
+    APIEmbedField, ActionRow, ActionRowBuilder, ButtonBuilder, AnyAPIActionRowComponent, ActionRowComponent, APIActionRowComponent, APIMessageActionRowComponent, ButtonStyle
 } from "discord.js";
 import { addBlock, getBlocks, removeBlock, updateBlock, CalendarBlock } from "../lib/attendancetracker";
 import { Weekday } from "../lib/recurringtask";
@@ -14,6 +14,11 @@ export default {
         name: "timetable",
         description: "Manages the timetable of the bot",
         options: [
+            {
+                type: ApplicationCommandOptionType.Subcommand,
+                name: "test",
+                description: "for testing"
+            },
             {
                 type: ApplicationCommandOptionType.Subcommand,
                 name: "list",
@@ -201,7 +206,7 @@ export default {
                 }
             }
         } else if (options.getSubcommand() == "list") {
-            await interaction.followUp({ ephemeral: true, content: JSON.stringify(getBlocks(options.getInteger("weekday"))),
+            await interaction.followUp({ ephemeral: true,
                 embeds:[buildTimeTableEmbed(getBlocks(options.getInteger("weekday")), options.getInteger("weekday"))]});
         } else if (options.getSubcommand() == "add") {
             await addBlock({
@@ -232,6 +237,10 @@ export default {
             } else {
                 await interaction.followUp({ ephemeral: true, content: "Error while updating block." });
             }
+        } else if (options.getSubcommand() == "test") {
+            let blocks = getBlocks(0, true);
+            await interaction.followUp({ephemeral: true, embeds: [buildTimeTableEmbed(blocks, 0)],
+                components: buildAttendanceAction(blocks)});
         }
     }
 } as ISlashCommand
@@ -244,7 +253,7 @@ function buildTimeTableEmbed(blocks: CalendarBlock[], weekday?: number) : EmbedB
 
     if (weekday == undefined) {
         for (let i = 0; i < 5; i++) {
-            embed.addFields(buildDayField(blocks, i))
+            embed.addFields(buildDayField(getDaysBlocks(blocks, i), i))
         }
     } else {
         embed.addFields(buildDayField(blocks, weekday));
@@ -253,14 +262,13 @@ function buildTimeTableEmbed(blocks: CalendarBlock[], weekday?: number) : EmbedB
     return embed;
 }
 
-function buildAttendanceAction(blocks: CalendarBlock[], weekday: number) : ActionRowBuilder[] {
-    let dayBlocks = getDaysBlocks(blocks, weekday);
-    let blockCount = dayBlocks.length;
+function buildAttendanceAction(blocks: CalendarBlock[]) : ActionRowBuilder<ButtonBuilder>[] {
+    let blockCount = blocks.length;
     let curCount = 0;
     let builders = []
     for (let i = 0; i < Math.ceil(blockCount / 5.0); i++) {
-        let builder = new ActionRowBuilder();
-        for (let j = blockCount; blockCount < Math.min(5, blockCount-curCount); j++) {
+        let builder = new ActionRowBuilder<ButtonBuilder>();
+        for (let j = 0; j < Math.min(5, blockCount-curCount); j++) {
             // TODO: System für IDS
 
             /*
@@ -268,7 +276,12 @@ function buildAttendanceAction(blocks: CalendarBlock[], weekday: number) : Actio
              * Wir brauchen nur irgendeine ID, um einen einzelnen Block zu identifizieren, title lowercase & mit _ statt " " vor
              * Außerdem: getBlocks() filtert jetzt wieder richtig, deswegen ist getDayBlocks() u.U nicht mehr notwendig
              */
-            builder.addComponents(new ButtonBuilder().setCustomId("TODO").setLabel(blocks[i*5+j].title));
+            builder.addComponents(
+                new ButtonBuilder()
+                    .setLabel(blocks[i*5+j].title)
+                    .setCustomId("attendancetracker-"+blocks[i*5+j].title.toLowerCase().replace(" ", "-"))
+                    .setStyle(ButtonStyle.Primary)
+            );
         }
         builders.push(builder);
         curCount += 5;
@@ -277,9 +290,15 @@ function buildAttendanceAction(blocks: CalendarBlock[], weekday: number) : Actio
 }
 
 function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField {
-    let value = getDaysBlocks(blocks, weekday).map(
-        e => {return e.startingTime + " - " + e.endingTime + ": " + e.title + "\n";}
-    ).reduce(
+    let value = blocks.map(
+        e => {
+            const top = e.startingTime + " - " + e.endingTime + ": " + e.title + "\n";
+            if (e.attendance == undefined) {
+                return top;
+            } else {
+                return top + e.attendance;
+            }
+    }).reduce(
         (p,c,i,a) => {
             if (c != "") {
                 return p + "\n" + c;

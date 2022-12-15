@@ -7,7 +7,7 @@ export default {
     event: 'interactionCreate',
     elevated: false,
     handler: async function(interaction: Interaction) {
-        if (!interaction.isSelectMenu()) return;
+        if (!interaction.isButton()) return;
         const match = REGEX.exec(interaction.customId);
         if (!match) return;
         await interaction.deferReply({ ephemeral: true });
