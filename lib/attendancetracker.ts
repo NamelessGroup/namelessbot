@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 import { get, write } from "./configmanager";
 import { Weekday } from "./recurringtask";
+import {buildTimeTableEmbed} from "./attenndancetrackerVisuals";
 
 export interface CalendarBlock {
     startingTime: string;
@@ -70,6 +71,7 @@ export async function updateAttendance(message: Message, weekday: Weekday, block
         attendanceMap[message.id][block].push(userId);
     }
 
+
     // TODO: const embed = buildEmbed
-    await message.edit({ embeds: [] });
+    await message.edit({embeds: [buildTimeTableEmbed(getBlocks(weekday, true), weekday)]});
 }

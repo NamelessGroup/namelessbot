@@ -181,9 +181,9 @@ export default {
         ]
     },
     handler: async function(interaction: CommandInteraction) {
-        await interaction.deferReply({ ephemeral: true });
         const options = interaction.options as CommandInteractionOptionResolver;
         if (options.getSubcommandGroup() == "restrict") {
+            await interaction.deferReply({ ephemeral: true });
             const index = options.getInteger("index");
             const block = getBlocks()[index];
             const user = options.getUser("user").id;
@@ -196,6 +196,7 @@ export default {
                     await interaction.followUp({ ephemeral: true, content: "User already added to block. "});
                 }
             } else if (options.getSubcommand() == "remove") {
+                await interaction.deferReply({ ephemeral: true });
                 if (block.forUsers.includes(user)) {
                     block.forUsers = block.forUsers.filter(u => { return u != user });
                     await updateBlock(index, block);
@@ -205,10 +206,12 @@ export default {
                 }
             }
         } else if (options.getSubcommand() == "list") {
+            await interaction.deferReply({ ephemeral: true });
             await interaction.followUp({ ephemeral: true,
                                          embeds:[buildTimeTableEmbed(getBlocks(options.getInteger("weekday")),
                                              options.getInteger("weekday"))]});
         } else if (options.getSubcommand() == "add") {
+            await interaction.deferReply({ ephemeral: true });
             await addBlock({
                 weekday: options.getInteger("weekday"),
                 startingTime: options.getString("starttime"),
@@ -218,6 +221,7 @@ export default {
             });
             await interaction.followUp({ ephemeral: true, content: "Added successful" });
         } else if (options.getSubcommand() == "remove") {
+            await interaction.deferReply({ ephemeral: true });
             const result = await removeBlock(options.getInteger("index"));
             if (result) {
                 await interaction.followUp({ ephemeral: true, content: "Removed block successfully." });
@@ -225,6 +229,7 @@ export default {
                 await interaction.followUp({ ephemeral: true, content: "Error while removing block." });
             }
         } else if (options.getSubcommand() == "update") {
+            await interaction.deferReply({ ephemeral: true });
             const result = await updateBlock(options.getInteger("index"), {
                 weekday: options.getInteger("weekday"),
                 startingTime: options.getString("starttime"),
@@ -238,12 +243,13 @@ export default {
                 await interaction.followUp({ ephemeral: true, content: "Error while updating block." });
             }
         } else if (options.getSubcommand() == "test") {
+            await interaction.deferReply({ ephemeral: false });
             /*
              * Temporary testing command
              * TODO: remove before merge
              */
             const blocks = getBlocks(0, true);
-            await interaction.followUp({ephemeral: true, embeds: [buildTimeTableEmbed(blocks, 0)],
+            await interaction.followUp({ephemeral: false, embeds: [buildTimeTableEmbed(blocks, 0)],
                                         components: buildAttendanceAction(blocks)});
         }
     }

@@ -64,10 +64,11 @@ function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField
             const top = prettyTime(e.startingTime) + " - " + prettyTime(e.endingTime) + ": " + e.title + "\n";
 
             // add the attendance if it is given
+
             if (e.attendance == undefined) {
                 return top;
             } else {
-                console.log(e.attendance)
+                // TODO: add attendance
                 return top;
             }
         }).reduce(

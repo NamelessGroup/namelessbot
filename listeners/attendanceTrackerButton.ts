@@ -1,4 +1,4 @@
-import { Interaction } from "discord.js";
+import {Interaction, Message} from "discord.js";
 import { updateAttendance } from "../lib/attendancetracker";
 
 const REGEX = /attendancetracker-(\d)-(.+)/
@@ -11,7 +11,6 @@ export default {
         const match = REGEX.exec(interaction.customId);
         if (!match) return;
         await interaction.deferReply({ ephemeral: true });
-        console.log(match);
         await updateAttendance(interaction.message, parseInt(match[1]), match[2], interaction.user.id);
         await interaction.followUp({ ephemeral: true, content: "Attendance successfully updated."});
     }
