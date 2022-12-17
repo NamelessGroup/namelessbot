@@ -26,9 +26,9 @@ export const TASKS = [
     new RecurringTask(Weekday.SUNDAY, 22, 5, aoc),
 
     // Attendance-Tracker
-    new RecurringTask(Weekday.MONDAY, 7, 0, attendanceTracker, [Weekday.MONDAY]),
-    new RecurringTask(Weekday.TUESDAY, 7, 0, attendanceTracker, [Weekday.TUESDAY]),
-    new RecurringTask(Weekday.WEDNESDAY, 7, 0, attendanceTracker, [Weekday.WEDNESDAY]),
-    new RecurringTask(Weekday.THURSDAY, 7, 0, attendanceTracker, [Weekday.THURSDAY]),
-    new RecurringTask(Weekday.FRIDAY, 7, 0, attendanceTracker, [Weekday.FRIDAY]),
+    new RecurringTask(Weekday.MONDAY, 6, 0, attendanceTracker, [Weekday.MONDAY]),
+    new RecurringTask(Weekday.TUESDAY, 6, 0, attendanceTracker, [Weekday.TUESDAY]),
+    new RecurringTask(Weekday.WEDNESDAY, 6, 0, attendanceTracker, [Weekday.WEDNESDAY]),
+    new RecurringTask(Weekday.THURSDAY, 6, 0, attendanceTracker, [Weekday.THURSDAY]),
+    new RecurringTask(Weekday.FRIDAY, 6, 0, attendanceTracker, [Weekday.FRIDAY]),
 ]
