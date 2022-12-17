@@ -14,9 +14,9 @@ export default {
         for(const c of commands) {
             try {
                 await c.handler(interaction as CommandInteraction);
-            } catch(e) {
-                console.error(e);
-                await interaction.followUp("There was an error while trying to parse your command.");
+            } catch (e) {
+                console.log(e)
+                await interaction.reply("There was an error while trying to parse your command.");
             }
         }
     }
