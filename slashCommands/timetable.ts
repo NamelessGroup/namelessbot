@@ -2,12 +2,11 @@ import {ISlashCommand} from "../types";
 import {
     ApplicationCommandOptionType,
     CommandInteraction,
-    CommandInteractionOptionResolver,
-    EmbedBuilder,
-    APIEmbedField, ActionRow, ActionRowBuilder, ButtonBuilder, AnyAPIActionRowComponent, ActionRowComponent, APIActionRowComponent, APIMessageActionRowComponent, ButtonStyle
+    CommandInteractionOptionResolver
 } from "discord.js";
-import { addBlock, getBlocks, removeBlock, updateBlock, CalendarBlock } from "../lib/attendancetracker";
+import { addBlock, getBlocks, removeBlock, updateBlock } from "../lib/attendancetracker";
 import { Weekday } from "../lib/recurringtask";
+import {buildTimeTableEmbed, buildAttendanceAction} from "../lib/attenndancetrackerVisuals"
 
 export default {
     command: {
@@ -207,7 +206,8 @@ export default {
             }
         } else if (options.getSubcommand() == "list") {
             await interaction.followUp({ ephemeral: true,
-                embeds:[buildTimeTableEmbed(getBlocks(options.getInteger("weekday")), options.getInteger("weekday"))]});
+                                         embeds:[buildTimeTableEmbed(getBlocks(options.getInteger("weekday")),
+                                             options.getInteger("weekday"))]});
         } else if (options.getSubcommand() == "add") {
             await addBlock({
                 weekday: options.getInteger("weekday"),
@@ -238,88 +238,13 @@ export default {
                 await interaction.followUp({ ephemeral: true, content: "Error while updating block." });
             }
         } else if (options.getSubcommand() == "test") {
-            let blocks = getBlocks(0, true);
+            /*
+             * Temporary testing command
+             * TODO: remove before merge
+             */
+            const blocks = getBlocks(0, true);
             await interaction.followUp({ephemeral: true, embeds: [buildTimeTableEmbed(blocks, 0)],
-                components: buildAttendanceAction(blocks)});
+                                        components: buildAttendanceAction(blocks)});
         }
     }
 } as ISlashCommand
-
-
-function buildTimeTableEmbed(blocks: CalendarBlock[], weekday?: number) : EmbedBuilder {
-    const embed = new EmbedBuilder();
-
-    embed.setTitle("Stundenplan" + (weekday != undefined ? " für " + dayFromInt(weekday):""));
-
-    if (weekday == undefined) {
-        for (let i = 0; i < 5; i++) {
-            embed.addFields(buildDayField(getDaysBlocks(blocks, i), i))
-        }
-    } else {
-        embed.addFields(buildDayField(blocks, weekday));
-    }
-
-    return embed;
-}
-
-function buildAttendanceAction(blocks: CalendarBlock[]) : ActionRowBuilder<ButtonBuilder>[] {
-    let blockCount = blocks.length;
-    let curCount = 0;
-    let builders = []
-    for (let i = 0; i < Math.ceil(blockCount / 5.0); i++) {
-        let builder = new ActionRowBuilder<ButtonBuilder>();
-        for (let j = 0; j < Math.min(5, blockCount-curCount); j++) {
-            // TODO: System für IDS
-
-            /*
-             * Update: id = "attendancetracker-${blockName.toLowerCase().replaceAll(" ", "-")}" ?
-             * Wir brauchen nur irgendeine ID, um einen einzelnen Block zu identifizieren, title lowercase & mit _ statt " " vor
-             * Außerdem: getBlocks() filtert jetzt wieder richtig, deswegen ist getDayBlocks() u.U nicht mehr notwendig
-             */
-            builder.addComponents(
-                new ButtonBuilder()
-                    .setLabel(blocks[i*5+j].title)
-                    .setCustomId("attendancetracker-"+blocks[i*5+j].title.toLowerCase().replace(" ", "-"))
-                    .setStyle(ButtonStyle.Primary)
-            );
-        }
-        builders.push(builder);
-        curCount += 5;
-    }
-    return builders;
-}
-
-function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField {
-    let value = blocks.map(
-        e => {
-            const top = e.startingTime + " - " + e.endingTime + ": " + e.title + "\n";
-            if (e.attendance == undefined) {
-                return top;
-            } else {
-                return top + e.attendance;
-            }
-    }).reduce(
-        (p,c,i,a) => {
-            if (c != "") {
-                return p + "\n" + c;
-            }
-            return p
-        }
-    )
-    console.log(value);
-    return {
-        name: dayFromInt(weekday),
-        value: value != "" ? value : "\u200b",
-        inline: true
-    } as APIEmbedField;
-}
-
-function getDaysBlocks(blocks: CalendarBlock[], weekday: number) : CalendarBlock[] {
-    return blocks.filter((e,i,a) => {
-        return e.weekday == weekday;
-    });
-}
-
-function dayFromInt(weekday: number) : string {
-    return ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"][weekday];
-}

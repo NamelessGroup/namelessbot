@@ -11,8 +11,8 @@ export default {
         const match = REGEX.exec(interaction.customId);
         if (!match) return;
         await interaction.deferReply({ ephemeral: true });
-        interaction.message;
-        await updateAttendance(interaction.message, parseInt(match.groups[1]), match.groups[2], interaction.user.id);
+        console.log(match);
+        await updateAttendance(interaction.message, parseInt(match[1]), match[2], interaction.user.id);
         await interaction.followUp({ ephemeral: true, content: "Attendance successfully updated."});
     }
 }
