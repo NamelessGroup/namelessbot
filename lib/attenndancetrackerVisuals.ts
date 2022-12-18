@@ -1,5 +1,6 @@
 import {CalendarBlock} from "./attendancetracker";
 import {ActionRowBuilder, APIEmbedField, ButtonBuilder, ButtonStyle, EmbedBuilder} from "discord.js";
+import {DateTime} from "luxon";
 
 /**
  * Builds the embed that containing the day(s) requested in the timetable layout
@@ -61,7 +62,7 @@ function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField
     const value = blocks.map(
         e => {
             // map each day to a string of its times and title
-            const top = prettyTime(e.startingTime) + " - " + prettyTime(e.endingTime) + ": " + e.title + "\n";
+            const top = prettyTime(weekday, e.startingTime) + " - " + prettyTime(weekday, e.endingTime) + ": " + e.title + "\n";
 
             // add the attendance if it is given
 
@@ -92,13 +93,19 @@ function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField
 
 /**
  * Given any common time representation it gets formatted into hh:mm
+ * @param weekday Weekday of time
  * @param unPrettyTime Any time representation of format: ([0-9]{1-2}) [:.] (([0-9]{1-2}.*)|[0-9]{0-2})
  */
-function prettyTime(unPrettyTime: string) : string {
+function prettyTime(weekday: number, unPrettyTime: string) : string {
     const parts = unPrettyTime.split(/:|\\./);
-    const hours = parts[0];
-    const minutes = parts.length >= 2 ? parts[1] : "00";
-    return (hours.length == 1 ? "0":"") + hours + ":" + (minutes.length == 1 ? "0":"") + minutes;
+    const hours = parts[0].match(/\d+/) ? parts[0] : "0"
+    const minutes = parts.length >= 2 ? (parts[1].match(/\d+/) ? parts[1] : "0") : "0";
+    try {
+        return "<t:" + (getNextTime(weekday, parseInt(hours), parseInt(minutes)).getTime() / 1000) + ":t>"
+    } catch (e) {
+        return (hours.length == 1 ? "0":"") + hours + ":" + (minutes.length == 1 ? "0":"") + minutes;
+    }
+
 }
 
 /**
@@ -118,4 +125,20 @@ function getDaysBlocks(blocks: CalendarBlock[], weekday: number) : CalendarBlock
  */
 function dayFromInt(weekday: number) : string {
     return ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"][weekday];
+}
+
+/**
+ * Returns the next day of the given weekday with the given time from now on
+ * @param weekday Weekday to search for
+ * @param hour Hours past midnight of the day
+ * @param minute Minutes in the hour
+ */
+function getNextTime(weekday: number, hour: number, minute: number) : Date {
+    let date = DateTime.now().setZone("Europe/Berlin");
+    while (date.weekday - 1 != weekday) {
+        date = date.plus({days:1})
+    }
+    const resultDay = date.toJSDate();
+    resultDay.setHours(hour, minute, 0, 0);
+    return resultDay;
 }
