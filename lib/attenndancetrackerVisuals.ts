@@ -65,6 +65,8 @@ function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField
 
             // add the attendance if it is given
 
+            // eslint-disable-next-line
+            // @ts-ignore
             if (e.attendance == undefined) {
                 return top;
             } else {
