@@ -7,7 +7,6 @@ export interface CalendarBlock {
     startingTime: string;
     endingTime: string;
     title: string;
-    forUsers: string[];
     weekday: Weekday;
     attendance?: string[];
 }
@@ -64,7 +63,7 @@ export async function updateAttendance(message: Message, weekday: Weekday, block
         attendanceMap[block] = [];
     }
     if (attendanceMap[block].includes(userId)) {
-        attendanceMap[block] = attendanceMap[message.id][block].filter(e => { return e !== userId });
+        attendanceMap[block] = attendanceMap[block].filter(e => { return e !== userId });
     } else {
         attendanceMap[block].push(userId);
     }
