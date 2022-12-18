@@ -5,6 +5,9 @@ import {TaskExecutor} from "../types";
 import {buildAttendanceAction, buildTimeTableEmbed} from "../lib/attendancetrackerVisuals";
 import {getBlocks, resetAttendance} from "../lib/attendancetracker";
 
+/**
+ * TaskExecutor object for printing the timetable with attendance buttons of the given weekday
+ */
 export default (async (client: Client, weekday: Weekday) => {
     resetAttendance();
     // const embed = buildEmbed, actionRow = buildActionRow
