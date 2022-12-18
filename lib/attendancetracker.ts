@@ -24,7 +24,7 @@ export function getBlocks(weekday?: Weekday, includeAttendence?: boolean): Calen
         const filteredBlocks = allBlocks.filter(e => { return e.weekday == weekday });
         if (includeAttendence) {
             return filteredBlocks.map(e => {
-                return Object.assign(e, { attendance: attendanceMap[e.title.toLowerCase().replace(/\w/g, "_")] });
+                return Object.assign(e, { attendance: attendanceMap[e.title.toLowerCase().replace(/\s/, "_")] });
             })
         }
         return filteredBlocks;
@@ -69,8 +69,6 @@ export async function updateAttendance(message: Message, weekday: Weekday, block
         attendanceMap[block].push(userId);
     }
 
-
-    // TODO: const embed = buildEmbed
     await message.edit({embeds: [buildTimeTableEmbed(getBlocks(weekday, true), weekday)]});
 }
 

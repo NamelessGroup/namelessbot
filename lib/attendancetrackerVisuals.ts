@@ -59,6 +59,13 @@ export function buildAttendanceAction(blocks: CalendarBlock[]) : ActionRowBuilde
  * @param weekday Day this field is for
  */
 function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField {
+    if (blocks == undefined || blocks.length == 0) {
+        return {
+            name: dayFromInt(weekday),
+            value: "\u200b",
+            inline: true
+        } as APIEmbedField;
+    }
     const value = blocks.map(
         e => {
             // map each day to a string of its times and title
@@ -66,11 +73,12 @@ function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField
 
             // add the attendance if it is given
 
+            console.log(e);
             if (e.attendance == undefined) {
                 return top;
             } else {
-                // TODO: add attendance
-                return top;
+                const attendance = e.attendance.map(e => { return "<@" + e + ">"; }).join("\n");
+                return top + attendance;
             }
         }).reduce(
         // concatenate all string representations of blocks into a single string
