@@ -3,7 +3,7 @@ import reminder from "../tasks/reminder";
 import {RecurringTask, Weekday} from "./recurringtask";
 import mensa from "../tasks/mensa";
 import aoc from "../tasks/aoc";
-import attendanceTracker from "../tasks/attendanceTracker";
+import attendanceTracker from "../tasks/attendanceTrackerTask";
 
 
 export const TASKS = [

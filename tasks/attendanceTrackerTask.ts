@@ -10,6 +10,6 @@ export default (async (client: Client, weekday: Weekday) => {
     // const embed = buildEmbed, actionRow = buildActionRow
     const channel = await client.channels.fetch(get('announcement_channel', 'config') as string) as TextChannel;
     const blocks = getBlocks(weekday, true)
-    await channel.send({embeds: [buildTimeTableEmbed(blocks)],
+    await channel.send({embeds: [buildTimeTableEmbed(blocks, weekday)],
                         components: buildAttendanceAction(blocks)});
 }) as TaskExecutor
