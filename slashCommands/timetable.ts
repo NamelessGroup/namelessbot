@@ -8,6 +8,9 @@ import { addBlock, getBlocks, removeBlock, updateBlock } from "../lib/attendance
 import { Weekday } from "../lib/recurringtask";
 import {buildTimeTableEmbed, buildAttendanceAction} from "../lib/attendancetrackerVisuals"
 
+/**
+ * Command object of the /timetable command
+ */
 export default {
     command: {
         name: "timetable",
@@ -135,6 +138,10 @@ export default {
             }
         ]
     },
+    /**
+     * Handler for the /timetable command
+     * @param interaction Interaction of the command
+     */
     handler: async function(interaction: CommandInteraction) {
         const options = interaction.options as CommandInteractionOptionResolver;
         if (options.getSubcommand() == "list") {
