@@ -6,7 +6,7 @@ import {
 } from "discord.js";
 import { addBlock, getBlocks, removeBlock, updateBlock } from "../lib/attendancetracker";
 import { Weekday } from "../lib/recurringtask";
-import {buildTimeTableEmbed, buildAttendanceAction} from "../lib/attenndancetrackerVisuals"
+import {buildTimeTableEmbed, buildAttendanceAction} from "../lib/attendancetrackerVisuals"
 
 export default {
     command: {

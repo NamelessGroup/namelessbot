@@ -1,4 +1,4 @@
-import {Interaction, Message} from "discord.js";
+import { Interaction } from "discord.js";
 import { updateAttendance } from "../lib/attendancetracker";
 
 const REGEX = /attendancetracker-(\d)-(.+)/

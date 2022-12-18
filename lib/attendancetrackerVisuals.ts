@@ -43,7 +43,7 @@ export function buildAttendanceAction(blocks: CalendarBlock[]) : ActionRowBuilde
                 new ButtonBuilder()
                     .setLabel(block.title)
                     .setCustomId("attendancetracker-" + block.weekday + "-"
-                        + block.title.toLowerCase().replace(" ", "-"))
+                        + block.title.toLowerCase().replace(" ", "_"))
                     .setStyle(ButtonStyle.Primary)
             );
         }
@@ -66,8 +66,6 @@ function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField
 
             // add the attendance if it is given
 
-            // eslint-disable-next-line
-            // @ts-ignore
             if (e.attendance == undefined) {
                 return top;
             } else {

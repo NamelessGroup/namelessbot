@@ -1,21 +1,22 @@
 import { Message } from "discord.js";
 import { get, write } from "./configmanager";
 import { Weekday } from "./recurringtask";
-import {buildTimeTableEmbed} from "./attenndancetrackerVisuals";
+import {buildTimeTableEmbed} from "./attendancetrackerVisuals";
 
 export interface CalendarBlock {
     startingTime: string;
     endingTime: string;
     title: string;
     forUsers: string[];
-    weekday: Weekday
+    weekday: Weekday;
+    attendance?: string[];
 }
 
 interface AttendanceMap {
-    [msgId: string]: { [blockId: string]: string[] }
+    [blockId: string]: string[];
 }
 
-const attendanceMap = {} as AttendanceMap;
+let attendanceMap = {} as AttendanceMap;
 
 export function getBlocks(weekday?: Weekday, includeAttendence?: boolean): CalendarBlock[] {
     const allBlocks = get("blocks", "timetable") as CalendarBlock[];
@@ -59,19 +60,20 @@ export async function removeBlock(index: number): Promise<boolean> {
 }
 
 export async function updateAttendance(message: Message, weekday: Weekday, block: string, userId: string): Promise<void> {
-    if (attendanceMap[message.id] === undefined) {
-        attendanceMap[message.id] = {}
+    if (attendanceMap[block] === undefined) {
+        attendanceMap[block] = [];
     }
-    if (attendanceMap[message.id][block] === undefined) {
-        attendanceMap[message.id][block] = [];
-    }
-    if (attendanceMap[message.id][block].includes(userId)) {
-        attendanceMap[message.id][block] = attendanceMap[message.id][block].filter(e => { return e !== userId });
+    if (attendanceMap[block].includes(userId)) {
+        attendanceMap[block] = attendanceMap[message.id][block].filter(e => { return e !== userId });
     } else {
-        attendanceMap[message.id][block].push(userId);
+        attendanceMap[block].push(userId);
     }
 
 
     // TODO: const embed = buildEmbed
     await message.edit({embeds: [buildTimeTableEmbed(getBlocks(weekday, true), weekday)]});
+}
+
+export function resetAttendance(): void {
+    attendanceMap = {} as AttendanceMap;
 }
