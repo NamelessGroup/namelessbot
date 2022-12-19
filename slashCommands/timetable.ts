@@ -6,7 +6,7 @@ import {
 } from "discord.js";
 import { addBlock, getBlocks, removeBlock, updateBlock } from "../lib/attendancetracker";
 import { Weekday } from "../lib/recurringtask";
-import {buildTimeTableEmbed, buildAttendanceAction} from "../lib/attendancetrackerVisuals"
+import {buildTimeTableEmbed, buildAttendanceAction} from "../lib/attendancetrackerVisuals";
 
 /**
  * Command object of the /timetable command
@@ -140,6 +140,7 @@ export default {
     },
     /**
      * Handler for the /timetable command
+     * 
      * @param interaction Interaction of the command
      */
     handler: async function(interaction: CommandInteraction) {
@@ -190,4 +191,4 @@ export default {
                                         components: buildAttendanceAction(blocks)});
         }
     }
-} as ISlashCommand
+} as ISlashCommand;

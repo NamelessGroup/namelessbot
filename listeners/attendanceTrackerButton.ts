@@ -1,7 +1,7 @@
 import { Interaction } from "discord.js";
 import { updateAttendance } from "../lib/attendancetracker";
 
-const REGEX = /attendancetracker-(\d)-(.+)/
+const REGEX = /attendancetracker-(\d)-(.+)/;
 
 /**
  * Event object for handling the Button presses of a timetable
@@ -11,6 +11,7 @@ export default {
     elevated: false,
     /**
      * The handler function for the Button interaction
+     * 
      * @param interaction The interaction this was called for
      */
     handler: async function(interaction: Interaction) {
@@ -21,4 +22,4 @@ export default {
         await updateAttendance(interaction.message, parseInt(match[1]), match[2], interaction.user.id);
         await interaction.followUp({ ephemeral: true, content: "Attendance successfully updated."});
     }
-}
+};
