@@ -4,7 +4,7 @@ import {DateTime} from "luxon";
 
 /**
  * Builds the embed that containing the day(s) requested in the timetable layout
- * 
+ *
  * @param blocks Blocks sorted by their time in the day. For single days it is expected that only blocks of a single day are given
  * @param weekday Optimal parameter. If given only the corresponding day will be in the embed. Otherwise, the entire week will be added
  * @returns The built embed
@@ -29,9 +29,9 @@ export function buildTimeTableEmbed(blocks: CalendarBlock[], weekday?: number) :
  * Returns the array that should be given to the components attribute of a message. <br>
  * There is a maximum of 25 blocks, due to Discords limits. <br>
  * Will be printed in rows of 5s
- * 
+ *
  * @param blocks Blocks that should be given a button. Buttons will be added in the order of this array
- * @returns Array of ActionRowBuilder containing the buttons 
+ * @returns Array of ActionRowBuilder containing the buttons
  */
 export function buildAttendanceAction(blocks: CalendarBlock[]) : ActionRowBuilder<ButtonBuilder>[] {
     const blockCount = Math.min(blocks.length, 25);
@@ -59,7 +59,7 @@ export function buildAttendanceAction(blocks: CalendarBlock[]) : ActionRowBuilde
 
 /**
  * Builds a field for Discords Embeds for a single day
- * 
+ *
  * @param blocks Blocks of only the requested day, sorted by their time
  * @param weekday Day this field is for
  * @returns Single embed field for the given day
@@ -78,8 +78,6 @@ function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField
             const top = prettyTime(weekday, e.startingTime) + " - " + prettyTime(weekday, e.endingTime) + ": " + e.title + "\n";
 
             // add the attendance if it is given
-
-            console.log(e);
             if (e.attendance == undefined) {
                 return top;
             } else {
@@ -105,7 +103,7 @@ function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField
 
 /**
  * Given any common time representation it gets formatted into hh:mm
- * 
+ *
  * @param weekday Weekday of time
  * @param unPrettyTime Any time representation of format: ([0-9]{1-2}) [:.] (([0-9]{1-2}.*)|[0-9]{0-2})
  * @returns Formatted time
@@ -124,7 +122,7 @@ function prettyTime(weekday: number, unPrettyTime: string) : string {
 
 /**
  * Filters an array of blocks to the blocks of the requested day
- * 
+ *
  * @param blocks Blocks to filter
  * @param weekday Weekday requested
  * @returns Blocks at the given day
@@ -137,7 +135,7 @@ function getDaysBlocks(blocks: CalendarBlock[], weekday: number) : CalendarBlock
 
 /**
  * Returns the german string representation of a given weekday
- * 
+ *
  * @param weekday Weekday requested
  * @returns String representation of the given weekday
  */
@@ -147,7 +145,7 @@ function dayFromInt(weekday: number) : string {
 
 /**
  * Returns the next day of the given weekday with the given time from now on
- * 
+ *
  * @param weekday Weekday to search for
  * @param hour Hours past midnight of the day
  * @param minute Minutes in the hour

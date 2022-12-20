@@ -6,7 +6,7 @@ import {
 } from "discord.js";
 import { addBlock, getBlocks, removeBlock, updateBlock } from "../lib/attendancetracker";
 import { Weekday } from "../lib/recurringtask";
-import {buildTimeTableEmbed, buildAttendanceAction} from "../lib/attendancetrackerVisuals";
+import {buildTimeTableEmbed} from "../lib/attendancetrackerVisuals";
 
 /**
  * Command object of the /timetable command
@@ -16,11 +16,6 @@ export default {
         name: "timetable",
         description: "Manages the timetable of the bot",
         options: [
-            {
-                type: ApplicationCommandOptionType.Subcommand,
-                name: "test",
-                description: "for testing"
-            },
             {
                 type: ApplicationCommandOptionType.Subcommand,
                 name: "list",
@@ -140,7 +135,7 @@ export default {
     },
     /**
      * Handler for the /timetable command
-     * 
+     *
      * @param interaction Interaction of the command
      */
     handler: async function(interaction: CommandInteraction) {
@@ -180,15 +175,6 @@ export default {
             } else {
                 await interaction.followUp({ ephemeral: true, content: "Error while updating block." });
             }
-        } else if (options.getSubcommand() == "test") {
-            await interaction.deferReply({ ephemeral: false });
-            /*
-             * Temporary testing command
-             * TODO: remove before merge
-             */
-            const blocks = getBlocks(0, true);
-            await interaction.followUp({ephemeral: false, embeds: [buildTimeTableEmbed(blocks, 0)],
-                                        components: buildAttendanceAction(blocks)});
         }
     }
 } as ISlashCommand;
