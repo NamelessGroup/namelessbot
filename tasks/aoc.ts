@@ -16,7 +16,7 @@ export default (async (client: Client) => {
     }
 
     const content = now.day == 26 ? `Final Results of AoC ${now.year}` : ``;
-    const embed = await embedLeaderboard(get("id", "aoc") as number, get("year", "aoc") as number);
+    const embed = await embedLeaderboard(get("id", "aoc") as number, get(now.year+"", "aoc") as number);
     const channel = await client.channels.fetch(get('announcement_channel', 'config') as string) as TextChannel;
     await channel.send({ content: content, embeds: [embed] });
 }) as TaskExecutor
