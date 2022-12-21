@@ -152,13 +152,17 @@ export default {
                                              options.getInteger("weekday"))]});
         } else if (options.getSubcommand() == "add") {
             await interaction.deferReply({ ephemeral: true });
-            await addBlock({
+            const result = await addBlock({
                 weekday: options.getInteger("weekday"),
                 startingTime: options.getString("starttime"),
                 endingTime: options.getString("endtime"),
                 title: options.getString("title")
             });
-            await interaction.followUp({ ephemeral: true, content: "Added successful" });
+            if (result) {
+                await interaction.followUp({ ephemeral: true, content: "Added successful" });
+            } else {
+                await interaction.followUp({ ephemeral: true, content: "Couldn't add block. Make sure the times are formatted as hh:mm."});
+            }
         } else if (options.getSubcommand() == "remove") {
             await interaction.deferReply({ ephemeral: true });
             const result = await removeBlock(options.getInteger("index"));
@@ -178,7 +182,7 @@ export default {
             if (result) {
                 await interaction.followUp({ ephemeral: true, content: "Updated block successfully." });
             } else {
-                await interaction.followUp({ ephemeral: true, content: "Error while updating block." });
+                await interaction.followUp({ ephemeral: true, content: "Error while updating block. Make sure the times are formatted as hh:mm." });
             }
         }
     }

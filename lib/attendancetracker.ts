@@ -87,10 +87,14 @@ function sortBlocks(blockA: CalendarBlock, blockB: CalendarBlock): number {
  *
  * @param block Block data to add
  */
-export async function addBlock(block: CalendarBlock): Promise<void> {
+export async function addBlock(block: CalendarBlock): Promise<boolean> {
+    if (!block.startingTime.match(/^\d{2}:\d{2}$/) || !block.endingTime.match(/^\d{2}:\d{2}$/)) {
+        return false;
+    }
     const allBlocks = get("blocks", "timetable") as CalendarBlock[];
     allBlocks.push(block);
     await write("blocks", "timetable", allBlocks);
+    return true;
 }
 
 /**
@@ -101,6 +105,9 @@ export async function addBlock(block: CalendarBlock): Promise<void> {
  * @returns true, if the update was successful, false otherwise
  */
 export async function updateBlock(index: number, block: CalendarBlock): Promise<boolean> {
+    if (!block.startingTime.match(/^\d{2}:\d{2}$/) || !block.endingTime.match(/^\d{2}:\d{2}$/)) {
+        return false;
+    }
     const allBlocks = get("blocks", "timetable") as CalendarBlock[];
     if (allBlocks.length <= index) {
         return false;
