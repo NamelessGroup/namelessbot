@@ -1,6 +1,9 @@
 import {ISlashCommand} from "../types";
 import {ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver} from "discord.js";
 
+/**
+ * Slash command definition for /test
+ */
 export default {
     command: {
         name: "test",
@@ -19,4 +22,4 @@ export default {
         const options = interaction.options as CommandInteractionOptionResolver;
         await interaction.followUp("You typed: `" + options.getString("test_argument") + "`");
     }
-} as ISlashCommand
+} as ISlashCommand;

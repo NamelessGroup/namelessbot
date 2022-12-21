@@ -76,7 +76,7 @@ function _hadEveryCombination(userId: Snowflake, includeLegendary=false): boolea
     const userCfg = get(userId, "koeri") as IKoeriList;
     if(userCfg === undefined) return false;
     if (includeLegendary) {
-        return Object.keys(userCfg).length >= maxPossibleCombinations - 1
+        return Object.keys(userCfg).length >= maxPossibleCombinations - 1;
     } else {
         return Object.keys(userCfg).length >= maxPossibleCombinations - 1 - legendaryCombinations.length;
     }
@@ -213,8 +213,8 @@ async function handler(interaction: CommandInteraction) {
         while(_hasHadCombination(interaction.user.id, combination)
             || (legendaryCombinations.includes(combination) && !_hadEveryCombination(interaction.user.id))
             || (options.getInteger("amount_seasonings") !== null && options.getInteger("amount_seasonings") !== _combinationToAmountSeasonings(combination))) {
-            combination += 1
-            combination %= maxPossibleCombinations
+            combination += 1;
+            combination %= maxPossibleCombinations;
             if(combination === 0) {
                 combination = 1;
             }

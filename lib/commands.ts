@@ -20,11 +20,11 @@ export const CHAT_COMMAND_PREFIX = "!";
  */
 export const CHAT_COMMANDS: IChatCommandList = {
     "test": test
-}
+};
 
 /**
  * Array containing all commands registered as slash commands
  */
 export const SLASH_COMMANDS: ISlashCommand[] = [
     testSlash, brainFUCK, koeri, tictactoe, mensa, vote, truthtable, aoc
-]
+];

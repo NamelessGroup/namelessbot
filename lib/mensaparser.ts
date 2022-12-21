@@ -27,7 +27,7 @@ export function buildMensaEmbed(foodPlan: CanteenLine[]): EmbedBuilder {
         if (line.meals.length > 0) {
             const content = line.meals.map(e => {
                 if (e.price !== "") {
-                    return `${e.name} (${e.price})`
+                    return `${e.name} (${e.price})`;
                 } else {
                     return `_${e.name}_`;
                 }

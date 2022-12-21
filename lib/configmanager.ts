@@ -41,7 +41,7 @@ export async function readConfig(): Promise<void> {
         try {
             configs[configName] = JSON.parse(await readConfigFile(cfg));
         } catch(e) {
-            console.log("Error while reading config file: ")
+            console.log("Error while reading config file: ");
             console.log(e);
         }
     }
@@ -58,6 +58,7 @@ export async function writeConfig(): Promise<void> {
 
 /**
  * Reads a file from the config directory using 'utf8' and returning its contents as a string.
+ * 
  * @param path Path to the file
  * @returns File contents
  */
@@ -67,6 +68,7 @@ export async function readConfigFile(path: string): Promise<string> {
 
 /**
  * Writes a config file to disk using 'utf8'
+ * 
  * @param path Path to config file
  * @param content File contents
  */
@@ -79,9 +81,10 @@ export async function writeConfigFile(path: string, content: string): Promise<vo
  * The key is tried to be read from the supplied config.
  * If the config doesn't exist in-memory, a {@link ReferenceError} will be thrown.
  * If the key doesn't exist, {@link undefined} will be returned.
+ * 
  * @param key Key to look up
  * @param config Config to look up
- * @throws {@link ReferenceError} Config doesn't exist
+ * @throws ReferenceError Config doesn't exist
  * @returns Value at key in supplied config, or undefined
  */
 export function get(key: string, config: string): unknown {
@@ -97,7 +100,7 @@ export function get(key: string, config: string): unknown {
  * @param key Key to write to
  * @param config Config to write to
  * @param value Value to write
- * @throws {@link ReferenceError} Config doesn't exist
+ * @throws ReferenceError Config doesn't exist
  */
 export async function write(key: string, config: string, value: unknown): Promise<void> {
     if(configs[config] === undefined) throw new ReferenceError(`Config ${config} doesn't exist`);
