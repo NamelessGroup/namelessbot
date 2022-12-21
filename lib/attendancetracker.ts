@@ -9,6 +9,7 @@ export interface CalendarBlock {
     title: string;
     weekday: Weekday;
     attendance?: string[];
+    index?: number;
 }
 
 interface AttendanceMap {
@@ -24,10 +25,18 @@ let attendanceMap = {} as AttendanceMap;
  *
  * @param weekday Optional weekday to lookup blocks for
  * @param includeAttendence Whether to include attendance or not
+ * @param includeIndex Whether to include the block index or not
  * @returns Array of CalendarBlocks
  */
-export function getBlocks(weekday?: Weekday, includeAttendence?: boolean): CalendarBlock[] {
-    const allBlocks = get("blocks", "timetable") as CalendarBlock[];
+export function getBlocks(weekday?: Weekday, includeAttendence?: boolean, includeIndex?: boolean): CalendarBlock[] {
+    let allBlocks = get("blocks", "timetable") as CalendarBlock[];
+
+    if (includeIndex) {
+        allBlocks = allBlocks.map((e, idx) => {
+            return Object.assign(e, { index: idx });
+        });
+    }
+
     if (weekday !== null) {
         const filteredBlocks = allBlocks.filter(e => { return e.weekday == weekday; });
         if (includeAttendence) {

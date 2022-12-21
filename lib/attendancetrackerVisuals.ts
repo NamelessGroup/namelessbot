@@ -6,7 +6,7 @@ import {DateTime} from "luxon";
  * Builds the embed that containing the day(s) requested in the timetable layout
  *
  * @param blocks Blocks sorted by their time in the day. For single days it is expected that only blocks of a single day are given
- * @param weekday Optimal parameter. If given only the corresponding day will be in the embed. Otherwise, the entire week will be added
+ * @param weekday Optional parameter. If given only the corresponding day will be in the embed. Otherwise, the entire week will be added
  * @returns The built embed
  */
 export function buildTimeTableEmbed(blocks: CalendarBlock[], weekday?: number) : EmbedBuilder {
@@ -75,15 +75,23 @@ function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField
     const value = blocks.map(
         e => {
             // map each day to a string of its times and title
-            const top = prettyTime(weekday, e.startingTime) + " - " + prettyTime(weekday, e.endingTime) + ": " + e.title + "\n";
+            const top = prettyTime(weekday, e.startingTime) + " - " + prettyTime(weekday, e.endingTime) + ": " + e.title;
+            let result = top;
+
+            // add the index if it is given
+            if (e.index !== undefined) {
+                result = top + ` (${e.index})\n`;
+            } else {
+                result += "\n";
+            }
 
             // add the attendance if it is given
-            if (e.attendance == undefined) {
-                return top;
-            } else {
+            if (e.attendance !== undefined) {
                 const attendance = e.attendance.map(e => { return "<@" + e + ">"; }).join("\n");
-                return top + attendance;
+                result += attendance;
             }
+            
+            return result;
         }).reduce(
         // concatenate all string representations of blocks into a single string
         (sumTillThisPoint, nextElement) => {

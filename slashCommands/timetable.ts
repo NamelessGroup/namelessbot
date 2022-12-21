@@ -33,6 +33,11 @@ export default {
                             { name: "Thursday", value: Weekday.THURSDAY },
                             { name: "Friday", value: Weekday.FRIDAY }
                         ]
+                    }, {
+                        type: ApplicationCommandOptionType.Boolean,
+                        name: "includeindex",
+                        description: "Including the index in the block list",
+                        required: false
                     }
                 ]
             },
@@ -143,7 +148,7 @@ export default {
         if (options.getSubcommand() == "list") {
             await interaction.deferReply({ ephemeral: true });
             await interaction.followUp({ ephemeral: true,
-                                         embeds:[buildTimeTableEmbed(getBlocks(options.getInteger("weekday")),
+                                         embeds:[buildTimeTableEmbed(getBlocks(options.getInteger("weekday"), false, options.getBoolean("includeindex")),
                                              options.getInteger("weekday"))]});
         } else if (options.getSubcommand() == "add") {
             await interaction.deferReply({ ephemeral: true });
@@ -158,7 +163,7 @@ export default {
             await interaction.deferReply({ ephemeral: true });
             const result = await removeBlock(options.getInteger("index"));
             if (result) {
-                await interaction.followUp({ ephemeral: true, content: "Removed block successfully." });
+                await interaction.followUp({ ephemeral: true, content: "Removed block successfully. Be aware that block indexes might have shifted now." });
             } else {
                 await interaction.followUp({ ephemeral: true, content: "Error while removing block." });
             }
