@@ -19,6 +19,8 @@ let attendanceMap = {} as AttendanceMap;
 
 /**
  * Returns all calendar blocks in the database
+ * 
+ * Blocks will be sorted by starting time, ending time and title, in that order.
  *
  * @param weekday Optional weekday to lookup blocks for
  * @param includeAttendence Whether to include attendance or not
@@ -33,10 +35,42 @@ export function getBlocks(weekday?: Weekday, includeAttendence?: boolean): Calen
                 return Object.assign(e, { attendance: attendanceMap[e.title.toLowerCase().replace(/\s/, "_")] });
             });
         }
-        return filteredBlocks;
+        return filteredBlocks.sort(sortBlocks);
     } else {
-        return allBlocks;
+        return allBlocks.sort(sortBlocks);
     }
+}
+
+/**
+ * Internal function to compare & sort two CalendarBlocks
+ * 
+ * Sorts / compares by starting time, ending time and title, in that order.
+ * 
+ * @param blockA Block to compare
+ * @param blockB Block to compare
+ * @returns >0 if Block A is concidered first, <0 if Block B is concidered first, 0 if they are equal
+ */
+function sortBlocks(blockA: CalendarBlock, blockB: CalendarBlock): number {
+    const startingTimeA = blockA.startingTime.split(":");
+    const startingTimeB = blockB.startingTime.split(":");
+    const endingTimeA = blockA.endingTime.split(":");
+    const endingTimeB = blockB.endingTime.split(":");
+
+    if (parseInt(startingTimeA[0]) !== parseInt(startingTimeB[0])) {
+        return parseInt(startingTimeA[0]) - parseInt(startingTimeB[0]);
+    }
+    if (parseInt(startingTimeA[1]) !== parseInt(startingTimeB[1])) {
+        return parseInt(startingTimeA[1]) - parseInt(startingTimeB[1]);
+    }
+
+    if (parseInt(endingTimeA[0]) !== parseInt(endingTimeB[0])) {
+        return parseInt(endingTimeA[0]) - parseInt(endingTimeB[0]);
+    }
+    if (parseInt(endingTimeA[1]) !== parseInt(endingTimeB[1])) {
+        return parseInt(endingTimeA[1]) - parseInt(endingTimeB[1]);
+    }
+
+    return blockA.title.localeCompare(blockB.title);
 }
 
 /**
