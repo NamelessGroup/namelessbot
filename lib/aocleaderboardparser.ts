@@ -53,7 +53,6 @@ export async function embedLeaderboard(id:number, year: number) {
     const map = {} as {[key:string]: string}
     for(const m of members) {
         map[m.name] = "";
-        console.log(m.completion_day_level)
         for (const k in m.completion_day_level) {
             let a = ":eight_pointed_black_star:";
             if (m.completion_day_level[k]["1"].get_star_ts != 0) {
