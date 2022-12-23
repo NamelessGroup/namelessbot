@@ -15,9 +15,9 @@ export function mockSlash(slashCommandArguments: SlashCommandArguments, subcomma
     const mockFollowUp = jest.fn();
 
     // Mocking options getter
-    const mockGetString = jest.fn((key) => slashCommandArguments[key] as string);
-    const mockGetBoolean = jest.fn((key) => slashCommandArguments[key] as boolean);
-    const mockGetNumber = jest.fn((key) => slashCommandArguments[key] as number);
+    const mockGetString = jest.fn((key) => slashCommandArguments[key] as string || null);
+    const mockGetBoolean = jest.fn((key) => slashCommandArguments[key] as boolean || null);
+    const mockGetNumber = jest.fn((key) => slashCommandArguments[key] as number || null);
     const mockGetSubcommand = jest.fn(() => subcommand);
 
     const commandInteraction = {
@@ -30,6 +30,9 @@ export function mockSlash(slashCommandArguments: SlashCommandArguments, subcomma
             getInteger: mockGetNumber,
             getNumber: mockGetNumber,
             getSubcommand: mockGetSubcommand
+        },
+        user: {
+            id: "mockUser"
         }
     } as unknown as CommandInteraction;
 

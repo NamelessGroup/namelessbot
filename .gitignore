@@ -152,3 +152,4 @@ config/*
 
 node_modules
 docs
+.vscode

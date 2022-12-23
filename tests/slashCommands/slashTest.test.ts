@@ -1,5 +1,5 @@
-import { mockSlash } from './utils';
-import testSlash from "../slashCommands/test";
+import { mockSlash } from '../utils';
+import testSlash from "../../slashCommands/test";
 
 test('/test - Test A', async () => {
     // Getting our mock input
