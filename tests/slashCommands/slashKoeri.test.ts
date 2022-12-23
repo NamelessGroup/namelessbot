@@ -7,7 +7,7 @@ import { ComponentType } from 'discord.js';
 const getMock = get as jest.Mock;
 const writeMock = write as jest.Mock;
 
-jest.mock('../lib/configmanager');
+jest.mock('../../lib/configmanager');
 
 // Mocking Math.random
 const random = jest.spyOn(global.Math, "random");
