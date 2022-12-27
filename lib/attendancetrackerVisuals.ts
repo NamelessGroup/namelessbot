@@ -1,4 +1,4 @@
-import {CalendarBlock} from "./attendancetracker";
+import {CalendarBlock, getBlocks} from "./attendancetracker";
 import {ActionRowBuilder, APIEmbedField, ButtonBuilder, ButtonStyle, EmbedBuilder} from "discord.js";
 import {DateTime} from "luxon";
 
@@ -16,7 +16,7 @@ export function buildTimeTableEmbed(blocks: CalendarBlock[], weekday?: number) :
 
     if (weekday == undefined) {
         for (let i = 0; i < 5; i++) {
-            embed.addFields(buildDayField(getDaysBlocks(blocks, i), i));
+            embed.addFields(buildDayField(getBlocks(i), i));
         }
     } else {
         embed.addFields(buildDayField(blocks, weekday));
@@ -126,19 +126,6 @@ function prettyTime(weekday: number, unPrettyTime: string) : string {
         return (hours.length == 1 ? "0":"") + hours + ":" + (minutes.length == 1 ? "0":"") + minutes;
     }
 
-}
-
-/**
- * Filters an array of blocks to the blocks of the requested day
- *
- * @param blocks Blocks to filter
- * @param weekday Weekday requested
- * @returns Blocks at the given day
- */
-function getDaysBlocks(blocks: CalendarBlock[], weekday: number) : CalendarBlock[] {
-    return blocks.filter(e => {
-        return e.weekday == weekday;
-    });
 }
 
 /**
