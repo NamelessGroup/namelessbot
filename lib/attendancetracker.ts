@@ -16,6 +16,7 @@ interface AttendanceMap {
     [blockId: string]: string[];
 }
 
+const TIME_REGEX = /^(1?\d|2[0-3]):[012]\d$/;
 let attendanceMap = {} as AttendanceMap;
 
 /**
@@ -88,7 +89,7 @@ function sortBlocks(blockA: CalendarBlock, blockB: CalendarBlock): number {
  * @param block Block data to add
  */
 export async function addBlock(block: CalendarBlock): Promise<boolean> {
-    if (!block.startingTime.match(/^\d{2}:\d{2}$/) || !block.endingTime.match(/^\d{2}:\d{2}$/)) {
+    if (!block.startingTime.match(TIME_REGEX) || !block.endingTime.match(TIME_REGEX)) {
         return false;
     }
     const allBlocks = get("blocks", "timetable") as CalendarBlock[];
@@ -105,7 +106,7 @@ export async function addBlock(block: CalendarBlock): Promise<boolean> {
  * @returns true, if the update was successful, false otherwise
  */
 export async function updateBlock(index: number, block: CalendarBlock): Promise<boolean> {
-    if (!block.startingTime.match(/^\d{2}:\d{2}$/) || !block.endingTime.match(/^\d{2}:\d{2}$/)) {
+    if (!block.startingTime.match(TIME_REGEX) || !block.endingTime.match(TIME_REGEX)) {
         return false;
     }
     const allBlocks = get("blocks", "timetable") as CalendarBlock[];
