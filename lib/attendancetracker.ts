@@ -16,7 +16,7 @@ interface AttendanceMap {
     [blockId: string]: string[];
 }
 
-const TIME_REGEX = /^(1?\d|2[0-3]):[012]\d$/;
+const TIME_REGEX = /^(1?\d|2[0-3]):[0-5]\d$/;
 let attendanceMap = {} as AttendanceMap;
 
 /**
