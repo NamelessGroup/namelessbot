@@ -28,4 +28,4 @@ export const CHAT_COMMANDS: IChatCommandList = {
  */
 export const SLASH_COMMANDS: ISlashCommand[] = [
     testSlash, brainFUCK, koeri, tictactoe, mensa, vote, truthtable, aoc, timetable
-]
+];

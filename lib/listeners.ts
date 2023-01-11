@@ -15,7 +15,7 @@ const LISTENERS: IEventListener[] = [
     bfSelectionMenu,
     koeriSelectionMenu,
     attendanceTrackerMenu
-]
+];
 
 /**
  * Adds all event listeners to the supplied client.
