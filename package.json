@@ -25,7 +25,7 @@
     "discord.js": "^14.6.0",
     "dotenv": "^16.0.0",
     "ka-mensa-fetch": "^3.0.2",
-    "luxon": "^2.3.0",
+    "luxon": "^2.5.2",
     "axios": "^1.2.0"
   },
   "scripts": {
