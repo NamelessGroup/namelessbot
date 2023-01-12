@@ -121,7 +121,7 @@ function prettyTime(weekday: number, unPrettyTime: string) : string {
     const hours = parts[0].match(/\d+/) ? parts[0] : "0";
     const minutes = parts.length >= 2 ? (parts[1].match(/\d+/) ? parts[1] : "0") : "0";
     try {
-        return "<t:" + (getNextTime(weekday, parseInt(hours), parseInt(minutes)).getTime() / 1000) + ":t>";
+        return "<t:" + Math.trunc(getNextTime(weekday, parseInt(hours), parseInt(minutes)).toMillis() / 1000) + ":t>";
     } catch (e) {
         return (hours.length == 1 ? "0":"") + hours + ":" + (minutes.length == 1 ? "0":"") + minutes;
     }
@@ -146,12 +146,11 @@ function dayFromInt(weekday: number) : string {
  * @param minute Minutes in the hour
  * @returns Date of the next day with this weekday
  */
-export function getNextTime(weekday: number, hour: number, minute: number) : Date {
+export function getNextTime(weekday: number, hour: number, minute: number) : DateTime {
     let date = DateTime.now().setZone("Europe/Berlin");
     while (date.weekday - 1 != weekday) {
         date = date.plus({days:1});
     }
-    const resultDay = date.toJSDate();
-    resultDay.setHours(hour, minute, 0, 0);
-    return resultDay;
+    date = date.set({ hour: hour, minute: minute });
+    return date;
 }

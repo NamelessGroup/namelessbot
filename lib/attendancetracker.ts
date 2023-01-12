@@ -1,11 +1,7 @@
 import { Message } from "discord.js";
 import { get, write } from "./configmanager";
 import { Weekday } from "./recurringtask";
-<<<<<<< HEAD
-import {buildTimeTableEmbed} from "./attendancetrackerVisuals";
-=======
 import {buildTimeTableEmbed, getNextTime} from "./attendancetrackerVisuals";
->>>>>>> master
 
 export interface CalendarBlock {
     startingTime: string;
@@ -155,10 +151,7 @@ export async function updateAttendance(message: Message, weekday: Weekday, block
     } else {
         attendanceMap[block].push(userId);
     }
-<<<<<<< HEAD
-=======
     await updateAttendanceFile(weekday, block, userId);
->>>>>>> master
 
     await message.edit({embeds: [buildTimeTableEmbed(getBlocks(weekday, true), weekday)]});
 }
@@ -168,8 +161,6 @@ export async function updateAttendance(message: Message, weekday: Weekday, block
  */
 export function resetAttendance(): void {
     attendanceMap = {} as AttendanceMap;
-<<<<<<< HEAD
-=======
 }
 
 /**
@@ -179,9 +170,8 @@ export function resetAttendance(): void {
  * @param userId User to update attendance for
  */
 async function updateAttendanceFile(weekday: Weekday, block: string, userId: string): Promise<void> {
-    const key = getNextTime(weekday, 0, 0).toISOString() + "-" + block;
+    const key = getNextTime(weekday, 0, 0).toISO() + "-" + block;
     const fileContent = get(key, "attendance") as Record<string, boolean>;
     fileContent[userId] = fileContent[userId] ? false : true;
     await write(key, "attendance", fileContent);
->>>>>>> master
 }

@@ -112,7 +112,7 @@ export class BrainfuckInterpreter {
                             continue;
                         }
                         if (this.options == undefined) this.buildOptions();
-                        if (this.options == []) return;
+                        if (this.options.length == 0) return;
 
                         await this.interaction.editReply({content: this.endString == "" ? "Input is requested: " : this.endString, components:[{
                             type: ComponentType.ActionRow,
@@ -254,7 +254,7 @@ export class BrainfuckInterpreter {
                 );
             }
         }
-        if (this.options == []) throw new SyntaxError("Error");
+        if (this.options.length == 0) throw new SyntaxError("Error");
     }
 
 }
