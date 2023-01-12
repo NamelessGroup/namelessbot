@@ -86,7 +86,7 @@ export async function writeConfigFile(path: string, content: string): Promise<vo
  */
 export function get(key: string, config: string): unknown {
     if(configs[config] === undefined) throw new ReferenceError(`Config ${config} doesn't exist`);
-    return JSON.parse(JSON.stringify(configs[config][key]));
+    return JSON.parse(JSON.stringify(configs[config][key]) || "{}");
 }
 
 /**

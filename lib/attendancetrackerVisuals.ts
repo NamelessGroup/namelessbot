@@ -146,7 +146,7 @@ function dayFromInt(weekday: number) : string {
  * @param minute Minutes in the hour
  * @returns Date of the next day with this weekday
  */
-function getNextTime(weekday: number, hour: number, minute: number) : Date {
+export function getNextTime(weekday: number, hour: number, minute: number) : Date {
     let date = DateTime.now().setZone("Europe/Berlin");
     while (date.weekday - 1 != weekday) {
         date = date.plus({days:1});
