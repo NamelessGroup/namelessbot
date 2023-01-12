@@ -170,7 +170,7 @@ export function resetAttendance(): void {
  * @param userId User to update attendance for
  */
 async function updateAttendanceFile(weekday: Weekday, block: string, userId: string): Promise<void> {
-    const key = getNextTime(weekday, 0, 0).toISOString() + "-" + block;
+    const key = getNextTime(weekday, 0, 0).toISO() + "-" + block;
     const fileContent = get(key, "attendance") as Record<string, boolean>;
     fileContent[userId] = fileContent[userId] ? false : true;
     await write(key, "attendance", fileContent);
