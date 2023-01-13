@@ -967,10 +967,10 @@ jsonc-parser@^3.0.0:
   resolved "https://registry.npmjs.org/jsonc-parser/-/jsonc-parser-3.0.0.tgz"
   integrity sha512-fQzRfAbIBnR0IQvftw9FJveWiHp72Fg20giDrHz6TdfB12UH/uue0D3hm57UB5KgAVuniLMCaS8P1IMj9NR7cA==
 
-ka-mensa-fetch@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/ka-mensa-fetch/-/ka-mensa-fetch-3.0.2.tgz#01c306dab4eb6b9a04d6904ff6273d83b42374a1"
-  integrity sha512-HRMTEDAldmj4vv9cp6vp1aKFRNrQSKfcI7h8wVpO8Pe+pCpSz5Bb0Yvb3kY2bEvbmdLZGAKLlzhiAcqD3MnT2A==
+ka-mensa-fetch@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/ka-mensa-fetch/-/ka-mensa-fetch-3.2.0.tgz#a1001168df7a001b39899f67e2775a28b8c5e636"
+  integrity sha512-2r9pszFLTKvaz3TxojJmgBHPoanoCI2COzCMUBxuj8w8KrG63WyJKFLh/hownAb5oyYc9bcMnQdTE5a9DeLK1w==
   dependencies:
     axios "^0.27.0"
     cheerio "^1.0.0-rc.10"
