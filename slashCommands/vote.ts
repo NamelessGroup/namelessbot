@@ -12,19 +12,14 @@ export default {
                 type: ApplicationCommandOptionType.String,
                 name: "name",
                 description: "Give this vote a reason",
-                required: false
-            },
-            {
-                type: ApplicationCommandOptionType.Boolean,
-                name: "istimed",
-                description: "Makes this vote to a Timed Vote.",
-                required: false,
+                required: true
             },
             {
                 type: ApplicationCommandOptionType.Integer,
                 name: "votetime",
-                description: "Time the vote is running in seconds",
+                description: "Time the vote is running in seconds.",
                 required: false,
+                minValue: 0
             }
         ]
     },
@@ -45,20 +40,12 @@ export default {
         // --- Variables with input
         const options = interaction.options as CommandInteractionOptionResolver;
 
-        let time = options.getInteger("votetime", false);
+        const time = options.getInteger("votetime", false);
 
-        let timed = options.getBoolean("istimed");
-        timed = (timed == null) ? false : timed;
+        const timed = time != undefined;
 
-        let title = options.getString("name");
+        const title = options.getString("name", true);
 
-        // --- Check for undefined
-
-        time = ((time == undefined || time <= 0) ? 30 : time);
-
-        title = (title == undefined) ? "" : title;
-
-        // --- group variables
 
         const guid = get("vote_group", "config") as string;
         const maingroup = interaction.guild.roles.cache.get(guid);
@@ -84,6 +71,7 @@ export default {
             .setDescription(msg)
             .setColor("#477ce0")
             .addFields({name: "Maximal Runtime", value: "" + maxLoop * time + " Seconds", inline: true});
+
 
         const reply = await interaction.reply({embeds: [voteAN], fetchReply:true}) as Message;
 
