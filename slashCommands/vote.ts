@@ -8,7 +8,10 @@ import {
 } from "discord.js";
 import {ISlashCommand} from "../types";
 import {get} from "../lib/configmanager";
+import {Optional} from "typedoc/dist/lib/utils/validation";
 
+const upEmo = "👍";
+const downEmo = "👎";
 
 export default {
     command: {
@@ -34,8 +37,6 @@ export default {
 
         // --- Variables
 
-        const upEmo = "👍";
-        const downEmo = "👎";
 
         let usedVotes = 0;
         let msg = "";
@@ -66,20 +67,8 @@ export default {
         }
 
 
-        const voteEmbed = new EmbedBuilder()
-            .setTitle((title == "") ? "Simple Voting ": title)
-            .setDescription(msg)
-            .setColor("#477ce0")
 
-
-        const actionRow = new ActionRowBuilder<ButtonBuilder>()
-            .addComponents(
-                new ButtonBuilder().setEmoji(upEmo).setStyle(ButtonStyle.Success).setCustomId("vote_up"),
-                new ButtonBuilder().setEmoji(downEmo).setStyle(ButtonStyle.Danger).setCustomId("vote_down")
-            );
-
-        const reply = await interaction.reply({embeds: [voteEmbed], components:[actionRow],  fetchReply:true}) as Message;
-
+        const reply = await interaction.reply(getEmbedOptions(title, msg)) as Message;
 
         // eslint-disable-next-line
         const filter = (interaction) => {
@@ -116,6 +105,7 @@ export default {
                 interaction.reply({content:"Voting successful. You are against the topic!", ephemeral:true})
             }
             if (!timed && pro.size + con.size == usedVotes) {
+                reply.edit(getEmbedOptions(title, msg, Math.ceil(Date.now()/1000 + 30)))
                 setTimeout(() => {
                     printVotes(pro, con, reply, title, collector);
                 }, 30000 );
@@ -164,4 +154,24 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
 
     //show embed
     await reply.edit({embeds:[msgEmbed]})
+}
+
+function getEmbedOptions(title:string, msg: string, field?:number):{embeds, components, fetchReply}{
+    const voteEmbed = new EmbedBuilder()
+        .setTitle((title == "") ? "Simple Voting ": title)
+        .setDescription(msg)
+        .setColor("#477ce0")
+
+    if (field != undefined) {
+        voteEmbed.addFields({name: "Vote is ending", value: "This vote ends <t:" + field + ":R> \n"})
+    }
+
+    const actionRow = new ActionRowBuilder<ButtonBuilder>()
+        .addComponents(
+            new ButtonBuilder().setEmoji(upEmo).setStyle(ButtonStyle.Success).setCustomId("vote_up"),
+            new ButtonBuilder().setEmoji(downEmo).setStyle(ButtonStyle.Danger).setCustomId("vote_down")
+        );
+
+
+    return {embeds: [voteEmbed], components:[actionRow],  fetchReply:true};
 }
