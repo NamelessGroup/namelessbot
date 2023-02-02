@@ -3,7 +3,6 @@ import {EmbedBuilder} from "discord.js";
 
 const url = "https://adventofcode.com/"
 const path = "/leaderboard/private/view/"
-
 interface aoc_data {
     event: string
     owner_id: number
