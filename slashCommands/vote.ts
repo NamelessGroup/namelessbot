@@ -1,7 +1,16 @@
-import {CommandInteraction, Message, EmbedBuilder, ReactionCollectorOptions, ApplicationCommandOptionType, CommandInteractionOptionResolver} from "discord.js";
+import {
+    CommandInteraction,
+    Message,
+    EmbedBuilder,
+    ReactionCollectorOptions,
+    ApplicationCommandOptionType,
+    CommandInteractionOptionResolver,
+    ActionRowBuilder, ButtonBuilder, ButtonStyle
+} from "discord.js";
 import {ISlashCommand} from "../types";
 import {get} from "../lib/configmanager";
 
+const runningVotes = new Map();
 
 export default {
     command: {
@@ -46,6 +55,9 @@ export default {
 
         const title = options.getString("name", true);
 
+        if (runningVotes.has(title)) {
+            return;
+        }
 
         const guid = get("vote_group", "config") as string;
         const maingroup = interaction.guild.roles.cache.get(guid);
@@ -58,7 +70,7 @@ export default {
         } else {
             // get online member
             const groupmembers = maingroup.members.map(m=>m.user.id);
-            usedVotes = Math.round(groupmembers.length/2);
+            usedVotes = Math.ceil(groupmembers.length/2);
             // further variables set
             usedVotes = ((usedVotes == 0) ? 1 : usedVotes);
             msg += "This is a majority voting. " + usedVotes + " Votes required!";
@@ -73,8 +85,15 @@ export default {
             .addFields({name: "Maximal Runtime", value: "" + maxLoop * time + " Seconds", inline: true});
 
 
-        const reply = await interaction.reply({embeds: [voteAN], fetchReply:true}) as Message;
+        const actionRow = new ActionRowBuilder<ButtonBuilder>()
+            .addComponents(
+                new ButtonBuilder().setEmoji(upEmo).setStyle(ButtonStyle.Success).setCustomId("vote_"+title+"_up"),
+                new ButtonBuilder().setEmoji(downEmo).setStyle(ButtonStyle.Danger).setCustomId("vote_"+title+"_down")
+            );
 
+        const reply = await interaction.reply({embeds: [voteAN], components:[actionRow],  fetchReply:true}) as Message;
+
+        runningVotes.set(title, [[], []]);
 
         await reply.react(upEmo);       //react with emote up
         await reply.react(downEmo);     //react with emote down
@@ -183,4 +202,18 @@ async function printVotes(reactionAr, reply, title) {
 
     //show embed
     await reply.edit({embeds:[msgEmbed]})
+}
+
+export function addVote(title: string, user: string, isUp: boolean) : void {
+    if (!runningVotes.has(title)) return;
+    const votes : string[][] = runningVotes.get(title);
+    for (const vType in votes) {
+        const index = vType.indexOf(user);
+        if (index > -1) {
+            vType.slice(index, 1)
+        }
+    }
+
+    votes[isUp ? 0 : 1].push(user);
+    runningVotes.set(title, votes);
 }
