@@ -104,18 +104,18 @@ export default {
                 pro.add(id)
                 if (con.has(id)) {
                     con.delete(id);
-                    interaction.reply({content:"Your Vote was updated to pro!", ephemeral:true})
+                    interaction.reply({content:"You now support the voting!", ephemeral:true})
                     return;
                 }
-                interaction.reply({content:"Your Vote was set to pro!", ephemeral:true})
+                interaction.reply({content:"Voting successful. You support the voting!", ephemeral:true})
             } else if (interaction.customId == "vote_down") {
                 con.add(id)
                 if (pro.has(id)) {
                     pro.delete(id);
-                    interaction.reply({content:"Your Vote was updated to con!", ephemeral:true})
+                    interaction.reply({content:"You are now against the voting!", ephemeral:true})
                     return;
                 }
-                interaction.reply({content:"Your Vote was set to con!", ephemeral:true})
+                interaction.reply({content:"Voting successful. You are against the topic!", ephemeral:true})
             }
             if (!timed && pro.size + con.size == usedVotes) {
                 setTimeout(() => {
