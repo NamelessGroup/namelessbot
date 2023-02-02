@@ -1,4 +1,4 @@
-import {Client, EmbedBuilder, TextChannel} from "discord.js";
+import {Client, TextChannel} from "discord.js";
 import {TaskExecutor} from "../types";
 import {embedLeaderboard} from "../lib/aocleaderboardparser"
 import {get} from "../lib/configmanager";

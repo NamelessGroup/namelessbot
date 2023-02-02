@@ -11,7 +11,7 @@ export default {
     elevated: false,
     /**
      * The handler function for the Button interaction
-     * 
+     *
      * @param interaction The interaction this was called for
      */
     handler: async function(interaction: Interaction) {
