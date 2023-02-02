@@ -70,9 +70,6 @@ export default {
             .setTitle((title == "") ? "Simple Voting ": title)
             .setDescription(msg)
             .setColor("#477ce0")
-        if (timed) {
-            voteEmbed.addFields({name: "Maximal Runtime", value: "" + time + " Seconds", inline: true});
-        }
 
 
         const actionRow = new ActionRowBuilder<ButtonBuilder>()
