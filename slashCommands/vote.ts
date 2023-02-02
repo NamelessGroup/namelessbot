@@ -54,7 +54,8 @@ export default {
         // --- create initial system for time or group voting
 
         if (timed) {
-            msg += "This is a timed vote. The vote is running " + time + " Seconds!";
+            msg += "This is a timed vote. The vote is running " + time + " Seconds!\n";
+            msg += "This vote ends <t:" + Math.ceil(Date.now()/1000 + time) + ":R> \n"
         } else {
             // get online member
             const groupmembers = maingroup.members.map(m=>m.user.id);
