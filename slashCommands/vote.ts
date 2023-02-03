@@ -4,7 +4,7 @@ import {
     EmbedBuilder,
     ApplicationCommandOptionType,
     CommandInteractionOptionResolver,
-    ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, InteractionCollector, GuildMemberRoleManager
+    ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, InteractionCollector, GuildMemberRoleManager, BaseMessageOptions, CollectedInteraction
 } from "discord.js";
 import {ISlashCommand} from "../types";
 import {get} from "../lib/configmanager";
@@ -61,7 +61,8 @@ export default {
             msg += "This is a majority voting. " + usedVotes + " Votes required!";
         }
 
-        const reply = await interaction.reply(getEmbedOptions(title, msg)) as Message;
+        const embed = getEmbedOptions(title, msg);
+        const reply = await interaction.reply({ embeds: embed.embeds, components: embed.components, fetchReply: true }) as Message;
 
         // eslint-disable-next-line
         const filter = (interaction) => {
@@ -72,7 +73,7 @@ export default {
         };
 
         //reaction controller
-        const collector = reply.createMessageComponentCollector({filter});
+        const collector = reply.createMessageComponentCollector({filter}) as InteractionCollector<CollectedInteraction>;
         const pro = new Set<string>();
         const con = new Set<string>();
 
@@ -119,7 +120,7 @@ export default {
 } as ISlashCommand;
 
 
-async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, title: string, collector: InteractionCollector<any>): Promise<void> {
+async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, title: string, collector: InteractionCollector<CollectedInteraction>): Promise<void> {
     collector.stop();
 
     let upVotes = Array.from(pro).map(e => {
@@ -147,7 +148,7 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
     await reply.edit({embeds:[msgEmbed]})
 }
 
-function getEmbedOptions(title:string, msg: string, timestamp?:number):{embeds, components, fetchReply}{
+function getEmbedOptions(title:string, msg: string, timestamp?:number): BaseMessageOptions {
     const voteEmbed = new EmbedBuilder()
         .setTitle((title == "") ? "Simple Voting ": title)
         .setDescription(msg)
@@ -164,5 +165,5 @@ function getEmbedOptions(title:string, msg: string, timestamp?:number):{embeds, 
         );
 
 
-    return {embeds: [voteEmbed], components:[actionRow],  fetchReply:true};
+    return {embeds: [voteEmbed], components:[actionRow]};
 }
