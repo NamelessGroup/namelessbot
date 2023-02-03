@@ -73,7 +73,6 @@ export default {
 
         //reaction controller
         const collector = reply.createMessageComponentCollector({filter});
-        console.log(typeof collector);
         const pro = new Set<string>();
         const con = new Set<string>();
 
