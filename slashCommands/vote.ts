@@ -4,11 +4,10 @@ import {
     EmbedBuilder,
     ApplicationCommandOptionType,
     CommandInteractionOptionResolver,
-    ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, InteractionCollector
+    ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, InteractionCollector, GuildMemberRoleManager
 } from "discord.js";
 import {ISlashCommand} from "../types";
 import {get} from "../lib/configmanager";
-import {Optional} from "typedoc/dist/lib/utils/validation";
 
 const upEmo = "👍";
 const downEmo = "👎";
@@ -74,15 +73,20 @@ export default {
 
         //reaction controller
         const collector = reply.createMessageComponentCollector({filter});
-
+        console.log(typeof collector);
         const pro = new Set<string>();
         const con = new Set<string>();
 
         //on reaction
         collector.on('collect', (interaction: ButtonInteraction) => {
             const id = interaction.user.id;
+            const roles = interaction.member.roles as GuildMemberRoleManager;
+            if (roles.cache.some((role) => role.name !== maingroup.name)) {
+                interaction.reply({content:"You are not allowed to vote. Please contact an Administrator!", ephemeral:true});
+                return;
+            }
             if (interaction.customId == "vote_up") {
-                pro.add(id)
+                pro.add(id);
                 if (con.has(id)) {
                     con.delete(id);
                     interaction.reply({content:"You now support the voting!", ephemeral:true})
@@ -90,10 +94,10 @@ export default {
                 }
                 interaction.reply({content:"Voting successful. You support the voting!", ephemeral:true})
             } else if (interaction.customId == "vote_down") {
-                con.add(id)
+                con.add(id);
                 if (pro.has(id)) {
                     pro.delete(id);
-                    interaction.reply({content:"You are now against the voting!", ephemeral:true})
+                    interaction.reply({content:"You are now against the voting!", ephemeral:true});
                     return;
                 }
                 interaction.reply({content:"Voting successful. You are against the topic!", ephemeral:true})
@@ -148,10 +152,10 @@ function getEmbedOptions(title:string, msg: string, timestamp?:number):{embeds, 
     const voteEmbed = new EmbedBuilder()
         .setTitle((title == "") ? "Simple Voting ": title)
         .setDescription(msg)
-        .setColor("#477ce0")
+        .setColor("#477ce0");
 
     if (timestamp != undefined) {
-        voteEmbed.addFields({name: "Vote is ending", value: "This vote ends <t:" + timestamp + ":R> \n"})
+        voteEmbed.addFields({name: "Vote is ending", value: "This vote ends <t:" + timestamp + ":R> \n"});
     }
 
     const actionRow = new ActionRowBuilder<ButtonBuilder>()
