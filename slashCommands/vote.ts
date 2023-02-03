@@ -81,7 +81,7 @@ export default {
         collector.on('collect', (interaction: ButtonInteraction) => {
             const id = interaction.user.id;
             const roles = interaction.member.roles as GuildMemberRoleManager;
-            if (roles.cache.some((role) => role.name !== maingroup.name)) {
+            if (!roles.cache.some((role) => role.id === maingroup.id)) {
                 interaction.reply({content:"You are not allowed to vote. Please contact an Administrator!", ephemeral:true});
                 return;
             }
