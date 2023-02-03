@@ -36,18 +36,14 @@ export default {
     handler: async function(interaction: CommandInteraction) {
 
         // --- Variables
-
-
         let usedVotes = 0;
         let msg = "";
-
 
         // --- Variables with input
         const options = interaction.options as CommandInteractionOptionResolver;
         const time = options.getInteger("votetime", false);
         const timed = time != undefined;
         const title = options.getString("name", true);
-
 
         const guid = get("vote_group", "config") as string;
         const maingroup = interaction.guild.roles.cache.get(guid);
@@ -65,8 +61,6 @@ export default {
             usedVotes = ((usedVotes == 0) ? 1 : usedVotes);
             msg += "This is a majority voting. " + usedVotes + " Votes required!";
         }
-
-
 
         const reply = await interaction.reply(getEmbedOptions(title, msg)) as Message;
 
@@ -122,9 +116,8 @@ export default {
 } as ISlashCommand;
 
 
-async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, title: string, collector: InteractionCollector<any>) {
+async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, title: string, collector: InteractionCollector<any>): Promise<void> {
     collector.stop();
-
 
     let upVotes = Array.from(pro).map(e => {
         return "🟢 <@" + e + ">";
@@ -132,14 +125,11 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
     let downVotes = Array.from(con).map(e => {
         return "🔴 <@" + e + ">";
     }).join("\n");
-
-
-
+    
     upVotes = (upVotes == "") ? "None" : upVotes;
     downVotes = (downVotes == "") ? "None" : downVotes;
 
     //finished embed
-
     const msgEmbed = new EmbedBuilder()
         .setColor((con.size < pro.size) ? "#02B22E" : "#cc0000")
         .setTitle((con.size < pro.size) ? "Vote accepted" : "Vote failed")
@@ -147,23 +137,21 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
         .setTimestamp();
 
     //if a title were specified it will be displayed
-
     if (title != "") {
         msgEmbed.setDescription(title);
     }
-
     //show embed
     await reply.edit({embeds:[msgEmbed]})
 }
 
-function getEmbedOptions(title:string, msg: string, field?:number):{embeds, components, fetchReply}{
+function getEmbedOptions(title:string, msg: string, timestamp?:number):{embeds, components, fetchReply}{
     const voteEmbed = new EmbedBuilder()
         .setTitle((title == "") ? "Simple Voting ": title)
         .setDescription(msg)
         .setColor("#477ce0")
 
-    if (field != undefined) {
-        voteEmbed.addFields({name: "Vote is ending", value: "This vote ends <t:" + field + ":R> \n"})
+    if (timestamp != undefined) {
+        voteEmbed.addFields({name: "Vote is ending", value: "This vote ends <t:" + timestamp + ":R> \n"})
     }
 
     const actionRow = new ActionRowBuilder<ButtonBuilder>()
