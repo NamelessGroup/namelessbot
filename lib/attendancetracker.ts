@@ -21,7 +21,7 @@ let attendanceMap = {} as AttendanceMap;
 
 /**
  * Returns all calendar blocks in the database
- * 
+ *
  * Blocks will be sorted by starting time, ending time and title, in that order.
  *
  * @param weekday Optional weekday to lookup blocks for
@@ -53,9 +53,9 @@ export function getBlocks(weekday?: Weekday, includeAttendence?: boolean, includ
 
 /**
  * Internal function to compare & sort two CalendarBlocks
- * 
+ *
  * Sorts / compares by starting time, ending time and title, in that order.
- * 
+ *
  * @param blockA Block to compare
  * @param blockB Block to compare
  * @returns >0 if Block A is concidered first, <0 if Block B is concidered first, 0 if they are equal
@@ -120,7 +120,7 @@ export async function updateBlock(index: number, block: CalendarBlock): Promise<
 
 /**
  * Removes a block in the databasse
- * 
+ *
  * @param index Index of the block to remove
  * @returns true, if the block was removed successfully, false otherwise
  */
@@ -136,7 +136,7 @@ export async function removeBlock(index: number): Promise<boolean> {
 
 /**
  * Updates attendance for one user on one block.
- * 
+ *
  * @param message Message to update with the new attendance
  * @param weekday Weekday of the block
  * @param block Block title to update attendance for
@@ -172,6 +172,6 @@ export function resetAttendance(): void {
 async function updateAttendanceFile(weekday: Weekday, block: string, userId: string): Promise<void> {
     const key = getNextTime(weekday, 0, 0).toISO() + "-" + block;
     const fileContent = get(key, "attendance") as Record<string, boolean>;
-    fileContent[userId] = fileContent[userId] ? false : true;
+    fileContent[userId] = !fileContent[userId];
     await write(key, "attendance", fileContent);
 }
