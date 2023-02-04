@@ -12,7 +12,7 @@ import {
     GuildMemberRoleManager,
     BaseMessageOptions,
     CollectedInteraction,
-    Role, GuildMember
+    Role, GuildMember, Snowflake
 } from "discord.js";
 import {ISlashCommand} from "../types";
 import {get} from "../lib/configmanager";
@@ -83,7 +83,7 @@ export default {
             msg += "This is a majority voting. " + usedVotes + " Votes required!";
         }
 
-        const embed = getEmbedOptions(title, msg, maingroup.id as unknown as number);
+        const embed = getEmbedOptions(title, msg, maingroup.id);
         const reply = await interaction.reply({ embeds: embed.embeds, components: embed.components, fetchReply: true }) as Message;
 
         // eslint-disable-next-line
@@ -125,7 +125,7 @@ export default {
                 interaction.reply({content:"Voting successful. You are against the topic!", ephemeral:true})
             }
             if (!timed && pro.size + con.size == usedVotes) {
-                reply.edit(getEmbedOptions(title, msg, maingroup.id as unknown as number, Math.ceil(Date.now()/1000 + 30)))
+                reply.edit(getEmbedOptions(title, msg, maingroup.id, Math.ceil(Date.now()/1000 + 30)))
                 setTimeout(() => {
                     printVotes(pro, con, reply, title, collector);
                 }, 30000 );
@@ -176,7 +176,7 @@ function membercanstartvote (member: GuildMember, selectedRole: Role): boolean {
     return !roles.cache.has(selectedRole.name);
 }
 
-function getEmbedOptions(title:string, msg: string, group:number, timestamp?:number): BaseMessageOptions {
+function getEmbedOptions(title:string, msg: string, group:Snowflake, timestamp?:number): BaseMessageOptions {
     const voteEmbed = new EmbedBuilder()
         .setTitle((title == "") ? "Simple Voting ": title)
         .setDescription(msg)
