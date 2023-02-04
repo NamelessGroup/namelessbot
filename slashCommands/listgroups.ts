@@ -23,7 +23,7 @@ export default {
         }).sort((r, r1) => { //sort the positions of the roles
             return r.position-r1.position;
         }).map((role) => { //map the roles to the message
-            return "" + role.name + " -> " + role.position;
+            return "" + role.name;
         }).join("\n");
         const msgEmbed = new EmbedBuilder()
             .setColor("#0047AB")
