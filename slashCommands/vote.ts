@@ -172,8 +172,13 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
 
 function membercanstartvote (member: GuildMember, selectedRole: Role): boolean {
     const roles = member.roles as GuildMemberRoleManager;
-    console.log(roles)
-    return !roles.cache.has(selectedRole.name);
+    let phrp = 0 //player highest role position
+    roles.cache.forEach((r)=> {
+        if (r.position > phrp) {
+            phrp = r.position;
+        }
+    });
+    return selectedRole.position > phrp
 }
 
 function getEmbedOptions(title:string, msg: string, group:Snowflake, timestamp?:number): BaseMessageOptions {
