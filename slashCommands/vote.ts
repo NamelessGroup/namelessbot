@@ -60,6 +60,11 @@ export default {
         }); //can only have one element
         const maingroup = maingroupcollection.get(maingroupcollection.keyAt(0))
 
+        if (playercanstartvote(interaction, maingroupposition)) {
+            await interaction.reply({content:"You can not start a Vote for a Role above your highest! Use /listgroups to find the possible Groups you could start a vote for!", ephemeral:true})
+            return
+        }
+
         // --- create initial system for time or group voting
 
         if (timed) {
@@ -159,6 +164,17 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
     }
     //show embed
     await reply.edit({embeds:[msgEmbed], components:[]})
+}
+
+function playercanstartvote (interaction: CommandInteraction, messagerolepos: number): boolean {
+    const roles = interaction.member.roles as GuildMemberRoleManager;
+    let phrp = 0 //player highest role position
+    roles.cache.forEach((r)=> {
+        if (r.position > phrp) {
+            phrp = r.position;
+        }
+    });
+    return messagerolepos > phrp
 }
 
 function getEmbedOptions(title:string, msg: string, group:number, timestamp?:number): BaseMessageOptions {
