@@ -4,7 +4,15 @@ import {
     EmbedBuilder,
     ApplicationCommandOptionType,
     CommandInteractionOptionResolver,
-    ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, InteractionCollector, GuildMemberRoleManager, BaseMessageOptions, CollectedInteraction
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    ButtonInteraction,
+    InteractionCollector,
+    GuildMemberRoleManager,
+    BaseMessageOptions,
+    CollectedInteraction,
+    Role, GuildMember
 } from "discord.js";
 import {ISlashCommand} from "../types";
 import {get} from "../lib/configmanager";
@@ -31,7 +39,7 @@ export default {
                 minValue: 0
             },
             {
-                type: ApplicationCommandOptionType.Integer,
+                type: ApplicationCommandOptionType.Role,
                 name: "votegroup",
                 description: "The Group that is allowed to vote (0 for @everyone)",
                 required: false,
@@ -50,17 +58,13 @@ export default {
         const time = options.getInteger("votetime", false);
         const timed = time != undefined;
         const title = options.getString("name", true);
-        let maingroupposition = options.getInteger("votegroup", false);
-        if (maingroupposition == undefined) {
+        let maingroup = options.getRole("votegroup", false) as Role;
+        if (maingroup == undefined) {
             const guid = get("vote_group", "config") as string;
-            maingroupposition = (guid == "")? 0: interaction.guild.roles.cache.get(guid).position;
+            maingroup = (guid == "")? interaction.guild.roles.everyone: interaction.guild.roles.cache.get(guid);
         }
-        const maingroupcollection = interaction.guild.roles.cache.filter(r => {
-            return r.position == maingroupposition;
-        }); //can only have one element
-        const maingroup = maingroupcollection.get(maingroupcollection.keyAt(0))
 
-        if (playercanstartvote(interaction, maingroupposition)) {
+        if (membercanstartvote(interaction.member as GuildMember, maingroup)) {
             await interaction.reply({content:"You can not start a Vote for a Role above your highest! Use /listgroups to find the possible Groups you could start a vote for!", ephemeral:true})
             return
         }
@@ -99,7 +103,7 @@ export default {
         collector.on('collect', (interaction: ButtonInteraction) => {
             const id = interaction.user.id;
             const roles = interaction.member.roles as GuildMemberRoleManager;
-            if (!roles.cache.some((role) => role.position === maingroupposition)) {
+            if (!roles.cache.some((role) => role.id === maingroup.id)) {
                 interaction.reply({content:"You are not allowed to vote. Please contact an Administrator!", ephemeral:true});
                 return;
             }
@@ -166,15 +170,10 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
     await reply.edit({embeds:[msgEmbed], components:[]})
 }
 
-function playercanstartvote (interaction: CommandInteraction, messagerolepos: number): boolean {
-    const roles = interaction.member.roles as GuildMemberRoleManager;
-    let phrp = 0 //player highest role position
-    roles.cache.forEach((r)=> {
-        if (r.position > phrp) {
-            phrp = r.position;
-        }
-    });
-    return messagerolepos > phrp
+function membercanstartvote (member: GuildMember, selectedRole: Role): boolean {
+    const roles = member.roles as GuildMemberRoleManager;
+    console.log(roles)
+    return !roles.cache.has(selectedRole.name);
 }
 
 function getEmbedOptions(title:string, msg: string, group:number, timestamp?:number): BaseMessageOptions {

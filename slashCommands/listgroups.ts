@@ -12,7 +12,6 @@ export default {
     },
     handler: async function(interaction: CommandInteraction) {
         const roles = interaction.member.roles as GuildMemberRoleManager;
-        console.log(roles.cache)
         let phrp = 0 //player highest role position
         roles.cache.forEach((r)=> {
             if (r.position > phrp) {
