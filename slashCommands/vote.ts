@@ -29,6 +29,13 @@ export default {
                 description: "Time the vote is running in seconds.",
                 required: false,
                 minValue: 0
+            },
+            {
+                type: ApplicationCommandOptionType.Integer,
+                name: "votegroup",
+                description: "The Group that is allowed to vote (0 for @everyone)",
+                required: false,
+                minValue: 0
             }
         ]
     },
@@ -43,9 +50,11 @@ export default {
         const time = options.getInteger("votetime", false);
         const timed = time != undefined;
         const title = options.getString("name", true);
-
-        const guid = get("vote_group", "config") as string;
-        const maingroupposition = (guid == "")? 0: interaction.guild.roles.cache.get(guid).position;
+        let maingroupposition = options.getInteger("votegroup", false);
+        if (maingroupposition == undefined) {
+            const guid = get("vote_group", "config") as string;
+            maingroupposition = (guid == "")? 0: interaction.guild.roles.cache.get(guid).position;
+        }
         const maingroupcollection = interaction.guild.roles.cache.filter(r => {
             return r.position == maingroupposition;
         }); //can only have one element
@@ -65,7 +74,7 @@ export default {
             msg += "This is a majority voting. " + usedVotes + " Votes required!";
         }
 
-        const embed = getEmbedOptions(title, msg);
+        const embed = getEmbedOptions(title, msg, maingroup.id as unknown as number);
         const reply = await interaction.reply({ embeds: embed.embeds, components: embed.components, fetchReply: true }) as Message;
 
         // eslint-disable-next-line
@@ -85,7 +94,7 @@ export default {
         collector.on('collect', (interaction: ButtonInteraction) => {
             const id = interaction.user.id;
             const roles = interaction.member.roles as GuildMemberRoleManager;
-            if (!roles.cache.some((role) => role.id === maingroup.id)) {
+            if (!roles.cache.some((role) => role.position === maingroupposition)) {
                 interaction.reply({content:"You are not allowed to vote. Please contact an Administrator!", ephemeral:true});
                 return;
             }
@@ -107,7 +116,7 @@ export default {
                 interaction.reply({content:"Voting successful. You are against the topic!", ephemeral:true})
             }
             if (!timed && pro.size + con.size == usedVotes) {
-                reply.edit(getEmbedOptions(title, msg, Math.ceil(Date.now()/1000 + 30)))
+                reply.edit(getEmbedOptions(title, msg, maingroup.id as unknown as number, Math.ceil(Date.now()/1000 + 30)))
                 setTimeout(() => {
                     printVotes(pro, con, reply, title, collector);
                 }, 30000 );
@@ -152,11 +161,12 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
     await reply.edit({embeds:[msgEmbed], components:[]})
 }
 
-function getEmbedOptions(title:string, msg: string, timestamp?:number): BaseMessageOptions {
+function getEmbedOptions(title:string, msg: string, group:number, timestamp?:number): BaseMessageOptions {
     const voteEmbed = new EmbedBuilder()
         .setTitle((title == "") ? "Simple Voting ": title)
         .setDescription(msg)
-        .setColor("#477ce0");
+        .setColor("#477ce0")
+        .addFields({name:"Allowed Groups", value:"Voting for Group <@&" + group + ">"})
 
     if (timestamp != undefined) {
         voteEmbed.addFields({name: "Vote is ending", value: "This vote ends <t:" + timestamp + ":R> \n"});
