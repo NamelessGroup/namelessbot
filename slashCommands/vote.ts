@@ -45,7 +45,11 @@ export default {
         const title = options.getString("name", true);
 
         const guid = get("vote_group", "config") as string;
-        const maingroup = interaction.guild.roles.cache.get(guid);
+        const maingroupposition = (guid == "")? 0: interaction.guild.roles.cache.get(guid).position;
+        const maingroupcollection = interaction.guild.roles.cache.filter(r => {
+            return r.position == maingroupposition;
+        }); //can only have one element
+        const maingroup = maingroupcollection.get(maingroupcollection.keyAt(0))
 
         // --- create initial system for time or group voting
 
