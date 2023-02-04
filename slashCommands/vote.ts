@@ -149,7 +149,7 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
         msgEmbed.setDescription(title);
     }
     //show embed
-    await reply.edit({embeds:[msgEmbed]})
+    await reply.edit({embeds:[msgEmbed], components:[]})
 }
 
 function getEmbedOptions(title:string, msg: string, timestamp?:number): BaseMessageOptions {
