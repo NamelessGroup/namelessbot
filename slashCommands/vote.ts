@@ -41,7 +41,7 @@ export default {
             {
                 type: ApplicationCommandOptionType.Role,
                 name: "votegroup",
-                description: "The Group that is allowed to vote (0 for @everyone)",
+                description: "The Group that is allowed to vote (You can only start a vote for a group you are a member of)",
                 required: false,
                 minValue: 0
             }
@@ -172,13 +172,7 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
 
 function membercanstartvote (member: GuildMember, selectedRole: Role): boolean {
     const roles = member.roles as GuildMemberRoleManager;
-    let phrp = 0 //player highest role position
-    roles.cache.forEach((r)=> {
-        if (r.position > phrp) {
-            phrp = r.position;
-        }
-    });
-    return selectedRole.position > phrp
+    return !roles.cache.has(selectedRole.name);
 }
 
 function getEmbedOptions(title:string, msg: string, group:Snowflake, timestamp?:number): BaseMessageOptions {
