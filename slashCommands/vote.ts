@@ -172,7 +172,6 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
 
 function membercanstartvote (member: GuildMember, selectedRole: Role): boolean {
     const roles = member.roles as GuildMemberRoleManager;
-    console.log(roles.cache)
     return !roles.cache.has(selectedRole.id);
 }
 
