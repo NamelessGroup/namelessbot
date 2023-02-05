@@ -65,7 +65,7 @@ export default {
         }
 
         if (membercanstartvote(interaction.member as GuildMember, maingroup)) {
-            await interaction.reply({content:"You can not start a Vote for a Role above your highest! Use /listgroups to find the possible Groups you could start a vote for!", ephemeral:true})
+            await interaction.reply({content:"You need to have the group, you want to start a vote for!", ephemeral:true})
             return
         }
 
@@ -172,7 +172,8 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
 
 function membercanstartvote (member: GuildMember, selectedRole: Role): boolean {
     const roles = member.roles as GuildMemberRoleManager;
-    return !roles.cache.has(selectedRole.name);
+    console.log(roles.cache)
+    return !roles.cache.has(selectedRole.id);
 }
 
 function getEmbedOptions(title:string, msg: string, group:Snowflake, timestamp?:number): BaseMessageOptions {
