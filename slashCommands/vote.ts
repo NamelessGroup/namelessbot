@@ -64,7 +64,7 @@ export default {
             maingroup = (guid == "")? interaction.guild.roles.everyone: interaction.guild.roles.cache.get(guid);
         }
 
-        if (membercanstartvote(interaction.member as GuildMember, maingroup)) {
+        if (membercantstartvote(interaction.member as GuildMember, maingroup)) {
             await interaction.reply({content:"You need to have the group, you want to start a vote for!", ephemeral:true})
             return
         }
@@ -170,7 +170,7 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
     await reply.edit({embeds:[msgEmbed], components:[]})
 }
 
-function membercanstartvote (member: GuildMember, selectedRole: Role): boolean {
+function membercantstartvote (member: GuildMember, selectedRole: Role): boolean {
     const roles = member.roles as GuildMemberRoleManager;
     return !roles.cache.has(selectedRole.id);
 }
