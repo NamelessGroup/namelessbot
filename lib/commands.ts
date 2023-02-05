@@ -8,7 +8,6 @@ import vote from "../slashCommands/vote";
 import truthtable from "../slashCommands/truthtable";
 import timetable from "../slashCommands/timetable";
 import aoc from "../slashCommands/aoc";
-import listgroups from "../slashCommands/listgroups";
 
 export const CHAT_COMMAND_PREFIX = "!";
 
@@ -17,5 +16,5 @@ export const CHAT_COMMANDS: IChatCommandList = {
 }
 
 export const SLASH_COMMANDS: ISlashCommand[] = [
-    testSlash, koeri, mensa, vote, truthtable, aoc, timetable, listgroups
+    testSlash, koeri, mensa, vote, truthtable, aoc, timetable
 ]
