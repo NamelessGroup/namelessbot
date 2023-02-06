@@ -61,7 +61,7 @@ export default {
         let maingroup = options.getRole("votegroup", false) as Role;
         if (maingroup == undefined) {
             const guid = get("vote_group", "config") as string;
-            maingroup = (guid == "")? interaction.guild.roles.everyone: interaction.guild.roles.cache.get(guid);
+            maingroup = (JSON.stringify(guid) == "{}" || guid == "")? interaction.guild.roles.everyone: interaction.guild.roles.cache.get(guid);
         }
 
         if (membercantstartvote(interaction.member as GuildMember, maingroup)) {
