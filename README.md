@@ -1,4 +1,8 @@
 # Namelessbot
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/namelessgroup/namelessbot/eslint.yml?label=lint)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/namelessgroup/namelessbot)
+![Discord.js Version](https://img.shields.io/badge/Discord.js-14.7.1-blue)
+
 Namelessbot is a Discord-Bot that implements many different small features. It is purpose build for our server.
 ## Language
 Namelessbot is a Discord-Bot based on Discord.js and implemented in TypeScript
