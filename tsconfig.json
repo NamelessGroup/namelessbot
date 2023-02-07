@@ -4,5 +4,19 @@
     "target": "esnext",
     "moduleResolution": "node",
   },
-  "esm": true
+  "esm": true,
+  "typedocOptions": {
+    "out": "docs/",
+    "entryPointStrategy": "expand",
+    "exclude": [
+      "node_modules/**/*"
+    ],
+    "plugin": [
+      "typedoc-theme-hierarchy",
+      "typedoc-plugin-missing-exports"
+    ],
+    "theme": "hierarchy",
+    "readme": "README.md",
+    "name": "NamelessBot",
+  }
 }

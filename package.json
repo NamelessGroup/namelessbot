@@ -34,6 +34,6 @@
   "scripts": {
     "start": "node --loader ts-node/esm --experimental-specifier-resolution=node ./index.ts",
     "lint": "eslint .",
-    "doc": "typedoc --out docs/ --entryPointStrategy expand --exclude 'node_modules/**/*' --plugin typedoc-theme-hierarchy --theme hierarchy ."
+    "doc": "typedoc ."
   }
 }
