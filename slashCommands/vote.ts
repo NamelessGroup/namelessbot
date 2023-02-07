@@ -4,7 +4,15 @@ import {
     EmbedBuilder,
     ApplicationCommandOptionType,
     CommandInteractionOptionResolver,
-    ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, InteractionCollector, GuildMemberRoleManager, BaseMessageOptions, CollectedInteraction
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    ButtonInteraction,
+    InteractionCollector,
+    GuildMemberRoleManager,
+    BaseMessageOptions,
+    CollectedInteraction,
+    Role, GuildMember, Snowflake
 } from "discord.js";
 import {ISlashCommand} from "../types";
 import {get} from "../lib/configmanager";
@@ -29,6 +37,13 @@ export default {
                 description: "Time the vote is running in seconds.",
                 required: false,
                 minValue: 0
+            },
+            {
+                type: ApplicationCommandOptionType.Role,
+                name: "votegroup",
+                description: "The Group that is allowed to vote (You can only start a vote for a group you are a member of)",
+                required: false,
+                minValue: 0
             }
         ]
     },
@@ -43,9 +58,16 @@ export default {
         const time = options.getInteger("votetime", false);
         const timed = time != undefined;
         const title = options.getString("name", true);
+        let maingroup = options.getRole("votegroup", false) as Role;
+        if (maingroup == undefined) {
+            const guid = get("vote_group", "config") as string;
+            maingroup = (JSON.stringify(guid) == "{}" || guid == "")? interaction.guild.roles.everyone: interaction.guild.roles.cache.get(guid);
+        }
 
-        const guid = get("vote_group", "config") as string;
-        const maingroup = interaction.guild.roles.cache.get(guid);
+        if (membercantstartvote(interaction.member as GuildMember, maingroup)) {
+            await interaction.reply({content:"You need to have the group, you want to start a vote for!", ephemeral:true})
+            return
+        }
 
         // --- create initial system for time or group voting
 
@@ -61,7 +83,7 @@ export default {
             msg += "This is a majority voting. " + usedVotes + " Votes required!";
         }
 
-        const embed = getEmbedOptions(title, msg);
+        const embed = getEmbedOptions(title, msg, maingroup.id);
         const reply = await interaction.reply({ embeds: embed.embeds, components: embed.components, fetchReply: true }) as Message;
 
         // eslint-disable-next-line
@@ -103,7 +125,7 @@ export default {
                 interaction.reply({content:"Voting successful. You are against the topic!", ephemeral:true})
             }
             if (!timed && pro.size + con.size == usedVotes) {
-                reply.edit(getEmbedOptions(title, msg, Math.ceil(Date.now()/1000 + 30)))
+                reply.edit(getEmbedOptions(title, msg, maingroup.id, Math.ceil(Date.now()/1000 + 30)))
                 setTimeout(() => {
                     printVotes(pro, con, reply, title, collector);
                 }, 30000 );
@@ -145,14 +167,20 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
         msgEmbed.setDescription(title);
     }
     //show embed
-    await reply.edit({embeds:[msgEmbed]})
+    await reply.edit({embeds:[msgEmbed], components:[]})
 }
 
-function getEmbedOptions(title:string, msg: string, timestamp?:number): BaseMessageOptions {
+function membercantstartvote (member: GuildMember, selectedRole: Role): boolean {
+    const roles = member.roles as GuildMemberRoleManager;
+    return !roles.cache.has(selectedRole.id);
+}
+
+function getEmbedOptions(title:string, msg: string, group:Snowflake, timestamp?:number): BaseMessageOptions {
     const voteEmbed = new EmbedBuilder()
         .setTitle((title == "") ? "Simple Voting ": title)
         .setDescription(msg)
-        .setColor("#477ce0");
+        .setColor("#477ce0")
+        .addFields({name:"Allowed Groups", value:"Voting for Group <@&" + group + ">"})
 
     if (timestamp != undefined) {
         voteEmbed.addFields({name: "Vote is ending", value: "This vote ends <t:" + timestamp + ":R> \n"});
