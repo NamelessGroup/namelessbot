@@ -19,7 +19,9 @@ import {get} from "../lib/configmanager";
 
 const upEmo = "👍";
 const downEmo = "👎";
-
+/**
+ * Slash Command definition for /vote.
+ */
 export default {
     command: {
         name: "vote",
@@ -141,7 +143,16 @@ export default {
     }
 } as ISlashCommand;
 
-
+/**
+ * Prints a Message on a vote end by editing the vote message. The Message contains the voters for and against the Subject.
+ * Also stops the collector.
+ *
+ * @param pro the pro votes
+ * @param con the con votes
+ * @param reply the message that will be edited
+ * @param title the title of the vote
+ * @param collector the collector related to the vote, that will be closed
+ */
 async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, title: string, collector: InteractionCollector<CollectedInteraction>): Promise<void> {
     collector.stop();
 
@@ -170,11 +181,27 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
     await reply.edit({embeds:[msgEmbed], components:[]});
 }
 
+/**
+ * This method determine if a member can start a vote. (He has to have the roll he wants to start a vote for)
+ *
+ * @param member the member that starts a vote
+ * @param selectedRole the role he wants to start a vote for
+ * @returns True if the member cant start a vote False if he can
+ */
 function membercantstartvote (member: GuildMember, selectedRole: Role): boolean {
     const roles = member.roles as GuildMemberRoleManager;
     return !roles.cache.has(selectedRole.id);
 }
 
+/**
+ * Generates the Embed that will be printed for the vote. It tags the group that can vote and additionally can add a relative timestamp.
+ *
+ * @param title the title of the subject
+ * @param msg a Message as Description
+ * @param group the group (as Snowflake) that can vote
+ * @param timestamp the timestamp of the time on that the vote ends
+ * @returns the Embed and the Components (Buttons)
+ */
 function getEmbedOptions(title:string, msg: string, group:Snowflake, timestamp?:number): BaseMessageOptions {
     const voteEmbed = new EmbedBuilder()
         .setTitle((title == "") ? "Simple Voting ": title)
