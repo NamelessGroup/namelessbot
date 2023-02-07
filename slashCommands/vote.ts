@@ -65,15 +65,15 @@ export default {
         }
 
         if (membercantstartvote(interaction.member as GuildMember, maingroup)) {
-            await interaction.reply({content:"You need to have the group, you want to start a vote for!", ephemeral:true})
-            return
+            await interaction.reply({content:"You need to have the group, you want to start a vote for!", ephemeral:true});
+            return;
         }
 
         // --- create initial system for time or group voting
 
         if (timed) {
             msg += "This is a timed vote. The vote is running " + time + " Seconds!\n";
-            msg += "This vote ends <t:" + Math.ceil(Date.now()/1000 + time) + ":R> \n"
+            msg += "This vote ends <t:" + Math.ceil(Date.now()/1000 + time) + ":R> \n";
         } else {
             // get online member
             const groupmembers = maingroup.members.map(m=>m.user.id);
@@ -111,10 +111,10 @@ export default {
                 pro.add(id);
                 if (con.has(id)) {
                     con.delete(id);
-                    interaction.reply({content:"You now support the voting!", ephemeral:true})
+                    interaction.reply({content:"You now support the voting!", ephemeral:true});
                     return;
                 }
-                interaction.reply({content:"Voting successful. You support the voting!", ephemeral:true})
+                interaction.reply({content:"Voting successful. You support the voting!", ephemeral:true});
             } else if (interaction.customId == "vote_down") {
                 con.add(id);
                 if (pro.has(id)) {
@@ -122,10 +122,10 @@ export default {
                     interaction.reply({content:"You are now against the voting!", ephemeral:true});
                     return;
                 }
-                interaction.reply({content:"Voting successful. You are against the topic!", ephemeral:true})
+                interaction.reply({content:"Voting successful. You are against the topic!", ephemeral:true});
             }
             if (!timed && pro.size + con.size == usedVotes) {
-                reply.edit(getEmbedOptions(title, msg, maingroup.id, Math.ceil(Date.now()/1000 + 30)))
+                reply.edit(getEmbedOptions(title, msg, maingroup.id, Math.ceil(Date.now()/1000 + 30)));
                 setTimeout(() => {
                     printVotes(pro, con, reply, title, collector);
                 }, 30000 );
@@ -167,7 +167,7 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
         msgEmbed.setDescription(title);
     }
     //show embed
-    await reply.edit({embeds:[msgEmbed], components:[]})
+    await reply.edit({embeds:[msgEmbed], components:[]});
 }
 
 function membercantstartvote (member: GuildMember, selectedRole: Role): boolean {
@@ -180,7 +180,7 @@ function getEmbedOptions(title:string, msg: string, group:Snowflake, timestamp?:
         .setTitle((title == "") ? "Simple Voting ": title)
         .setDescription(msg)
         .setColor("#477ce0")
-        .addFields({name:"Allowed Groups", value:"Voting for Group <@&" + group + ">"})
+        .addFields({name:"Allowed Groups", value:"Voting for Group <@&" + group + ">"});
 
     if (timestamp != undefined) {
         voteEmbed.addFields({name: "Vote is ending", value: "This vote ends <t:" + timestamp + ":R> \n"});

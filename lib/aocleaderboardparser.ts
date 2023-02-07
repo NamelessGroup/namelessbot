@@ -1,8 +1,8 @@
 import axios from "axios";
 import {EmbedBuilder} from "discord.js";
 
-const url = "https://adventofcode.com/"
-const path = "/leaderboard/private/view/"
+const url = "https://adventofcode.com/";
+const path = "/leaderboard/private/view/";
 interface aoc_data {
     event: string
     owner_id: number
@@ -49,7 +49,7 @@ export async function requestLeaderboard(id: number, year: number) {
 
 export async function embedLeaderboard(id:number, year: number) {
     const members = await requestLeaderboard(id, year);
-    const map = {} as {[key:string]: string}
+    const map = {} as {[key:string]: string};
     for(const m of members) {
         map[m.name] = "";
         for (const k in m.completion_day_level) {
@@ -65,7 +65,7 @@ export async function embedLeaderboard(id:number, year: number) {
         }
     }
     const embed = new EmbedBuilder().setURL("https://adventofcode.com").setTitle("Advent of Code Leaderboard")
-        .addFields({name:"Ranking", value:members.map(e => { return e.name + ": " + e.local_score + map[e.name]  }).join("\n")});
+        .addFields({name:"Ranking", value:members.map(e => { return e.name + ": " + e.local_score + map[e.name]; }).join("\n")});
     return embed;
 }
 
