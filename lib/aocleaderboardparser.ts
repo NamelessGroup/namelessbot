@@ -31,7 +31,15 @@ interface aoc_member {
         }
     }
 }
-export async function requestLeaderboard(id: number, year: number) {
+
+/**
+ * Gets the current leaderboard data from the AoC servers
+ *
+ * @param id ID of the leaderboard
+ * @param year Year of this AoC competition
+ * @returns Array of members of this leaderboard
+ */
+export async function requestLeaderboard(id: number, year: number) : Promise<aoc_member[]> {
     const concaturl = url + year + path + id + ".json";
     const answer = await axios.get(concaturl, {headers: {'Content-Type' : 'application/json', 'cookie':'session=' + process.env.AOC_SESSION}});
     const data = answer.data as aoc_data;
@@ -47,7 +55,14 @@ export async function requestLeaderboard(id: number, year: number) {
     return members;
 }
 
-export async function embedLeaderboard(id:number, year: number) {
+/**
+ * Generates the embed for displaying a leaderboard
+ *
+ * @param id ID of the leaderboard
+ * @param year Year of this AoC competition
+ * @returns The Embed for showing the leaderboard
+ */
+export async function embedLeaderboard(id:number, year: number) : Promise<EmbedBuilder> {
     const members = await requestLeaderboard(id, year);
     const map = {} as {[key:string]: string};
     for(const m of members) {

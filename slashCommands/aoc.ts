@@ -3,6 +3,9 @@ import {CommandInteraction} from "discord.js";
 import {embedLeaderboard} from "../lib/aocleaderboardparser";
 import {get} from "../lib/configmanager";
 
+/**
+ * Slash command definition for /aoc, a command that sends the current leaderboard
+ */
 export default {
     command: {
         name: "aoc",
