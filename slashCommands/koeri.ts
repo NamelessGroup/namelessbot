@@ -48,7 +48,7 @@ function _getRateOptions(): MessageSelectOption[] {
  * @param upperBound Upper bound of the generation (inclusive)
  * @returns Random integer
  */
-function _randint(lowerBound: number, upperBound: number) {
+function _randint(lowerBound: number, upperBound: number): number {
     return Math.floor(Math.random() * (upperBound - lowerBound + 1) + lowerBound);
 }
 
@@ -197,7 +197,7 @@ const command = {
  * 
  * @param interaction Interaction to handle
  */
-async function handler(interaction: CommandInteraction) {
+async function handler(interaction: CommandInteraction): Promise<void> {
     const options = interaction.options as CommandInteractionOptionResolver;
     if(options.getSubcommand() === "generate") {
         await interaction.deferReply();
