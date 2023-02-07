@@ -1,8 +1,9 @@
-name: Build and Deploy
+name: Build and Deploy - Documentation
 on:
   push:
     branches:
       - "main"
+      - "dev_docs"
   workflow_dispatch:
 permissions:
   contents: write
