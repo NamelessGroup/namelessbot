@@ -1,0 +1,9 @@
+modules/aoc @MartinKrausewitz
+modules/attendancetracker @c0derMo @Kr0nox
+modules/koeri @c0derMo
+modules/mensa @c0derMo
+modules/truthtable @c0derMo
+modules/vote @MartinKrausewitz
+lib @c0derMo
+index.ts @c0derMo
+run.sh @c0derMo
