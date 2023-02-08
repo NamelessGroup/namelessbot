@@ -533,10 +533,10 @@ interface ParserResult {
 }
 
 /**
- * Parsing the input string, building an AST of the boolean expression
+ * Parsing the input string, building an abstract syntax tree of the boolean expression
  * 
  * @param input Input string
- * @returns AST & variables of the input expression
+ * @returns Abstract syntax tree & variables of the input expression
  */
 export function parse(input: string): ParserResult {
     const scanResult = scan(input);
@@ -759,7 +759,7 @@ interface TruthTable {
 }
 
 /**
- * Generates a truthtable with the supplied AST & variables
+ * Generates a truthtable with the supplied abstract syntax tree & variables
  * 
  * @param parseResult Parsed truthtable
  * @returns Truthtable with variables & results for given variable assignments
