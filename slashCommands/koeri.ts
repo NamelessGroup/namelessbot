@@ -21,6 +21,11 @@ interface IStringKoeriList {
 const maxPossibleCombinations = 64;
 const legendaryCombinations = [63];
 
+/**
+ * Returns all rating options for combinations.
+ *
+ * @returns Rating options
+ */
 function _getRateOptions(): MessageSelectOption[] {
     const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     const result: MessageSelectOption[] = [];
@@ -36,26 +41,54 @@ function _getRateOptions(): MessageSelectOption[] {
     return result;
 }
 
-function _randint(lowerBound: number, upperBound: number) {
+/**
+ * Generates a random integer between the supplied bounds.
+ *
+ * @param lowerBound Lower bound of the generation (inclusive)
+ * @param upperBound Upper bound of the generation (inclusive)
+ * @returns Random integer
+ */
+function _randint(lowerBound: number, upperBound: number): number {
     return Math.floor(Math.random() * (upperBound - lowerBound + 1) + lowerBound);
 }
 
+/**
+ * Checks if a user already had a combination previously.
+ *
+ * @param userId User to check
+ * @param combination Combination to check
+ * @returns true, if the user already had the supplied combination, false otherwise
+ */
 function _hasHadCombination(userId: Snowflake, combination: number): boolean {
     const userCfg = get(userId, "koeri") as IKoeriList;
     if(userCfg === undefined) return false;
     return userCfg[combination] !== undefined;
 }
 
+/**
+ * Checks whether a user already had all combinations possible.
+ * 
+ * @param userId User to check
+ * @param includeLegendary Whether to also check for legendary combinations
+ * @returns true, if the user has had all combinations, false otherwise
+ */
 function _hadEveryCombination(userId: Snowflake, includeLegendary=false): boolean {
     const userCfg = get(userId, "koeri") as IKoeriList;
     if(userCfg === undefined) return false;
     if (includeLegendary) {
-        return Object.keys(userCfg).length >= maxPossibleCombinations - 1
+        return Object.keys(userCfg).length >= maxPossibleCombinations - 1;
     } else {
-        return Object.keys(userCfg).length >= maxPossibleCombinations - 1 - legendaryCombinations.length
+        return Object.keys(userCfg).length >= maxPossibleCombinations - 1 - legendaryCombinations.length;
     }
 }
 
+/**
+ * Sets the rating of a user of a specific combination.
+ * 
+ * @param userId User to set rating for
+ * @param combination Combination to set the rating for
+ * @param rating Rating to set
+ */
 export async function setRating(userId: Snowflake, combination: number, rating: number): Promise<void> {
     let userCfg = get(userId, "koeri") as IKoeriList;
     if(userCfg === undefined) userCfg = {};
@@ -63,7 +96,13 @@ export async function setRating(userId: Snowflake, combination: number, rating: 
     await write(userId, "koeri", userCfg);
 }
 
-function _combinationToSeasonings(combination: number) {
+/**
+ * Converts a combination number to a string.
+ * 
+ * @param combination Combination to convert
+ * @returns The combination as a string
+ */
+function _combinationToSeasonings(combination: number): string {
     let s = (combination >>> 0).toString(2);
     while(s.length < Math.log2(maxPossibleCombinations)) {
         s = "0" + s;
@@ -72,12 +111,18 @@ function _combinationToSeasonings(combination: number) {
     const sSplit = s.split("");
     for(const i in sSplit) {
         if(sSplit[i] === "1") {
-            result += "Gewürz " + (parseInt(i) - 1 + 2) + ", "
+            result += "Gewürz " + (parseInt(i) - 1 + 2) + ", ";
         }
     }
     return result.substring(0, result.length-2);
 }
 
+/**
+ * Returns the amount of seasonings in a combinanion.
+ * 
+ * @param combination Combination to check
+ * @returns The amount of seasonings inside that combination
+ */
 function _combinationToAmountSeasonings(combination: number): number {
     let s = (combination >>> 0).toString(2);
     while(s.length < Math.log2(maxPossibleCombinations)) {
@@ -147,7 +192,12 @@ const command = {
     ]
 } as ApplicationCommandData;
 
-async function handler(interaction: CommandInteraction) {
+/**
+ * Handles a command interaction.
+ * 
+ * @param interaction Interaction to handle
+ */
+async function handler(interaction: CommandInteraction): Promise<void> {
     const options = interaction.options as CommandInteractionOptionResolver;
     if(options.getSubcommand() === "generate") {
         await interaction.deferReply();
@@ -163,8 +213,8 @@ async function handler(interaction: CommandInteraction) {
         while(_hasHadCombination(interaction.user.id, combination)
             || (legendaryCombinations.includes(combination) && !_hadEveryCombination(interaction.user.id))
             || (options.getInteger("amount_seasonings") !== null && options.getInteger("amount_seasonings") !== _combinationToAmountSeasonings(combination))) {
-            combination += 1
-            combination %= maxPossibleCombinations
+            combination += 1;
+            combination %= maxPossibleCombinations;
             if(combination === 0) {
                 combination = 1;
             }
@@ -234,7 +284,7 @@ async function handler(interaction: CommandInteraction) {
         let message = "Koeri-Fortschritt:\n`";
         message += "#".repeat(Math.floor(percentage / 5));
         message += ".".repeat(20 - Math.floor(percentage / 5));
-        message += `  ${amountCombinationsRated} / ${maxPossibleCombinations - 1} (${percentage.toFixed(2)}%)`
+        message += `  ${amountCombinationsRated} / ${maxPossibleCombinations - 1} (${percentage.toFixed(2)}%)`;
         message += "`";
         await interaction.followUp(message);
         return;
@@ -245,6 +295,9 @@ async function handler(interaction: CommandInteraction) {
     });
 }
 
+/**
+ * Slash command definiton for /koeri
+ */
 export default {
     command,
     handler

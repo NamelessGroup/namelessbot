@@ -1,6 +1,9 @@
 node_modules
+docs
+.DS_Store
 .idea
 *.js
 yarn-error.log
 .env
 config/*.json
+.vscode

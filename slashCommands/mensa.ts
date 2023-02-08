@@ -2,6 +2,9 @@ import {ISlashCommand} from "../types";
 import {CommandInteraction} from "discord.js";
 import {buildMensaEmbed, getMensaData} from "../lib/mensaparser";
 
+/**
+ * Slash command definition for /mensa
+ */
 export default {
     command: {
         name: "mensa",

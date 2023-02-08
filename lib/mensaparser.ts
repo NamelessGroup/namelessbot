@@ -3,7 +3,7 @@ import {CanteenLine, fetchMensa} from "ka-mensa-fetch";
 
 
 /**
- * Returns the food plan from the KIT-Adenauerring-Mensa for today
+ * Returns the food plan from the KIT-Adenauerring-Mensa for today.
  */
 export async function getMensaData(): Promise<CanteenLine[]> {
     const mensaData = await fetchMensa("simplesite", {canteens: ['adenauerring']});
@@ -11,7 +11,10 @@ export async function getMensaData(): Promise<CanteenLine[]> {
 }
 
 /**
- * Builds an embed using the supplied food plan
+ * Builds an embed using the supplied food plan.
+ * 
+ * @param foodPlan Food plan to build an embed for
+ * @returns Embed of the supplied foodplan
  */
 export function buildMensaEmbed(foodPlan: CanteenLine[]): EmbedBuilder {
     const embed = new EmbedBuilder();
@@ -24,7 +27,7 @@ export function buildMensaEmbed(foodPlan: CanteenLine[]): EmbedBuilder {
         if (line.meals.length > 0) {
             const content = line.meals.map(e => {
                 if (e.price !== "") {
-                    return `${e.name} (${e.price})`
+                    return `${e.name} (${e.price})`;
                 } else {
                     return `_${e.name}_`;
                 }

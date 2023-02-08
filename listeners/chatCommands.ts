@@ -1,6 +1,10 @@
 import {Message} from "discord.js";
 import {CHAT_COMMAND_PREFIX, CHAT_COMMANDS} from "../lib/commands";
+import { IEventListener } from "../types";
 
+/**
+ * Event handler for handling chat-commands
+ */
 export default {
     event: 'messageCreate',
     elevated: true,
@@ -16,5 +20,4 @@ export default {
             }
         }
     }
-
-}
+} as IEventListener;

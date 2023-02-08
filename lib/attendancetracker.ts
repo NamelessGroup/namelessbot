@@ -165,6 +165,7 @@ export function resetAttendance(): void {
 
 /**
  * Updates the attendance inside the tracker file.
+ * 
  * @param weekday Weekday to update attendance for
  * @param block Block to update attendance for
  * @param userId User to update attendance for

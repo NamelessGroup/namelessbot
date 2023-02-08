@@ -13,8 +13,8 @@ export const CHAT_COMMAND_PREFIX = "!";
 
 export const CHAT_COMMANDS: IChatCommandList = {
     "test": test
-}
+};
 
 export const SLASH_COMMANDS: ISlashCommand[] = [
     testSlash, koeri, mensa, vote, truthtable, aoc, timetable
-]
+];

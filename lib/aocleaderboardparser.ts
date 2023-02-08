@@ -1,8 +1,8 @@
 import axios from "axios";
 import {EmbedBuilder} from "discord.js";
 
-const url = "https://adventofcode.com/"
-const path = "/leaderboard/private/view/"
+const url = "https://adventofcode.com/";
+const path = "/leaderboard/private/view/";
 interface aoc_data {
     event: string
     owner_id: number
@@ -31,7 +31,15 @@ interface aoc_member {
         }
     }
 }
-export async function requestLeaderboard(id: number, year: number) {
+
+/**
+ * Gets the current leaderboard data from the AoC servers
+ *
+ * @param id ID of the leaderboard
+ * @param year Year of this AoC competition
+ * @returns Array of members of this leaderboard
+ */
+export async function requestLeaderboard(id: number, year: number) : Promise<aoc_member[]> {
     const concaturl = url + year + path + id + ".json";
     const answer = await axios.get(concaturl, {headers: {'Content-Type' : 'application/json', 'cookie':'session=' + process.env.AOC_SESSION}});
     const data = answer.data as aoc_data;
@@ -47,9 +55,16 @@ export async function requestLeaderboard(id: number, year: number) {
     return members;
 }
 
-export async function embedLeaderboard(id:number, year: number) {
+/**
+ * Generates the embed for displaying a leaderboard
+ *
+ * @param id ID of the leaderboard
+ * @param year Year of this AoC competition
+ * @returns The Embed for showing the leaderboard
+ */
+export async function embedLeaderboard(id:number, year: number) : Promise<EmbedBuilder> {
     const members = await requestLeaderboard(id, year);
-    const map = {} as {[key:string]: string}
+    const map = {} as {[key:string]: string};
     for(const m of members) {
         map[m.name] = "";
         for (const k in m.completion_day_level) {
@@ -65,7 +80,7 @@ export async function embedLeaderboard(id:number, year: number) {
         }
     }
     const embed = new EmbedBuilder().setURL("https://adventofcode.com").setTitle("Advent of Code Leaderboard")
-        .addFields({name:"Ranking", value:members.map(e => { return e.name + ": " + e.local_score + map[e.name]  }).join("\n")});
+        .addFields({name:"Ranking", value:members.map(e => { return e.name + ": " + e.local_score + map[e.name]; }).join("\n")});
     return embed;
 }
 
