@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
-import { get, write } from "./configmanager";
-import { Weekday } from "./recurringtask";
+import { get, write } from "../../lib/configmanager";
+import { Weekday } from "../../lib/recurringtask";
 import {buildTimeTableEmbed, getNextTime} from "./attendancetrackerVisuals";
 
 export interface CalendarBlock {

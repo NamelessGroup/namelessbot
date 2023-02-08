@@ -1,9 +1,9 @@
 import {Client, TextChannel} from "discord.js";
-import { get } from "../lib/configmanager";
-import { Weekday } from "../lib/recurringtask";
-import {TaskExecutor} from "../types";
-import {buildAttendanceAction, buildTimeTableEmbed} from "../lib/attendancetrackerVisuals";
-import {getBlocks, resetAttendance} from "../lib/attendancetracker";
+import { get } from "../../lib/configmanager";
+import { Weekday } from "../../lib/recurringtask";
+import {TaskExecutor} from "../../types";
+import {buildAttendanceAction, buildTimeTableEmbed} from "./attendancetrackerVisuals";
+import {getBlocks, resetAttendance} from "./attendancetracker";
 
 /**
  * TaskExecutor for printing the timetable with attendance buttons of the given weekday <br>

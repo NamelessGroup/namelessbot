@@ -14,8 +14,8 @@ import {
     CollectedInteraction,
     Role, GuildMember, Snowflake
 } from "discord.js";
-import {ISlashCommand} from "../types";
-import {get} from "../lib/configmanager";
+import {ISlashCommand} from "../../types";
+import {get} from "../../lib/configmanager";
 
 const upEmo = "👍";
 const downEmo = "👎";

@@ -1,5 +1,5 @@
 import {Interaction} from "discord.js";
-import {setRating} from "../slashCommands/koeri";
+import {setRating} from "./koeriCommand";
 
 const REGEX = /koeri-u(\d+)\$(\d+)/;
 

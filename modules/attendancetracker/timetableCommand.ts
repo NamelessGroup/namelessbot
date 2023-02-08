@@ -1,12 +1,12 @@
-import {ISlashCommand} from "../types";
+import {ISlashCommand} from "../../types";
 import {
     ApplicationCommandOptionType,
     CommandInteraction,
     CommandInteractionOptionResolver
 } from "discord.js";
-import { addBlock, getBlocks, removeBlock, updateBlock } from "../lib/attendancetracker";
-import { Weekday } from "../lib/recurringtask";
-import {buildTimeTableEmbed} from "../lib/attendancetrackerVisuals";
+import { addBlock, getBlocks, removeBlock, updateBlock } from "./attendancetracker";
+import { Weekday } from "../../lib/recurringtask";
+import {buildTimeTableEmbed} from "./attendancetrackerVisuals";
 
 /**
  * Slash command definition for /timetable
