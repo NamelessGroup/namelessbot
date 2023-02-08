@@ -79,8 +79,8 @@ export async function writeConfigFile(path: string, content: string): Promise<vo
 /**
  * Gets a key from a config.
  * The key is tried to be read from the supplied config.
- * If the config doesn't exist in-memory, a {@link ReferenceError} will be thrown.
- * If the key doesn't exist, {@link undefined} will be returned.
+ * If the config doesn't exist in-memory, a ReferenceError will be thrown.
+ * If the key doesn't exist, undefined will be returned.
  * 
  * @param key Key to look up
  * @param config Config to look up
@@ -94,7 +94,7 @@ export function get(key: string, config: string): unknown {
 
 /**
  * Writes a key to the supplied config.
- * If the supplied config doesn't exist, a {@link ReferenceError} will be thrown.
+ * If the supplied config doesn't exist, a ReferenceError will be thrown.
  * All configs will afterwards be written to disk.
  *
  * @param key Key to write to

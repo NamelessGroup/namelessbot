@@ -6,7 +6,7 @@ import aoc from "../tasks/aoc";
 import attendanceTracker from "../tasks/attendanceTrackerTask";
 
 /**
- * Array containing all {@link RecurringTask}s
+ * Array containing all {@link lib/recurringtask.RecurringTask}s
  */
 export const TASKS = [
     //new RecurringTask(Weekday.TUESDAY, 21, 47, reminder, ["MOAR ARGUMENTS"]),

@@ -19,7 +19,7 @@ async function checkForTasks(client: Client): Promise<void> {
 }
 
 /**
- * Starts the {@link RecurringTask} loop
+ * Starts the {@link lib/recurringtask.RecurringTask} loop
  * 
  * @param client Client to run the tasks with
  */
@@ -28,7 +28,7 @@ export function startRecurringTaskLoop(client: Client): void {
 }
 
 /**
- * Stops the {@link RecurringTask} loop
+ * Stops the {@link lib/recurringtask.RecurringTask} loop
  */
 export function stopRecurringTaskLoop(): void {
     clearInterval(taskLoop);
