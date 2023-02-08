@@ -9,7 +9,7 @@ import { Weekday } from "../lib/recurringtask";
 import {buildTimeTableEmbed} from "../lib/attendancetrackerVisuals";
 
 /**
- * Command object of the /timetable command
+ * Slash command definition for /timetable
  */
 export default {
     command: {

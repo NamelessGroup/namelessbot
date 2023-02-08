@@ -6,7 +6,7 @@ import {buildAttendanceAction, buildTimeTableEmbed} from "../lib/attendancetrack
 import {getBlocks, resetAttendance} from "../lib/attendancetracker";
 
 /**
- * TaskExecutor object for printing the timetable with attendance buttons of the given weekday <br>
+ * TaskExecutor for printing the timetable with attendance buttons of the given weekday <br>
  *
  * @param client Client to execute the task with
  * @param weekday Weekday to execute the task with

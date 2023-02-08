@@ -3,7 +3,7 @@ import {TaskExecutor} from "../types";
 import {get} from "../lib/configmanager";
 
 /**
- * Task executor for sending us reminders.
+ * TaskExecutor for sending us reminders.
  * 
  * @param client Client to send messages with
  * @param message Reminder message to send

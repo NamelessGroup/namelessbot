@@ -4,7 +4,7 @@ import {get} from "../lib/configmanager";
 import {TaskExecutor} from "../types";
 
 /**
- * Task executor for sending mensa plans
+ * TaskExecutor for sending mensa plans
  *
  * @param client Client to send plans with
  */
