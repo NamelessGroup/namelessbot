@@ -46,7 +46,8 @@ module.exports = {
             "MethodDefinition": true
         }, "contexts": [ "ExportDefaultDeclaration" ] }],
         "jsdoc/require-param-type": 0,
-        "jsdoc/require-returns-type": 0
+        "jsdoc/require-returns-type": 0,
+        "jsdoc/no-types": "error"
     },
     "settings": {
         "jsdoc": {
