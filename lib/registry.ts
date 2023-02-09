@@ -11,8 +11,8 @@ import voteCommand from "../modules/vote/voteCommand";
 import mensaTask from "../modules/mensa/mensaTask";
 import aocTask from "../modules/aoc/aocTask";
 import attendanceTrackerTask from "../modules/attendancetracker/attendanceTrackerTask";
-import koeriSelectionMenu from "../modules/koeri/koeriSelectionMenu";
-import attendanceTrackerButton from "../modules/attendancetracker/attendanceTrackerButton";
+import koeriSelectionMenu from "../modules/koeri/koeriSelectionMenuListener";
+import attendanceTrackerButton from "../modules/attendancetracker/attendanceTrackerButtonListener";
 
 export const SLASH_COMMANDS: ISlashCommand[] = [
     koeriCommand, mensaCommand, voteCommand, truthtableCommand, aocCommand, timetableCommand

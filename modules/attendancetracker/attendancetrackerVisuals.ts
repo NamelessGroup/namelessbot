@@ -1,4 +1,4 @@
-import {CalendarBlock, getBlocks} from "./attendancetracker";
+import {CalendarBlock, getBlocks} from "./attendanceTracker";
 import {ActionRowBuilder, APIEmbedField, ButtonBuilder, ButtonStyle, EmbedBuilder} from "discord.js";
 import {DateTime} from "luxon";
 

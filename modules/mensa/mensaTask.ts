@@ -1,5 +1,5 @@
 import {Client, TextChannel} from "discord.js";
-import {buildMensaEmbed, getMensaData} from "./mensaparser";
+import {buildMensaEmbed, getMensaData} from "./mensaParser";
 import {get} from "../../lib/configmanager";
 import {TaskExecutor} from "../../types";
 

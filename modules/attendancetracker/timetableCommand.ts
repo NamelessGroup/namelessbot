@@ -4,9 +4,9 @@ import {
     CommandInteraction,
     CommandInteractionOptionResolver
 } from "discord.js";
-import { addBlock, getBlocks, removeBlock, updateBlock } from "./attendancetracker";
+import { addBlock, getBlocks, removeBlock, updateBlock } from "./attendanceTracker";
 import { Weekday } from "../../lib/recurringtask";
-import {buildTimeTableEmbed} from "./attendancetrackerVisuals";
+import {buildTimeTableEmbed} from "./attendanceTrackerVisuals";
 
 /**
  * Slash command definition for /timetable

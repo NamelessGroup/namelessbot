@@ -1,6 +1,6 @@
 import {ISlashCommand} from "../../types";
 import {ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver} from "discord.js";
-import {generateTruthTable, parse} from "./truthtable";
+import {generateTruthTable, parse} from "./truthtableParser";
 
 /**
  * Slash command definition for /truthtable

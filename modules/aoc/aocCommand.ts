@@ -1,6 +1,6 @@
 import {ISlashCommand} from "../../types";
 import {CommandInteraction} from "discord.js";
-import {embedLeaderboard} from "./aocleaderboardparser";
+import {embedLeaderboard} from "./aocLeaderboardParser";
 import {get} from "../../lib/configmanager";
 
 /**

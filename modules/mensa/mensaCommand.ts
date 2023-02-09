@@ -1,6 +1,6 @@
 import {ISlashCommand} from "../../types";
 import {CommandInteraction} from "discord.js";
-import {buildMensaEmbed, getMensaData} from "./mensaparser";
+import {buildMensaEmbed, getMensaData} from "./mensaParser";
 
 /**
  * Slash command definition for /mensa
