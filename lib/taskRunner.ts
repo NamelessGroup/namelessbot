@@ -1,6 +1,6 @@
 import {Client} from "discord.js";
 import {DateTime} from "luxon";
-import {TASKS} from "./tasks";
+import { TASKS } from "./registry";
 
 let taskLoop: NodeJS.Timer;
 

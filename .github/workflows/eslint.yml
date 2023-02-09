@@ -1,4 +1,4 @@
-name: dev-ts lint
+name: CI - Linting
 on:
   push:
   workflow_dispatch:

@@ -1,7 +1,7 @@
-import {ISlashCommand} from "../types";
+import {ISlashCommand} from "../../types";
 import {CommandInteraction} from "discord.js";
-import {embedLeaderboard} from "../lib/aocleaderboardparser";
-import {get} from "../lib/configmanager";
+import {embedLeaderboard} from "./aocLeaderboardParser";
+import {get} from "../../lib/configmanager";
 
 /**
  * Slash command definition for /aoc, a command that sends the current leaderboard

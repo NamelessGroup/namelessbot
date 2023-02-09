@@ -1,7 +1,7 @@
 import {Client, TextChannel} from "discord.js";
-import {buildMensaEmbed, getMensaData} from "../lib/mensaparser";
-import {get} from "../lib/configmanager";
-import {TaskExecutor} from "../types";
+import {buildMensaEmbed, getMensaData} from "./mensaParser";
+import {get} from "../../lib/configmanager";
+import {TaskExecutor} from "../../types";
 
 /**
  * TaskExecutor for sending mensa plans

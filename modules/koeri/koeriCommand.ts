@@ -1,4 +1,4 @@
-import {ISlashCommand} from "../types";
+import {ISlashCommand} from "../../types";
 import {
     ApplicationCommandData,
     ApplicationCommandOptionType,
@@ -8,7 +8,7 @@ import {
     MessageSelectOption,
     Snowflake
 } from "discord.js";
-import {get, write} from "../lib/configmanager";
+import {get, write} from "../../lib/configmanager";
 
 interface IKoeriList {
     [combination: number]: number
