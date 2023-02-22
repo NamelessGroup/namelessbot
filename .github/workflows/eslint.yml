@@ -10,6 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: reviewdog/action-eslint@v1
+      - name: Setup node
+        uses: actions/setup-node@v3
+      - run: yarn install --dev
+      - run: yarn lint --output-file eslint_report.json --format json
+        continue-on-error: true
+      - name: Annotate code linting results
+        uses: ataylorme/eslint-annotate-action@1.0.4
         with:
-          reporter: github-check
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          report-json: "eslint_report.json"
