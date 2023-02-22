@@ -8,7 +8,7 @@ const INTENTS = [
     IntentsBitField.Flags.GuildMessages,
     IntentsBitField.Flags.Guilds,
     IntentsBitField.Flags.GuildMessageReactions
-];
+]
 
 const client = new Client({intents: INTENTS});
 
