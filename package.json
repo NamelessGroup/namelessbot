@@ -19,7 +19,7 @@
     "eslint": "^8.35.0",
     "eslint-plugin-jsdoc": "^40.0.0",
     "ts-node": "^10.9.1",
-    "typedoc": "^0.23.24",
+    "typedoc": "^0.23.26",
     "typedoc-plugin-missing-exports": "^1.0.0",
     "typedoc-theme-hierarchy": "^3.0.2",
     "@knodes/typedoc-plugin-pages": "^0.23.1",
