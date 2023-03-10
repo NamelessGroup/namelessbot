@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - "master"
+    paths-ignore:
+      - "package.json"
+      - "yarn.lock"
   workflow_dispatch:
 permissions:
   contents: write
