@@ -1,5 +1,6 @@
 import {Client} from "discord.js";
-import {TaskExecutor} from "../types";
+import {TaskExecutor} from "../../types";
+import {DateTime} from "luxon";
 
 /**
  * Enum representing each weekday
@@ -52,7 +53,7 @@ export class RecurringTask {
      * 
      * @param client Client to run the task with
      */
-    async run(client: Client): Promise<void> {
+    public async run(client: Client): Promise<void> {
         try {
             this.runner(client, ...this.arguments);
         } catch(e) {
@@ -69,7 +70,7 @@ export class RecurringTask {
      * @param minute The minute to compare to
      * @returns 0 if equal, 1 if this object is later as the compared time, -1 otherwise
      */
-    compareTime(weekday: Weekday, hour: number, minute: number): number {
+    private compareTime(weekday: Weekday, hour: number, minute: number): number {
         if(this.weekday === weekday && this.hour === hour && this.minute === minute) {
             return 0;
         }
@@ -80,5 +81,15 @@ export class RecurringTask {
         } else {
             return -1;
         }
+    }
+
+    /**
+     * Checks whether this task should be executed at the given time
+     *
+     * @param time Time to check against
+     * @returns Whether the task should be executed
+     */
+    public shouldRunAtTime(time: DateTime): boolean {
+        return this.compareTime(time.weekday-1, time.hour, time.minute) === 0;
     }
 }

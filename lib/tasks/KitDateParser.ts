@@ -1,0 +1,167 @@
+import axios from "axios";
+
+/**
+ * Parser for transforming the lecture dates from the kit website and checking whether dates are in this span
+ */
+export default class KitDateParser {
+
+
+    private static dateRegex= '[0-9]{2}[.][0-9]{2}[.][0-9]{4} - [0-9]{2}[.][0-9]{2}[.][0-9]{4}';
+
+    private timeSpans: TimeSpan[];
+
+    /**
+     * Fetches the current dates on startup
+     */
+    constructor() {
+        this.fetchData();
+    }
+
+    /**
+     * Checks whether the given Date is a timespan where lectures are given
+     *
+     * @param date Date to check against
+     * @returns True if it is inside a week, where lectures are held, false otherwise. True if no timeSpans found
+     */
+    public isLectureTime(date: Date): boolean {
+        if (this.timeSpans.length == 0) {
+            return true;
+        }
+        for (const t of this.timeSpans) {
+            if (t.isInside(date)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Updates the timeSpans array
+     */
+    private fetchData(): void {
+        this.getHTML("https://www.sle.kit.edu/imstudium/termine-fristen.php").then(html => {
+            this.timeSpans = this.parseDateStrings(this.queryDateStrings(html));
+        });
+    }
+
+    /**
+     * Parses the html string and extracts all the relevant dates from it
+     *
+     * @param html html string
+     * @returns the dates
+     */
+    private queryDateStrings(html: string): string[] {
+        let tableStart = html.indexOf("<table");
+        let index = -1;
+        const allTimes = [];
+        do {
+            index = html.indexOf("<tr", tableStart);
+            if (index == -1) {
+                break;
+            }
+            for (let i = 0; i < 3; i++) {
+                while (!html.substring(index, index + 23).match(KitDateParser.dateRegex)) {
+                    index++;
+                }
+                if (i != 0) {
+                    allTimes.push(html.substring(index, index+23));
+                }
+
+                index += 25;
+            }
+            tableStart = index + 1;
+        } while (index != 1);
+
+        return allTimes;
+    }
+
+    /**
+     * Parses the given times from the query function and transforms them into TimeSpans
+     *
+     * @param dateStrings queried dates
+     * @returns The matching TimeSpans
+     */
+    private parseDateStrings(dateStrings: string[]): TimeSpan[] {
+        const tempTimeSpans: TimeSpan[] = [];
+
+        for (let i = 0; i < dateStrings.length / 2; i += 2) {
+            const splitsAll = dateStrings[i].split(" - ");
+            const splitsFree = dateStrings[i + 1].split(" - ");
+
+            const date1 = this.stringToDate(splitsAll[0]);
+            const date2 = this.stringToDate(splitsFree[0]);
+            const date3 = this.stringToDate(splitsFree[1]);
+            date3.setHours(25);
+            const date4 = this.stringToDate(splitsAll[1]);
+            const span1 = new TimeSpan(date1, date2);
+            const span2 = new TimeSpan(date3, date4);
+            tempTimeSpans.push(span1, span2);
+        }
+
+        return tempTimeSpans;
+    }
+
+    /**
+     * Transforms a date from the kit website into a date object
+     *
+     * @param d string to transform (DD.MM.YYY)
+     * @returns The corresponding date
+     */
+    private stringToDate(d: string): Date {
+        const splits = d.split(".");
+
+        const date = new Date();
+        date.setUTCFullYear(parseInt(splits[2]), parseInt(splits[1]) - 1, parseInt(splits[0]));
+        date.setUTCHours(0, 0, 0, 0);
+        return date;
+    }
+
+    /**
+     * Fetches the html source code form the given url
+     *
+     * @param url Website to fetch from
+     * @returns the html source code
+     */
+    private async getHTML(url: string): Promise<string>  {
+        const response = await axios.get(url);
+        return response.data as string;
+    }
+}
+
+/**
+ * Class that represents a time span. [start, end)
+ */
+class TimeSpan {
+    start: Date;
+    end: Date;
+
+    /**
+     * Creates timespan [start, end)
+     * 
+     * @param start start time (inclusive)
+     * @param end end time (exclusive)
+     */
+    constructor(start: Date, end: Date) {
+        this.start = start;
+        this.end = end;
+    }
+
+    /**
+     * Checks whether a date is inside this timespan
+     *
+     * @param date Date to check against
+     * @returns Whether the date is in the span
+     */
+    public isInside(date: Date): boolean {
+        return date >= this.start && date < this.end;
+    }
+
+    /**
+     * Transforms this timespan into a string
+     *
+     * @returns string representation of the timespan
+     */
+    public toString(): string {
+        return `${this.start.toDateString()} - ${this.end.toDateString()}`;
+    }
+}
