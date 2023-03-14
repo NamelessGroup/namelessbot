@@ -41,7 +41,6 @@ export default class KitDateParser {
     private fetchData(): void {
         this.getHTML(KitDateParser.dateURL).then(html => {
             this.timeSpans = this.parseDateStrings(this.queryDateStrings(html));
-            console.log(this.timeSpans);
         });
     }
 
