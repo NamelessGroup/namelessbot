@@ -5,7 +5,7 @@ import {
     CommandInteractionOptionResolver
 } from "discord.js";
 import { addBlock, getBlocks, removeBlock, updateBlock } from "./attendanceTracker";
-import { Weekday } from "../../lib/recurringtask";
+import { Weekday } from "../../lib/tasks/recurringtask";
 import {buildTimeTableEmbed} from "./attendanceTrackerVisuals";
 
 /**

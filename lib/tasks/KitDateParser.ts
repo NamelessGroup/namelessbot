@@ -5,8 +5,8 @@ import axios from "axios";
  */
 export default class KitDateParser {
 
-
-    private static dateRegex= '[0-9]{2}[.][0-9]{2}[.][0-9]{4} - [0-9]{2}[.][0-9]{2}[.][0-9]{4}';
+    private static dateRegex = '[0-9]{2}[.][0-9]{2}[.][0-9]{4} - [0-9]{2}[.][0-9]{2}[.][0-9]{4}';
+    private static dateURL = 'https://www.sle.kit.edu/imstudium/termine-fristen.php';
 
     private timeSpans: TimeSpan[];
 
@@ -39,8 +39,9 @@ export default class KitDateParser {
      * Updates the timeSpans array
      */
     private fetchData(): void {
-        this.getHTML("https://www.sle.kit.edu/imstudium/termine-fristen.php").then(html => {
+        this.getHTML(KitDateParser.dateURL).then(html => {
             this.timeSpans = this.parseDateStrings(this.queryDateStrings(html));
+            console.log(this.timeSpans);
         });
     }
 
@@ -69,9 +70,8 @@ export default class KitDateParser {
 
                 index += 25;
             }
-            tableStart = index + 1;
+            tableStart = index;
         } while (index != 1);
-
         return allTimes;
     }
 
@@ -84,21 +84,35 @@ export default class KitDateParser {
     private parseDateStrings(dateStrings: string[]): TimeSpan[] {
         const tempTimeSpans: TimeSpan[] = [];
 
-        for (let i = 0; i < dateStrings.length / 2; i += 2) {
+        for (let i = 0; i < dateStrings.length; i += 2) {
             const splitsAll = dateStrings[i].split(" - ");
             const splitsFree = dateStrings[i + 1].split(" - ");
 
-            const date1 = this.stringToDate(splitsAll[0]);
-            const date2 = this.stringToDate(splitsFree[0]);
-            const date3 = this.stringToDate(splitsFree[1]);
-            date3.setHours(25);
-            const date4 = this.stringToDate(splitsAll[1]);
-            const span1 = new TimeSpan(date1, date2);
-            const span2 = new TimeSpan(date3, date4);
-            tempTimeSpans.push(span1, span2);
+            tempTimeSpans.push(this.makeTimeSpan(splitsAll[0], splitsFree[0], 0));
+            // 49 adds two days
+            tempTimeSpans.push(this.makeTimeSpan(splitsFree[1], splitsAll[1], 49));
         }
 
         return tempTimeSpans;
+    }
+
+    /**
+     * Creates a new TimeSpan from the given date strings
+     *
+     * @param start String of first date
+     * @param end String of last date
+     * @param startHourSetter Time to set start date to
+     * @returns The corresponding TimeSpan
+     */
+    private makeTimeSpan(start: string, end:string, startHourSetter?: number): TimeSpan {
+        const dateStart = this.stringToDate(start);
+        const dateEnd = this.stringToDate(end);
+
+        if (startHourSetter != undefined) {
+            dateStart.setHours(startHourSetter);
+        }
+
+        return new TimeSpan(dateStart, dateEnd);
     }
 
     /**
