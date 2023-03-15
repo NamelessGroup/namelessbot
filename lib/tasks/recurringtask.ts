@@ -34,7 +34,7 @@ export class RecurringTask {
      * @param hour Hour which the task should run
      * @param minute Minute which the task should run
      * @param runner Function to execute
-     * @param functionArguments Array of additional parameters to pass to the runner fundtion
+     * @param functionArguments Array of additional parameters to pass to the runner function
      */
     constructor(weekday: Weekday, hour: number, minute: number, runner: TaskExecutor, functionArguments?: unknown[]) {
         this.weekday = weekday;
@@ -63,33 +63,12 @@ export class RecurringTask {
     }
 
     /**
-     * Compare this RecurringTask object to another time.
-     *
-     * @param weekday The weekday to compare to
-     * @param hour The hour to compare to
-     * @param minute The minute to compare to
-     * @returns 0 if equal, 1 if this object is later as the compared time, -1 otherwise
-     */
-    private compareTime(weekday: Weekday, hour: number, minute: number): number {
-        if(this.weekday === weekday && this.hour === hour && this.minute === minute) {
-            return 0;
-        }
-        if((this.weekday > weekday) ||
-            (this.weekday === weekday && this.hour > hour) ||
-            (this.weekday === weekday && this.hour === hour && this.minute > minute)) {
-            return 1;
-        } else {
-            return -1;
-        }
-    }
-
-    /**
      * Checks whether this task should be executed at the given time
      *
      * @param time Time to check against
      * @returns Whether the task should be executed
      */
     public shouldRunAtTime(time: DateTime): boolean {
-        return this.compareTime(time.weekday-1, time.hour, time.minute) === 0;
+        return this.weekday == time.weekday - 1 && this.hour == time.hour  && this.minute == time.minute;
     }
 }
