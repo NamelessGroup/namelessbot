@@ -90,7 +90,7 @@ export default class KitDateParser {
 
             tempTimeSpans.push(this.makeTimeSpan(splitsAll[0], splitsFree[0], 0));
             // 49 adds two days
-            tempTimeSpans.push(this.makeTimeSpan(splitsFree[1], splitsAll[1], 49));
+            tempTimeSpans.push(this.makeTimeSpan(splitsFree[1], splitsAll[1], 2));
         }
 
         return tempTimeSpans;
