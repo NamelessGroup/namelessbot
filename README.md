@@ -21,3 +21,5 @@ Namelessbot is a Discord-Bot based on Discord.js and implemented in TypeScript
 Slashcommands are the implementation of Discords slash commands
 ### Recurring Tasks
 These are tasks that get repeated on a regular basis every 7 days on the same weekday.
+#### University Recurring Tasks
+This special kind of recurring task only gets executed on days, where lectures are held at KIT  
