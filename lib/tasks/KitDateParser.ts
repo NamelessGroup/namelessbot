@@ -1,4 +1,5 @@
 import axios from "axios";
+import {DateTime} from "luxon";
 
 /**
  * Parser for transforming the lecture dates from the kit website and checking whether dates are in this span
@@ -23,7 +24,7 @@ export default class KitDateParser {
      * @param date Date to check against
      * @returns True if it is inside a week, where lectures are held, false otherwise. True if no timeSpans found
      */
-    public isLectureTime(date: Date): boolean {
+    public isLectureTime(date: DateTime): boolean {
         if (this.timeSpans.length == 0) {
             return true;
         }
@@ -100,7 +101,7 @@ export default class KitDateParser {
      *
      * @param start String of first date
      * @param end String of last date
-     * @param startHourSetter Time to set start date to
+     * @param startHourSetter Days to add to start date
      * @returns The corresponding TimeSpan
      */
     private makeTimeSpan(start: string, end:string, startHourSetter?: number): TimeSpan {
@@ -108,7 +109,7 @@ export default class KitDateParser {
         const dateEnd = this.stringToDate(end);
 
         if (startHourSetter != undefined) {
-            dateStart.setHours(startHourSetter);
+            dateStart.plus({days: startHourSetter});
         }
 
         return new TimeSpan(dateStart, dateEnd);
@@ -120,12 +121,9 @@ export default class KitDateParser {
      * @param d string to transform (DD.MM.YYY)
      * @returns The corresponding date
      */
-    private stringToDate(d: string): Date {
-        const splits = d.split(".");
-
-        const date = new Date();
-        date.setUTCFullYear(parseInt(splits[2]), parseInt(splits[1]) - 1, parseInt(splits[0]));
-        date.setUTCHours(0, 0, 0, 0);
+    private stringToDate(d: string): DateTime {
+        const date = DateTime.fromFormat(d, "dd.mm.yyyy");
+        date.set({hour: 0, minute: 0, second: 0, millisecond: 0});
         return date;
     }
 
@@ -145,8 +143,8 @@ export default class KitDateParser {
  * Class that represents a time span. [start, end)
  */
 class TimeSpan {
-    start: Date;
-    end: Date;
+    start: DateTime;
+    end: DateTime;
 
     /**
      * Creates timespan [start, end)
@@ -154,7 +152,7 @@ class TimeSpan {
      * @param start start time (inclusive)
      * @param end end time (exclusive)
      */
-    constructor(start: Date, end: Date) {
+    constructor(start: DateTime, end: DateTime) {
         this.start = start;
         this.end = end;
     }
@@ -165,7 +163,7 @@ class TimeSpan {
      * @param date Date to check against
      * @returns Whether the date is in the span
      */
-    public isInside(date: Date): boolean {
+    public isInside(date: DateTime): boolean {
         return date >= this.start && date < this.end;
     }
 
@@ -175,6 +173,6 @@ class TimeSpan {
      * @returns string representation of the timespan
      */
     public toString(): string {
-        return `${this.start.toDateString()} - ${this.end.toDateString()}`;
+        return `${this.start.toFormat("dd.mm.yyyy")} - ${this.end.toFormat("dd.mm.yyyy")}`;
     }
 }
