@@ -89,7 +89,6 @@ export default class KitDateParser {
             const splitsFree = dateStrings[i + 1].split(" - ");
 
             tempTimeSpans.push(this.makeTimeSpan(splitsAll[0], splitsFree[0], 0));
-            // 49 adds two days
             tempTimeSpans.push(this.makeTimeSpan(splitsFree[1], splitsAll[1], 2));
         }
 
