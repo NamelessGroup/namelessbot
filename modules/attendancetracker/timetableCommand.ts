@@ -6,7 +6,8 @@ import {
 } from "discord.js";
 import { addBlock, getBlocks, removeBlock, updateBlock } from "./attendanceTracker";
 import { Weekday } from "../../lib/recurringtask";
-import {buildTimeTableEmbed} from "./attendanceTrackerVisuals";
+import {buildResultEmbed, buildTimeTableEmbed} from "./attendanceTrackerVisuals";
+import {DateTime} from "luxon";
 
 /**
  * Slash command definition for /timetable
@@ -135,6 +136,31 @@ export default {
                         required: true
                     }
                 ]
+            },
+            {
+                type:ApplicationCommandOptionType.Subcommand,
+                name: "tracked",
+                description: "Displays the tracked attendace",
+                options: [
+                    {
+                        type: ApplicationCommandOptionType.String,
+                        name: "filter",
+                        description: "RegEx filter for names of Events",
+                        required: false
+                    },
+                    {
+                        type: ApplicationCommandOptionType.String,
+                        name: "start",
+                        description: "first date to look for",
+                        required: false
+                    },
+                    {
+                        type: ApplicationCommandOptionType.String,
+                        name: "end",
+                        description: "last date to look for",
+                        required: false
+                    }
+                ]
             }
         ]
     },
@@ -184,6 +210,14 @@ export default {
             } else {
                 await interaction.followUp({ ephemeral: true, content: "Error while updating block. Make sure the times are formatted as hh:mm." });
             }
+        } else if (options.getSubcommand() == "tracked") {
+            await interaction.deferReply({ ephemeral: false });
+            const start = options.getString("start") ? DateTime.fromFormat(options.getString("start"), "dd.mm.yyyy") : undefined;
+            const end = options.getString("end") ? DateTime.fromFormat(options.getString("end"), "dd.mm.yyyy") : undefined;
+            await interaction.reply( {
+                embeds: [ buildResultEmbed([], options.getString("filter"), start, end) ],
+                ephemeral: false
+            });
         }
     }
 } as ISlashCommand;

@@ -154,3 +154,17 @@ export function getNextTime(weekday: number, hour: number, minute: number) : Dat
     date = date.set({ hour: hour, minute: minute });
     return date;
 }
+
+export function buildResultEmbed(results: any[], filter?:string, start?: DateTime, end?: DateTime): EmbedBuilder  {
+    let name = "Attendace"
+    if (filter) {
+        name += " with filter: " + filter;
+    }
+    if (start) {
+        name += " from " + start.toFormat("dd.mm.yyyy");
+    }
+    if (end) {
+        name += " to " + end.toFormat("dd.mm.yyyy");
+    }
+    return {name: name, value:''};
+}
