@@ -18,3 +18,4 @@ updates:
     allow:
       - dependency-name: "discord.js"
       - dependency-name: "ka-mensa-fetch"
+      - dependency-name: "feiertagejs"
