@@ -1,7 +1,7 @@
 import {Client, IntentsBitField} from 'discord.js';
 import 'dotenv/config';
 import {addListeners} from "./lib/listeners";
-import {startRecurringTaskLoop} from "./lib/taskRunner";
+import {startRecurringTaskLoop} from "./lib/tasks/taskRunner";
 import {readConfig} from "./lib/configmanager";
 
 const INTENTS = [

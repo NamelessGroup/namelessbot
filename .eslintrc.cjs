@@ -43,8 +43,8 @@ module.exports = {
             "ClassExpression": true,
             "FunctionDeclaration": true,
             "FunctionExpression": false,
-            "MethodDefinition": true
-        }, "contexts": [ "ExportDefaultDeclaration" ] }],
+            "MethodDefinition": false
+        }, "contexts": [ "ExportDefaultDeclaration", "MethodDefinition[override!=true]" ] }],
         "jsdoc/require-param-type": 0,
         "jsdoc/require-returns-type": 0,
         "jsdoc/no-types": "error"
