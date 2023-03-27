@@ -1,6 +1,6 @@
 import {Client, TextChannel} from "discord.js";
 import { get } from "../../lib/configmanager";
-import { Weekday } from "../../lib/recurringtask";
+import { Weekday } from "../../lib/tasks/recurringtask";
 import {TaskExecutor} from "../../types";
 import {buildAttendanceAction, buildTimeTableEmbed} from "./attendanceTrackerVisuals";
 import {getBlocks, resetAttendance} from "./attendanceTracker";

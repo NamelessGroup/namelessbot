@@ -4,8 +4,8 @@ import {
     CommandInteraction,
     CommandInteractionOptionResolver
 } from "discord.js";
-import { addBlock, getBlocks, removeBlock, updateBlock } from "./attendanceTracker";
-import { Weekday } from "../../lib/recurringtask";
+import { addBlock, getBlocks, getTrackedAttendace, removeBlock, updateBlock } from "./attendanceTracker";
+import { Weekday } from "../../lib/tasks/recurringtask";
 import {buildResultEmbed, buildTimeTableEmbed} from "./attendanceTrackerVisuals";
 import {DateTime} from "luxon";
 
@@ -138,26 +138,26 @@ export default {
                 ]
             },
             {
-                type:ApplicationCommandOptionType.Subcommand,
-                name: "tracked",
-                description: "Displays the tracked attendace",
+                type: ApplicationCommandOptionType.Subcommand,
+                name: "stats",
+                description: "Displays the percentages of attendance",
                 options: [
                     {
                         type: ApplicationCommandOptionType.String,
                         name: "filter",
-                        description: "RegEx filter for names of Events",
+                        description: "Regex to use as filter for block names",
                         required: false
                     },
                     {
                         type: ApplicationCommandOptionType.String,
                         name: "start",
-                        description: "first date to look for",
+                        description: "First day to look at",
                         required: false
                     },
                     {
                         type: ApplicationCommandOptionType.String,
                         name: "end",
-                        description: "last date to look for",
+                        description: "Last day to look at",
                         required: false
                     }
                 ]
@@ -210,14 +210,19 @@ export default {
             } else {
                 await interaction.followUp({ ephemeral: true, content: "Error while updating block. Make sure the times are formatted as hh:mm." });
             }
-        } else if (options.getSubcommand() == "tracked") {
-            await interaction.deferReply({ ephemeral: false });
-            const start = options.getString("start") ? DateTime.fromFormat(options.getString("start"), "dd.mm.yyyy") : undefined;
-            const end = options.getString("end") ? DateTime.fromFormat(options.getString("end"), "dd.mm.yyyy") : undefined;
-            await interaction.reply( {
-                embeds: [ buildResultEmbed([], options.getString("filter"), start, end) ],
-                ephemeral: false
-            });
+        } else if (options.getSubcommand() == "stats") {
+            const dateRegex = /[0-9]{2}.[0-9]{2}.[0-9]{4}/;
+            const filter = options.getString("filter");
+            const startTime = options.getString("start");
+            const endTime = options.getString("end");
+            if (startTime != undefined && !startTime.match(dateRegex) || endTime != undefined && !startTime.match(dateRegex)) {
+                interaction.reply({ephemeral: false, content: "One time had the wrong format"});
+                return;
+            }
+            await interaction.deferReply({ephemeral: false});
+            const start = startTime != undefined ? DateTime.fromFormat(startTime, "dd.MM.yyyy") : undefined;
+            const end = endTime != undefined ? DateTime.fromFormat(endTime, "dd.MM.yyyy") : undefined;
+            await getTrackedAttendace().then(a => interaction.followUp({ephemeral: false, embeds: [buildResultEmbed(a, filter, start, end)]}));
         }
     }
 } as ISlashCommand;

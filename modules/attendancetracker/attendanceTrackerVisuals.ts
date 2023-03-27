@@ -151,20 +151,121 @@ export function getNextTime(weekday: number, hour: number, minute: number) : Dat
     while (date.weekday - 1 != weekday) {
         date = date.plus({days:1});
     }
-    date = date.set({ hour: hour, minute: minute });
+    date = date.set({ hour: hour, minute: minute, second: 0, millisecond: 0 });
     return date;
 }
 
-export function buildResultEmbed(results: any[], filter?:string, start?: DateTime, end?: DateTime): EmbedBuilder  {
+interface Attendable {
+    id: string;
+    count: number;
+    attendances: Map<string, number>;
+}
+
+export function buildResultEmbed(results: object[], filter?:string, start?: DateTime, end?: DateTime): EmbedBuilder  {
     let name = "Attendace"
     if (filter) {
         name += " with filter: " + filter;
     }
     if (start) {
-        name += " from " + start.toFormat("dd.mm.yyyy");
+        name += " from " + start.toFormat("dd.MM.yyyy");
     }
     if (end) {
-        name += " to " + end.toFormat("dd.mm.yyyy");
+        name += " to " + end.toFormat("dd.MM.yyyy");
     }
-    return {name: name, value:''};
+    const embed = new EmbedBuilder();
+    embed.setTitle(name);
+
+    const blocks = countAttandances(results, start, end);
+    const total = {id: "Total", count: 0, attendances: new Map()} as Attendable;
+
+    for (const block of blocks) {
+        if (block.count == 0) {
+            continue;
+        }
+        if (!block.id.match(filter == undefined ? ".*" : filter)) {
+            continue;
+        }
+
+        total.count += block.count;
+        for (const [attandie, count] of block.attendances) {
+            if (total.attendances.has(attandie)) {
+                total.attendances.set(attandie, total.attendances.get(attandie) + count);
+            } else {
+                total.attendances.set(attandie, count);
+            }
+        }
+        embed.addFields(buildResultEmbedField(block));
+    }
+    embed.addFields({ name: '\u200B', value: '\u200B', inline: false });
+    if (total.count > 0) {
+        embed.addFields(buildResultEmbedField(total));
+    }
+
+    embed.setTimestamp();
+    return embed;
+}
+
+function buildResultEmbedField(block: Attendable): APIEmbedField {
+    let value = "";
+    for (const [attandie, count] of block.attendances) {
+        value += `<@${attandie}> ${count}/${block.count} (${Math.round(100 * count/block.count)}%) \n`;
+    }
+
+    return {
+        name: block.id,
+        value: value != "" ? value : '\u200B',
+        inline: false
+    } as APIEmbedField;
+}
+
+function countAttandances(results: object[], start?: DateTime, end?: DateTime): Attendable[] {
+    const blocks: Attendable[] = [];
+
+    for (const blockKey in results) {
+        const s = blockKey.split("-");
+        const name = s[s.length - 1].replace("_", " ");
+
+        let found = false;
+
+        for (const block of blocks) {
+            if (block.id == name) {
+                found = true;
+                continue;
+            }
+        }
+
+        if (!found) {
+            blocks.push({id: name, count:0, attendances: new Map()});
+        }
+    }
+
+    for (const blockKey in results) {
+        const s = blockKey.split("-");
+        const name = s[s.length - 1].replace("_", " ");
+        const time = DateTime.fromFormat(s[0], "dd.MM.yyyy");
+
+        if (start != undefined && start > time) {
+            continue;
+        }
+        if (end != undefined && end < time) {
+            continue;
+        }
+
+        for (const block of blocks) {
+            if (block.id == name) {
+                block.count++;
+                for (const attandie in results[blockKey]) {
+                    if (results[blockKey][attandie]) {
+                        if (block.attendances.has(attandie)) {
+                            block.attendances.set(attandie, block.attendances.get(attandie) + 1);
+                        } else {
+                            block.attendances.set(attandie, 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return blocks;
 }

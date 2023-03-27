@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
-import { get, write } from "../../lib/configmanager";
-import { Weekday } from "../../lib/recurringtask";
+import {get, readConfigFile, write} from "../../lib/configmanager";
+import { Weekday } from "../../lib/tasks/recurringtask";
 import {buildTimeTableEmbed, getNextTime} from "./attendanceTrackerVisuals";
 
 export interface CalendarBlock {
@@ -171,8 +171,14 @@ export function resetAttendance(): void {
  * @param userId User to update attendance for
  */
 async function updateAttendanceFile(weekday: Weekday, block: string, userId: string): Promise<void> {
-    const key = getNextTime(weekday, 0, 0).toISO() + "-" + block;
+    const key = getNextTime(weekday, 0, 0).toFormat("dd.MM.yyyy") + "-" + block;
     const fileContent = get(key, "attendance") as Record<string, boolean>;
     fileContent[userId] = !fileContent[userId];
     await write(key, "attendance", fileContent);
+}
+
+export async function getTrackedAttendace(): Promise<object[]> {
+    return readConfigFile("attendance.json").then(s => {
+        return JSON.parse(s)
+    });
 }
