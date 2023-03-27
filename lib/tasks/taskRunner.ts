@@ -1,6 +1,6 @@
 import {Client} from "discord.js";
 import {DateTime} from "luxon";
-import { TASKS } from "./registry";
+import { TASKS } from "../registry";
 
 let taskLoop: NodeJS.Timer;
 
@@ -12,7 +12,7 @@ let taskLoop: NodeJS.Timer;
 async function checkForTasks(client: Client): Promise<void> {
     const now = DateTime.now().setZone("Europe/Berlin");
     for(const t of TASKS) {
-        if(t.compareTime(now.weekday-1, now.hour, now.minute) === 0) {
+        if(t.shouldRunAtTime(now)) {
             await t.run(client);
         }
     }

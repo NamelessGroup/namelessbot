@@ -1,5 +1,6 @@
 import {Client} from "discord.js";
-import {TaskExecutor} from "../types";
+import {TaskExecutor} from "../../types";
+import {DateTime} from "luxon";
 
 /**
  * Enum representing each weekday
@@ -33,7 +34,7 @@ export class RecurringTask {
      * @param hour Hour which the task should run
      * @param minute Minute which the task should run
      * @param runner Function to execute
-     * @param functionArguments Array of additional parameters to pass to the runner fundtion
+     * @param functionArguments Array of additional parameters to pass to the runner function
      */
     constructor(weekday: Weekday, hour: number, minute: number, runner: TaskExecutor, functionArguments?: unknown[]) {
         this.weekday = weekday;
@@ -52,7 +53,7 @@ export class RecurringTask {
      * 
      * @param client Client to run the task with
      */
-    async run(client: Client): Promise<void> {
+    public async run(client: Client): Promise<void> {
         try {
             this.runner(client, ...this.arguments);
         } catch(e) {
@@ -62,23 +63,12 @@ export class RecurringTask {
     }
 
     /**
-     * Compare this RecurringTask object to another time.
+     * Checks whether this task should be executed at the given time
      *
-     * @param weekday The weekday to compare to
-     * @param hour The hour to compare to
-     * @param minute The minute to compare to
-     * @returns 0 if equal, 1 if this object is later as the compared time, -1 otherwise
+     * @param time Time to check against
+     * @returns Whether the task should be executed
      */
-    compareTime(weekday: Weekday, hour: number, minute: number): number {
-        if(this.weekday === weekday && this.hour === hour && this.minute === minute) {
-            return 0;
-        }
-        if((this.weekday > weekday) ||
-            (this.weekday === weekday && this.hour > hour) ||
-            (this.weekday === weekday && this.hour === hour && this.minute > minute)) {
-            return 1;
-        } else {
-            return -1;
-        }
+    public shouldRunAtTime(time: DateTime): boolean {
+        return this.weekday == time.weekday - 1 && this.hour == time.hour  && this.minute == time.minute;
     }
 }
