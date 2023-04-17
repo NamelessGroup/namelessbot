@@ -121,7 +121,7 @@ export default class KitDateParser {
      * @returns The corresponding date
      */
     private stringToDate(d: string): DateTime {
-        const date = DateTime.fromFormat(d, "dd.mm.yyyy");
+        const date = DateTime.fromFormat(d, "dd.MM.yyyy");
         date.set({hour: 0, minute: 0, second: 0, millisecond: 0});
         return date;
     }
@@ -172,6 +172,6 @@ class TimeSpan {
      * @returns string representation of the timespan
      */
     public toString(): string {
-        return `${this.start.toFormat("dd.mm.yyyy")} - ${this.end.toFormat("dd.mm.yyyy")}`;
+        return `${this.start.toFormat("dd.MM.yyyy")} - ${this.end.toFormat("dd.MM.yyyy")}`;
     }
 }
