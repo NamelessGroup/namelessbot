@@ -47,7 +47,7 @@ export function buildAttendanceAction(blocks: CalendarBlock[]) : ActionRowBuilde
                 new ButtonBuilder()
                     .setLabel(block.title)
                     .setCustomId("attendancetracker-" + block.weekday + "-"
-                        + block.title.toLowerCase().replace(" ", "_"))
+                        + block.title.toLowerCase().replace(/\s/g, "_"))
                     .setStyle(ButtonStyle.Primary)
             );
         }
