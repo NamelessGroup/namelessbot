@@ -90,7 +90,7 @@ function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField
                 const attendance = e.attendance.map(e => { return "<@" + e + ">"; }).join("\n");
                 result += attendance;
             }
-            
+
             return result;
         }).reduce(
         // concatenate all string representations of blocks into a single string
@@ -171,7 +171,7 @@ interface Attendable {
  * @returns Discord Embed
  */
 export function buildResultEmbed(results: object[], filter?:string, start?: DateTime, end?: DateTime): EmbedBuilder  {
-    let name = "Attendace";
+    let name = "Attendance";
     if (filter) {
         name += " with filter: " + filter;
     }

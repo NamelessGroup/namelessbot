@@ -38,6 +38,8 @@ export function getBlocks(weekday?: Weekday, includeAttendence?: boolean, includ
         });
     }
 
+    allBlocks.sort(sortBlocks);
+
     if (weekday !== null) {
         const filteredBlocks = allBlocks.filter(e => { return e.weekday == weekday; });
         if (includeAttendence) {
@@ -45,9 +47,9 @@ export function getBlocks(weekday?: Weekday, includeAttendence?: boolean, includ
                 return Object.assign(e, { attendance: attendanceMap[e.title.toLowerCase().replace(/\s/g, "_")] });
             });
         }
-        return filteredBlocks.sort(sortBlocks);
+        return filteredBlocks;
     } else {
-        return allBlocks.sort(sortBlocks);
+        return allBlocks;
     }
 }
 
@@ -165,7 +167,7 @@ export function resetAttendance(): void {
 
 /**
  * Updates the attendance inside the tracker file.
- * 
+ *
  * @param weekday Weekday to update attendance for
  * @param block Block to update attendance for
  * @param userId User to update attendance for
@@ -180,7 +182,7 @@ async function updateAttendanceFile(weekday: Weekday, block: string, userId: str
 
 /**
  * Adds all blocks to the attendance tracker file.
- * 
+ *
  * @param weekday Weekday to add blocks for
  * @param blocks Blocks to add
  */
