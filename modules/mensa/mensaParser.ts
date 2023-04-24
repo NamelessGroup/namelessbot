@@ -4,6 +4,8 @@ import {CanteenLine, fetchMensa} from "ka-mensa-fetch";
 
 /**
  * Returns the food plan from the KIT-Adenauerring-Mensa for today.
+ *
+ * @returns The food plans from the KIT-Adenauerring-Mensa for today
  */
 export async function getMensaData(): Promise<CanteenLine[]> {
     const mensaData = await fetchMensa("simplesite", {canteens: ['adenauerring']});
@@ -12,7 +14,7 @@ export async function getMensaData(): Promise<CanteenLine[]> {
 
 /**
  * Builds an embed using the supplied food plan.
- * 
+ *
  * @param foodPlan Food plan to build an embed for
  * @returns Embed of the supplied foodplan
  */

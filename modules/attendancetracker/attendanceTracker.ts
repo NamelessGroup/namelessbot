@@ -89,6 +89,7 @@ function sortBlocks(blockA: CalendarBlock, blockB: CalendarBlock): number {
  * Adds a block to the database
  *
  * @param block Block data to add
+ * @returns true, if the block was added successfully, false otherwise
  */
 export async function addBlock(block: CalendarBlock): Promise<boolean> {
     if (!block.startingTime.match(TIME_REGEX) || !block.endingTime.match(TIME_REGEX)) {
@@ -197,6 +198,8 @@ export async function writeAllBlocksToAttendanceFile(weekday: Weekday, blocks: C
 
 /**
  * Reads the attendance tracker file.
+ *
+ * @returns all tracked attendance
  */
 export async function getTrackedAttendace(): Promise<object[]> {
     return readConfigFile("attendance.json").then(s => {
