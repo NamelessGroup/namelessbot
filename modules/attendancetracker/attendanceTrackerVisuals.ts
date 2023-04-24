@@ -161,8 +161,17 @@ interface Attendable {
     attendances: Map<string, number>;
 }
 
+/**
+ * Builds a Discord Embed for the given results and filter
+ *
+ * @param results Results to be printed
+ * @param filter Regex to filter the results
+ * @param start Start of the time range
+ * @param end End of the time range
+ * @returns Discord Embed
+ */
 export function buildResultEmbed(results: object[], filter?:string, start?: DateTime, end?: DateTime): EmbedBuilder  {
-    let name = "Attendace"
+    let name = "Attendace";
     if (filter) {
         name += " with filter: " + filter;
     }
@@ -205,6 +214,12 @@ export function buildResultEmbed(results: object[], filter?:string, start?: Date
     return embed;
 }
 
+/**
+ * Builds a Discord Embed Field for the given block
+ *
+ * @param block Block to be printed
+ * @returns Discord Embed Field
+ */
 function buildResultEmbedField(block: Attendable): APIEmbedField {
     let value = "";
     for (const [attandie, count] of block.attendances) {
@@ -218,6 +233,14 @@ function buildResultEmbedField(block: Attendable): APIEmbedField {
     } as APIEmbedField;
 }
 
+/**
+ * Counts the attendances of the given results
+ *
+ * @param results Results to be counted
+ * @param start Start of the time range
+ * @param end End of the time range
+ * @returns Array of blocks with their attendances
+ */
 function countAttandances(results: object[], start?: DateTime, end?: DateTime): Attendable[] {
     const blocks: Attendable[] = [];
 

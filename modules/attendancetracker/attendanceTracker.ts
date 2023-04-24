@@ -193,8 +193,11 @@ export async function writeAllBlocksToAttendanceFile(weekday: Weekday, blocks: C
     }
 }
 
+/**
+ * Reads the attendance tracker file.
+ */
 export async function getTrackedAttendace(): Promise<object[]> {
     return readConfigFile("attendance.json").then(s => {
-        return JSON.parse(s)
+        return JSON.parse(s);
     });
 }
