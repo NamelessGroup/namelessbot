@@ -4,9 +4,10 @@ import {
     CommandInteraction,
     CommandInteractionOptionResolver
 } from "discord.js";
-import { addBlock, getBlocks, removeBlock, updateBlock } from "./attendanceTracker";
+import { addBlock, getBlocks, getTrackedAttendace, removeBlock, updateBlock } from "./attendanceTracker";
 import { Weekday } from "../../lib/tasks/recurringtask";
-import {buildTimeTableEmbed} from "./attendanceTrackerVisuals";
+import {buildResultEmbed, buildTimeTableEmbed} from "./attendanceTrackerVisuals";
+import {DateTime} from "luxon";
 
 /**
  * Slash command definition for /timetable
@@ -135,6 +136,31 @@ export default {
                         required: true
                     }
                 ]
+            },
+            {
+                type: ApplicationCommandOptionType.Subcommand,
+                name: "stats",
+                description: "Displays the percentages of attendance",
+                options: [
+                    {
+                        type: ApplicationCommandOptionType.String,
+                        name: "filter",
+                        description: "Regex to use as filter for block names",
+                        required: false
+                    },
+                    {
+                        type: ApplicationCommandOptionType.String,
+                        name: "start",
+                        description: "First day to look at",
+                        required: false
+                    },
+                    {
+                        type: ApplicationCommandOptionType.String,
+                        name: "end",
+                        description: "Last day to look at",
+                        required: false
+                    }
+                ]
             }
         ]
     },
@@ -184,6 +210,19 @@ export default {
             } else {
                 await interaction.followUp({ ephemeral: true, content: "Error while updating block. Make sure the times are formatted as hh:mm." });
             }
+        } else if (options.getSubcommand() == "stats") {
+            const dateRegex = /[0-9]{2}.[0-9]{2}.[0-9]{4}/;
+            const filter = options.getString("filter");
+            const startTime = options.getString("start");
+            const endTime = options.getString("end");
+            if (startTime != undefined && !startTime.match(dateRegex) || endTime != undefined && !startTime.match(dateRegex)) {
+                interaction.reply({ephemeral: false, content: "One time had the wrong format"});
+                return;
+            }
+            await interaction.deferReply({ephemeral: false});
+            const start = startTime != undefined ? DateTime.fromFormat(startTime, "dd.MM.yyyy") : undefined;
+            const end = endTime != undefined ? DateTime.fromFormat(endTime, "dd.MM.yyyy") : undefined;
+            await getTrackedAttendace().then(a => interaction.followUp({ephemeral: false, embeds: [buildResultEmbed(a, filter, start, end)]}));
         }
     }
 } as ISlashCommand;

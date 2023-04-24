@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { get, write } from "../../lib/configmanager";
+import {get, readConfigFile, write} from "../../lib/configmanager";
 import { Weekday } from "../../lib/tasks/recurringtask";
 import {buildTimeTableEmbed, getNextTime} from "./attendanceTrackerVisuals";
 
@@ -38,16 +38,18 @@ export function getBlocks(weekday?: Weekday, includeAttendence?: boolean, includ
         });
     }
 
+    allBlocks.sort(sortBlocks);
+
     if (weekday !== null) {
         const filteredBlocks = allBlocks.filter(e => { return e.weekday == weekday; });
         if (includeAttendence) {
             return filteredBlocks.map(e => {
-                return Object.assign(e, { attendance: attendanceMap[e.title.toLowerCase().replace(/\s/, "_")] });
+                return Object.assign(e, { attendance: attendanceMap[e.title.toLowerCase().replace(/\s/g, "_")] });
             });
         }
-        return filteredBlocks.sort(sortBlocks);
+        return filteredBlocks;
     } else {
-        return allBlocks.sort(sortBlocks);
+        return allBlocks;
     }
 }
 
@@ -165,14 +167,39 @@ export function resetAttendance(): void {
 
 /**
  * Updates the attendance inside the tracker file.
- * 
+ *
  * @param weekday Weekday to update attendance for
  * @param block Block to update attendance for
  * @param userId User to update attendance for
  */
 async function updateAttendanceFile(weekday: Weekday, block: string, userId: string): Promise<void> {
-    const key = getNextTime(weekday, 0, 0).toISO() + "-" + block;
+    const key = getNextTime(weekday, 0, 0).toFormat("dd.MM.yyyy") + "-" + block;
     const fileContent = get(key, "attendance") as Record<string, boolean>;
     fileContent[userId] = !fileContent[userId];
     await write(key, "attendance", fileContent);
+}
+
+
+/**
+ * Adds all blocks to the attendance tracker file.
+ *
+ * @param weekday Weekday to add blocks for
+ * @param blocks Blocks to add
+ */
+export async function writeAllBlocksToAttendanceFile(weekday: Weekday, blocks: CalendarBlock[]): Promise<void> {
+    for (const block of blocks) {
+        const key = getNextTime(weekday, 0, 0).toFormat("dd.MM.yyyy") + "-" + block.title.toLowerCase().replace(/\s/g, "_");
+        if (get(key, "attendance") === undefined) {
+            await write(key, "attendance", {});
+        }
+    }
+}
+
+/**
+ * Reads the attendance tracker file.
+ */
+export async function getTrackedAttendace(): Promise<object[]> {
+    return readConfigFile("attendance.json").then(s => {
+        return JSON.parse(s);
+    });
 }
