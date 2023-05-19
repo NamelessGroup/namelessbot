@@ -28,10 +28,12 @@ export function buildMensaEmbed(foodPlan: CanteenLine[]): EmbedBuilder {
     for (const line of foodPlan) {
         if (line.meals.length > 0) {
             const content = line.meals.map(e => {
+                let emoji = getClassificationEmoji(e.classifiers);
+                emoji += emoji != '' ? ' ' : '';
                 if (e.price !== "") {
-                    return `${getClassificationEmoji(e.classifiers)} ${e.name} (${e.price})`;
+                    return `${emoji}${e.name} (${e.price})`;
                 } else {
-                    return `${getClassificationEmoji(e.classifiers)} _${e.name}_`;
+                    return `${emoji} _${e.name}_`;
                 }
             }).join("\n");
             embed.addFields({name: line.name, value: content, inline: true});
