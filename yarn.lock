@@ -826,10 +826,10 @@ fastq@^1.6.0:
   dependencies:
     reusify "^1.0.4"
 
-feiertagejs@^1.3.6:
-  version "1.3.6"
-  resolved "https://registry.yarnpkg.com/feiertagejs/-/feiertagejs-1.3.6.tgz#2a73c5b1a48830c83fdd2c5d5006008a8e511886"
-  integrity sha512-sbtLIbnHOW22KNszgRJhdvWZlohM2Ra/Fd1B1urMlz9KLn6Bc4KI/fIFfKfyxCh4KK83sFyrmWvbLPjN7z3Tow==
+feiertagejs@^1.3.9:
+  version "1.3.9"
+  resolved "https://registry.yarnpkg.com/feiertagejs/-/feiertagejs-1.3.9.tgz#f3a3a1e7cad42c4f7ca6452d6da0870228babef1"
+  integrity sha512-tUP+WBv2OWBhPwe3NfqwCtjMq+ym598a42tfqmL0FySswEb9xs96p2iKwqqx+lxKieu1njJBRZKsFm92bJhxZw==
 
 file-entry-cache@^6.0.1:
   version "6.0.1"
