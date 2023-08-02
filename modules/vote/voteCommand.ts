@@ -83,7 +83,7 @@ export default {
             usedVotes = Math.ceil(groupmembers.length/2);
             // further variables set
             usedVotes = ((usedVotes == 0) ? 1 : usedVotes);
-            msg += "This is a majority voting. " + usedVotes + " Votes required!";
+            msg += "This is a majority voting. " + usedVotes + " Votes are on one position required!";
         }
 
         const embed = getEmbedOptions(title, msg, maingroup.id);
@@ -127,7 +127,7 @@ export default {
                 }
                 interaction.reply({content:"Voting successful. You are against the topic!", ephemeral:true});
             }
-            if (!timed && pro.size + con.size == usedVotes) {
+            if (!timed && (pro.size == usedVotes || con.size == usedVotes)) {
                 reply.edit(getEmbedOptions(title, msg, maingroup.id, Math.ceil(Date.now()/1000 + 30)));
                 setTimeout(() => {
                     printVotes(pro, con, reply, title, collector);
