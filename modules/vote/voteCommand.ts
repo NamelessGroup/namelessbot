@@ -78,7 +78,9 @@ export default {
             msg += "This vote ends <t:" + Math.ceil(Date.now()/1000 + time) + ":R> \n";
         } else {
             // get online member
+            await maingroup.guild.members.fetch()
             const groupmembers = maingroup.members.map(m=>m.user.id);
+            console.log(groupmembers)
             usedVotes = Math.ceil(groupmembers.length/2);
             // further variables set
             usedVotes = ((usedVotes == 0) ? 1 : usedVotes);
@@ -162,7 +164,7 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
     let downVotes = Array.from(con).map(e => {
         return "🔴 <@" + e + ">";
     }).join("\n");
-    
+
     upVotes = (upVotes == "") ? "None" : upVotes;
     downVotes = (downVotes == "") ? "None" : downVotes;
 

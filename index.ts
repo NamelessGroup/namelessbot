@@ -7,7 +7,8 @@ import {readConfig} from "./lib/configmanager";
 const INTENTS = [
     IntentsBitField.Flags.GuildMessages,
     IntentsBitField.Flags.Guilds,
-    IntentsBitField.Flags.GuildMessageReactions
+    IntentsBitField.Flags.GuildMessageReactions,
+    IntentsBitField.Flags.GuildMembers
 ];
 
 const client = new Client({intents: INTENTS});
