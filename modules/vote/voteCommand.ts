@@ -50,7 +50,12 @@ export default {
         ]
     },
     handler: async function(interaction: CommandInteraction) {
-
+        try {
+            await interaction.channel.fetch();
+        } catch {
+            await interaction.reply("Not in this channel! Move to a channel the bot has access to.");
+            return;
+        }
         // --- Variables
         let usedVotes = 0;
         let msg = "";
