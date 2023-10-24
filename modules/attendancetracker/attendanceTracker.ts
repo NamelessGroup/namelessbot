@@ -96,6 +96,9 @@ export async function addBlock(block: CalendarBlock): Promise<boolean> {
         return false;
     }
     const allBlocks = get("blocks", "timetable") as CalendarBlock[];
+    if (allBlocks.some(b => { return b.title === block.title && b.weekday === block.weekday; })) {
+        return false;
+    }
     allBlocks.push(block);
     await write("blocks", "timetable", allBlocks);
     return true;
@@ -114,6 +117,9 @@ export async function updateBlock(index: number, block: CalendarBlock): Promise<
     }
     const allBlocks = get("blocks", "timetable") as CalendarBlock[];
     if (allBlocks.length <= index) {
+        return false;
+    }
+    if (allBlocks.some(b => { return b.title === block.title && b.weekday === block.weekday; })) {
         return false;
     }
     allBlocks[index] = block;
