@@ -88,7 +88,7 @@ export default {
             usedVotes = Math.ceil(groupmembers.length/2);
             // further variables set
             usedVotes = ((usedVotes == 0) ? 1 : usedVotes);
-            msg += "This is a majority voting. " + usedVotes + " Votes are on one position required!";
+            msg += "This is a majority voting. " + usedVotes + " Votes are required for one of the sides!";
         }
 
         const embed = getEmbedOptions(title, msg, maingroup.id);
