@@ -1,4 +1,5 @@
 import axios from "axios";
+import {aocData, aocMember} from "./aocTypes";
 
 const url = "https://adventofcode.com/";
 const path = "/leaderboard/private/view/";

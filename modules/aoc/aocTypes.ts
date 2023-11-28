@@ -1,4 +1,4 @@
-interface aocData {
+export interface aocData {
     event: string
     owner_id: number
     members: {
@@ -6,7 +6,7 @@ interface aocData {
     }
 }
 
-interface aocMember {
+export interface aocMember {
     last_start_ts: number
     id: number
     local_score: number
