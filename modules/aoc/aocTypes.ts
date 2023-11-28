@@ -1,12 +1,12 @@
-interface aoc_data {
+interface aocData {
     event: string
     owner_id: number
     members: {
-        [id:number]:aoc_member
+        [id:number]:aocMember
     }
 }
 
-interface aoc_member {
+interface aocMember {
     last_start_ts: number
     id: number
     local_score: number
