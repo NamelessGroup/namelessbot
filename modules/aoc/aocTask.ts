@@ -1,6 +1,6 @@
 import {Client, TextChannel} from "discord.js";
 import {TaskExecutor} from "../../types";
-import {embedLeaderboard} from "./aocLeaderboardParser";
+import {embedLeaderboard} from "./aocEmbedGenerator";
 import {get} from "../../lib/configmanager";
 import {DateTime} from "luxon";
 
