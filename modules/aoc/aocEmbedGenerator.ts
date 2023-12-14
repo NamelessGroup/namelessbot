@@ -26,7 +26,15 @@ export async function embedLeaderboard(id:number, year: number) : Promise<EmbedB
             map[m.name] = map[m.name] + emoji;
         }
     }
+    
     return new EmbedBuilder().setURL("https://adventofcode.com").setTitle("Advent of Code Leaderboard")
-        .addFields({name:"Ranking", value:members.map(e => { return e.name + ": " + e.local_score + map[e.name]; }).join("\n")});
-
+        .addFields(
+            ...members.filter(m => map[m.name] != undefined && map[m.name].length > 0)
+                .map(m => {
+                    return {
+                        name: m.name + ": " + m.local_score,
+                        value: map[m.name]
+                    };
+                })
+        );
 }
