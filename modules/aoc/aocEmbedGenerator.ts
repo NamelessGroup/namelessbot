@@ -16,8 +16,8 @@ export async function embedLeaderboard(id:number, year: number) : Promise<EmbedB
         map[m.name] = "";
         for (const k in m.completion_day_level) {
             let emoji = ":eight_pointed_black_star:";
-            if (m.completion_day_level[k]["1"].get_star_ts != 0) {
-                if (m.completion_day_level[k]["2"].get_star_ts != 0) {
+            if (m.completion_day_level[k]["1"] != undefined && m.completion_day_level[k]["1"].get_star_ts != 0) {
+                if (m.completion_day_level[k]["2"] != undefined && m.completion_day_level[k]["2"].get_star_ts != 0) {
                     emoji = ":star2:";
                 } else {
                     emoji = ":star:";
