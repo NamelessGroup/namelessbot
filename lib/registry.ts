@@ -8,7 +8,6 @@ import mensaCommand from "../modules/mensa/mensaCommand";
 import truthtableCommand from "../modules/truthtable/truthtableCommand";
 import voteCommand from "../modules/vote/voteCommand";
 
-import mensaTask from "../modules/mensa/mensaTask";
 import aocTask from "../modules/aoc/aocTask";
 import attendanceTrackerTask from "../modules/attendancetracker/attendanceTrackerTask";
 import koeriSelectionMenu from "../modules/koeri/koeriSelectionMenuListener";
@@ -21,12 +20,14 @@ export const SLASH_COMMANDS: ISlashCommand[] = [
 
 export const TASKS = [
     // Mensa-Plans
-    new UniversityDayRecurringTask(Weekday.MONDAY, 9, 48, mensaTask),
-    new UniversityDayRecurringTask(Weekday.TUESDAY, 9, 48, mensaTask),
-    new UniversityDayRecurringTask(Weekday.WEDNESDAY, 9, 48, mensaTask),
-    new UniversityDayRecurringTask(Weekday.THURSDAY, 9, 48, mensaTask),
-    new UniversityDayRecurringTask(Weekday.FRIDAY, 9, 48, mensaTask),
 
+    /*
+     * new UniversityDayRecurringTask(Weekday.MONDAY, 9, 48, mensaTask),
+     * new UniversityDayRecurringTask(Weekday.TUESDAY, 9, 48, mensaTask),
+     * new UniversityDayRecurringTask(Weekday.WEDNESDAY, 9, 48, mensaTask),
+     * new UniversityDayRecurringTask(Weekday.THURSDAY, 9, 48, mensaTask),
+     * new UniversityDayRecurringTask(Weekday.FRIDAY, 9, 48, mensaTask),
+     */
 
     // Advent of Code
     new RecurringTask(Weekday.MONDAY, 22, 5, aocTask),
