@@ -29,6 +29,7 @@
     "axios": "^1.3.4",
     "discord.js": "^14.11.0",
     "dotenv": "^16.0.3",
+    "esbuild": "^0.24.2",
     "feiertagejs": "^1.3.9",
     "ka-mensa-fetch": "^4.0.1",
     "luxon": "^3.3.0"
@@ -36,6 +37,7 @@
   "scripts": {
     "start": "node --loader ts-node/esm --experimental-specifier-resolution=node ./index.ts",
     "lint": "eslint .",
-    "doc": "typedoc ."
+    "doc": "typedoc .",
+    "build": "esbuild index.ts --bundle --outfile=app.cjs --platform=node"
   }
 }
