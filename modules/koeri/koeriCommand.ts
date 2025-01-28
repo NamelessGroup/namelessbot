@@ -14,10 +14,6 @@ interface IKoeriList {
     [combination: number]: number
 }
 
-interface IStringKoeriList {
-    [combination: string]: number
-}
-
 const maxPossibleCombinations = 64;
 const legendaryCombinations = [63];
 
@@ -100,9 +96,10 @@ export async function setRating(userId: Snowflake, combination: number, rating: 
  * Converts a combination number to a string.
  * 
  * @param combination Combination to convert
+ * @param prefix Prefix before each seasoning
  * @returns The combination as a string
  */
-function _combinationToSeasonings(combination: number): string {
+function _combinationToSeasonings(combination: number, prefix = "Gewürz "): string {
     let s = (combination >>> 0).toString(2);
     while(s.length < Math.log2(maxPossibleCombinations)) {
         s = "0" + s;
@@ -111,7 +108,7 @@ function _combinationToSeasonings(combination: number): string {
     const sSplit = s.split("");
     for(const i in sSplit) {
         if(sSplit[i] === "1") {
-            result += "Gewürz " + (parseInt(i) - 1 + 2) + ", ";
+            result += prefix + (parseInt(i) - 1 + 2) + ", ";
         }
     }
     return result.substring(0, result.length-2);
@@ -258,15 +255,18 @@ async function handler(interaction: CommandInteraction): Promise<void> {
             return;
         }
         let longestCombination = 0;
-        const combinations: IStringKoeriList = {};
+        const combinations: {seasoning: string, rating: number}[] = [];
         for(const combination in userCfg) {
-            const str = _combinationToSeasonings(parseInt(combination));
+            const str = "Gewürz " + _combinationToSeasonings(parseInt(combination), "");
             if(str.length > longestCombination) longestCombination = str.length;
-            combinations[str] = userCfg[combination];
+            combinations.push({ seasoning: str, rating: userCfg[combination] });
         }
+
+        combinations.sort((a, b) => b.rating - a.rating);
+
         let result = "```";
-        for(const combination in combinations) {
-            result += combination.padEnd(longestCombination, " ") + " | " + combinations[combination] + "\n";
+        for(const combination of combinations) {
+            result += combination.seasoning.padEnd(longestCombination, " ") + " | " + combination.rating + "\n";
         }
         result += "```";
         await interaction.followUp(result);
