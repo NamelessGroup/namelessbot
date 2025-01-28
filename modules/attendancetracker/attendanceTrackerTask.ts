@@ -15,6 +15,9 @@ export default (async (client: Client, weekday: Weekday) => {
     resetAttendance();
     const channel = await client.channels.fetch(get('announcement_channel', 'config') as string) as TextChannel;
     const blocks = getBlocks(weekday, true);
+    if (blocks.length <= 0) {
+        return;
+    }
     await writeAllBlocksToAttendanceFile(weekday, blocks);
     await channel.send({embeds: [buildTimeTableEmbed(blocks, weekday)],
                         components: buildAttendanceAction(blocks)});
