@@ -1,4 +1,5 @@
 {
   "announcement_channel": "",
-  "default_guild": ""
+  "default_guild": "",
+  "vote_group":  ""
 }

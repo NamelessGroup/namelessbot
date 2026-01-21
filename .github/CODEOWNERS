@@ -1,0 +1,8 @@
+modules/aoc @ProgramPhoenix @Kr0nox
+modules/attendancetracker @c0derMo @Kr0nox
+modules/koeri @c0derMo
+modules/truthtable @c0derMo
+modules/vote @ProgramPhoenix
+lib @c0derMo
+lib/tasks @Kr0nox
+index.ts @c0derMo

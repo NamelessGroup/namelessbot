@@ -1,8 +1,33 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
+    "module": "esnext",
+    "target": "esnext",
     "moduleResolution": "node",
     "esModuleInterop": true
   },
-  "esm": true
+  "esm": true,
+  "typedocOptions": {
+    "out": "docs/",
+    "entryPointStrategy": "expand",
+    "exclude": [
+      "node_modules/**/*"
+    ],
+    "plugin": [
+      "typedoc-theme-hierarchy",
+      "typedoc-plugin-missing-exports",
+      "@knodes/typedoc-plugin-pages"
+    ],
+    "pluginPages": {
+      "pages": [ { "title": "NamelessBot", "moduleRoot": true, "children": [
+        { "title": "Configuration", "source": "configuration.md" }
+      ] } ],
+      "source": "docs_pages"
+    },
+    "navigationLinks": {
+      "Configuration": "pages/configuration.html"
+    },
+    "theme": "hierarchy",
+    "readme": "README.md",
+    "name": "NamelessBot",
+  }
 }
