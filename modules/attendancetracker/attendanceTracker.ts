@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import {get, readConfigFile, write} from "../../lib/configmanager";
+import {ConfigurationFile, get, readConfigFile, write} from "../../lib/configmanager";
 import { Weekday } from "../../lib/tasks/recurringtask";
 import {buildTimeTableEmbed, getNextTime} from "./attendanceTrackerVisuals";
 
@@ -30,7 +30,7 @@ let attendanceMap = {} as AttendanceMap;
  * @returns Array of CalendarBlocks
  */
 export function getBlocks(weekday?: Weekday, includeAttendence?: boolean, includeIndex?: boolean): CalendarBlock[] {
-    let allBlocks = get("blocks", "timetable") as CalendarBlock[];
+    let allBlocks = get("blocks", ConfigurationFile.TIMETABLE);
 
     if (includeIndex) {
         allBlocks = allBlocks.map((e, idx) => {
@@ -95,12 +95,12 @@ export async function addBlock(block: CalendarBlock): Promise<boolean> {
     if (!block.startingTime.match(TIME_REGEX) || !block.endingTime.match(TIME_REGEX)) {
         return false;
     }
-    const allBlocks = get("blocks", "timetable") as CalendarBlock[];
+    const allBlocks = get("blocks", ConfigurationFile.TIMETABLE);
     if (allBlocks.some(b => { return b.title === block.title && b.weekday === block.weekday; })) {
         return false;
     }
     allBlocks.push(block);
-    await write("blocks", "timetable", allBlocks);
+    await write("blocks", ConfigurationFile.TIMETABLE, allBlocks);
     return true;
 }
 
@@ -115,7 +115,7 @@ export async function updateBlock(index: number, block: CalendarBlock): Promise<
     if (!block.startingTime.match(TIME_REGEX) || !block.endingTime.match(TIME_REGEX)) {
         return false;
     }
-    const allBlocks = get("blocks", "timetable") as CalendarBlock[];
+    const allBlocks = get("blocks", ConfigurationFile.TIMETABLE);
     if (allBlocks.length <= index) {
         return false;
     }
@@ -123,7 +123,7 @@ export async function updateBlock(index: number, block: CalendarBlock): Promise<
         return false;
     }
     allBlocks[index] = block;
-    await write("blocks", "timetable", allBlocks);
+    await write("blocks", ConfigurationFile.TIMETABLE, allBlocks);
     return true;
 }
 
@@ -134,12 +134,12 @@ export async function updateBlock(index: number, block: CalendarBlock): Promise<
  * @returns true, if the block was removed successfully, false otherwise
  */
 export async function removeBlock(index: number): Promise<boolean> {
-    const allBlocks = get("blocks", "timetable") as CalendarBlock[];
+    const allBlocks = get("blocks", ConfigurationFile.TIMETABLE);
     if (allBlocks.length <= index) {
         return false;
     }
     allBlocks.splice(index, 1);
-    await write("blocks", "timetable", allBlocks);
+    await write("blocks", ConfigurationFile.TIMETABLE, allBlocks);
     return true;
 }
 
@@ -181,9 +181,9 @@ export function resetAttendance(): void {
  */
 async function updateAttendanceFile(weekday: Weekday, block: string, userId: string): Promise<void> {
     const key = getNextTime(weekday, 0, 0).toFormat("dd.MM.yyyy") + "-" + block;
-    const fileContent = get(key, "attendance") as Record<string, boolean>;
+    const fileContent = get(key, ConfigurationFile.ATTENDANCE);
     fileContent[userId] = !fileContent[userId];
-    await write(key, "attendance", fileContent);
+    await write(key, ConfigurationFile.ATTENDANCE, fileContent);
 }
 
 
@@ -196,8 +196,8 @@ async function updateAttendanceFile(weekday: Weekday, block: string, userId: str
 export async function writeAllBlocksToAttendanceFile(weekday: Weekday, blocks: CalendarBlock[]): Promise<void> {
     for (const block of blocks) {
         const key = getNextTime(weekday, 0, 0).toFormat("dd.MM.yyyy") + "-" + block.title.toLowerCase().replace(/\s/g, "_");
-        if (get(key, "attendance") === undefined) {
-            await write(key, "attendance", {});
+        if (get(key, ConfigurationFile.ATTENDANCE) == null) {
+            await write(key, ConfigurationFile.ATTENDANCE, {});
         }
     }
 }
@@ -208,7 +208,5 @@ export async function writeAllBlocksToAttendanceFile(weekday: Weekday, blocks: C
  * @returns all tracked attendance
  */
 export async function getTrackedAttendace(): Promise<object[]> {
-    return readConfigFile("attendance.json").then(s => {
-        return JSON.parse(s);
-    });
+    return await readConfigFile("attendance.json") as object[];
 }

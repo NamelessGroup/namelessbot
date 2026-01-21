@@ -1,7 +1,7 @@
 import {ISlashCommand} from "../../types";
 import {ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver} from "discord.js";
 import {embedLeaderboard} from "./aocEmbedGenerator";
-import {get} from "../../lib/configmanager";
+import {ConfigurationFile, get} from "../../lib/configmanager";
 import {DateTime} from "luxon";
 
 /**
@@ -26,7 +26,7 @@ export default {
         const options = interaction.options as CommandInteractionOptionResolver;
         const requestedYear = options.getInteger("year", false);
         const year =  (requestedYear === null)? DateTime.now().setZone("Europe/Berlin").year : requestedYear;
-        const embed = await embedLeaderboard(get("id", "aoc") as number, year);
+        const embed = await embedLeaderboard(get("id", ConfigurationFile.AOC), year);
         await interaction.reply({ embeds: [embed] });
     }
 } as ISlashCommand;

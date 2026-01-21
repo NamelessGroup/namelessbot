@@ -8,9 +8,9 @@ import {
     MessageSelectOption,
     Snowflake
 } from "discord.js";
-import {get, write} from "../../lib/configmanager";
+import {ConfigurationFile, get, write} from "../../lib/configmanager";
 
-interface IKoeriList {
+export interface IKoeriList {
     [combination: number]: number
 }
 
@@ -56,7 +56,7 @@ function _randint(lowerBound: number, upperBound: number): number {
  * @returns true, if the user already had the supplied combination, false otherwise
  */
 function _hasHadCombination(userId: Snowflake, combination: number): boolean {
-    const userCfg = get(userId, "koeri") as IKoeriList;
+    const userCfg = get(userId, ConfigurationFile.KOERI);
     if(userCfg === undefined) return false;
     return userCfg[combination] !== undefined;
 }
@@ -69,7 +69,7 @@ function _hasHadCombination(userId: Snowflake, combination: number): boolean {
  * @returns true, if the user has had all combinations, false otherwise
  */
 function _hadEveryCombination(userId: Snowflake, includeLegendary=false): boolean {
-    const userCfg = get(userId, "koeri") as IKoeriList;
+    const userCfg = get(userId, ConfigurationFile.KOERI);
     if(userCfg === undefined) return false;
     if (includeLegendary) {
         return Object.keys(userCfg).length >= maxPossibleCombinations - 1;
@@ -86,10 +86,10 @@ function _hadEveryCombination(userId: Snowflake, includeLegendary=false): boolea
  * @param rating Rating to set
  */
 export async function setRating(userId: Snowflake, combination: number, rating: number): Promise<void> {
-    let userCfg = get(userId, "koeri") as IKoeriList;
-    if(userCfg === undefined) userCfg = {};
+    let userCfg = get(userId, ConfigurationFile.KOERI);
+    userCfg ??= {};
     userCfg[combination] = rating;
-    await write(userId, "koeri", userCfg);
+    await write(userId, ConfigurationFile.KOERI, userCfg);
 }
 
 /**
@@ -249,7 +249,7 @@ async function handler(interaction: CommandInteraction): Promise<void> {
     }
     if(options.getSubcommand() === "ratings") {
         await interaction.deferReply();
-        const userCfg = get(interaction.user.id, "koeri") as IKoeriList;
+        const userCfg = get(interaction.user.id, ConfigurationFile.KOERI);;
         if(userCfg === undefined) {
             await interaction.followUp("Du musst zunächst koeri essen!");
             return;
@@ -274,7 +274,7 @@ async function handler(interaction: CommandInteraction): Promise<void> {
     }
     if(options.getSubcommand() === "progress") {
         await interaction.deferReply();
-        const userCfg = get(interaction.user.id, "koeri") as IKoeriList;
+        const userCfg = get(interaction.user.id, ConfigurationFile.KOERI);;
         if(userCfg === undefined) {
             await interaction.followUp("Du musst zunächst koeri essen!");
             return;

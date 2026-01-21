@@ -1,5 +1,5 @@
 import {Client, CommandInteraction, Interaction} from "discord.js";
-import { get } from "./configmanager";
+import { ConfigurationFile, get } from "./configmanager";
 import { LISTENERS, SLASH_COMMANDS } from "./registry";
 
 /**
@@ -44,7 +44,7 @@ export function removeListeners(client: Client, includeElevated = false): void {
  * @param client Client to register slash commands with
  */
 async function registerSlashCommands(client: Client<true>): Promise<void> {
-    const DIRECT_GUILD = get("default_guild", "config") as string;
+    const DIRECT_GUILD = get("default_guild", ConfigurationFile.GENERAL);
     if(DIRECT_GUILD === "") {
         console.log("! No default_guild is set in 'config.json' - Slash commands can't be registered!");
     } else {
