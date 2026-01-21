@@ -16,10 +16,30 @@ Namelessbot is a Discord-Bot based on Discord.js and implemented in TypeScript
 |truthtable|Given an boolean expression it generates a truthtable with all variable conditions|[c0derMo](https://github.com/c0derMo)|
 |vote|Start a vote that either ends on time or after a majority of people has voted|[ujqlg](https://github.com/MartinKrausewitz)|
 
+## Configuration
+All configuration files are located in the `config` folder. All configuration files are in standard JSON format.
+
+### Config file reference
+|File name|Content|
+|--|--|
+| `config.json` | General purpose configuration file. Holds default guild, channel, voter group. |
+| `aoc.json` | "Advent of Code"-related config. Holds the year and leaderboard to pull. |
+| `attendance.json` | Holds the tracked attendance of all discord users.
+| `timetable.json` | Holds the timetable to use in combination with the attendance tracker. |
+| `koeri.json` | Holds all rated koeri-combinations per user. |
+
+### Environment variables
+Some sensitive information shouldn't get stored in config files, these are stored in environment variables. These can also be specified in a `.env` file in the project root. Mainly holds authorization-related information.
+
+|Environment variable|Content|
+|--|--|
+|`DISCORD_TOKEN`|Holds the discord bot token used to login|
+|`AOC_TOKEN`|Holds the Advent of Code-Session token used to fetch the leaderboard|
+
 ## Internal Components
 ### Slashcommand
 Slashcommands are the implementation of Discords slash commands
 ### Recurring Tasks
 These are tasks that get repeated on a regular basis every 7 days on the same weekday.
 #### University Recurring Tasks
-This special kind of recurring task only gets executed on days, where lectures are held at KIT  
+This special kind of recurring task only gets executed on days, where lectures are held at KIT 
