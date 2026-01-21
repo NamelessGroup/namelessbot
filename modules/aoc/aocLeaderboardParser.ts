@@ -1,5 +1,5 @@
-import axios from "axios";
 import {aocData, aocMember} from "./aocTypes";
+import { ofetch } from "ofetch";
 
 const url = "https://adventofcode.com/";
 const path = "/leaderboard/private/view/";
@@ -14,8 +14,7 @@ const path = "/leaderboard/private/view/";
  */
 export async function requestLeaderboard(id: number, year: number) : Promise<aocMember[]> {
     const concaturl = url + year + path + id + ".json";
-    const answer = await axios.get(concaturl, {headers: {'Content-Type' : 'application/json', 'cookie':'session=' + process.env.AOC_SESSION}});
-    const data = answer.data as aocData;
+    const data = await ofetch<aocData>(concaturl, {headers: {'Content-Type' : 'application/json', 'cookie':'session=' + process.env.AOC_SESSION}});
     const members = Object.values(data.members);
     members.sort((a, b)=> {
         if (a.local_score < b.local_score) {

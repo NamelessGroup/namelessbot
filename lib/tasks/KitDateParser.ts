@@ -1,5 +1,5 @@
-import axios from "axios";
 import {DateTime} from "luxon";
+import { ofetch } from "ofetch";
 
 /**
  * Parser for transforming the lecture dates from the kit website and checking whether dates are in this span
@@ -133,8 +133,8 @@ export default class KitDateParser {
      * @returns the html source code
      */
     private async getHTML(url: string): Promise<string>  {
-        const response = await axios.get(url);
-        return response.data as string;
+        const response = await ofetch(url, { parseResponse: (txt) => txt });
+        return response;
     }
 }
 
