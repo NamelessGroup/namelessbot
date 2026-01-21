@@ -1,37 +1,38 @@
-import { get, write } from '../../lib/configmanager';
-import { mockSlash } from '../utils';
-import koeri, { setRating } from '../../slashCommands/koeri';
-import { ComponentType } from 'discord.js';
+import { test, expect, vi, afterEach } from 'vitest';
+import * as configManager from '../../lib/configmanager';
+import koeri, { setRating } from '../../modules/koeri/koeriCommand';
+import { MockSlashCommand } from '../utils';
+import { ActionRowData, ComponentType, MessageActionRowComponentData } from 'discord.js';
 
 // Mocking the config manager
-const getMock = get as jest.Mock;
-const writeMock = write as jest.Mock;
+const getMock = vi.spyOn(configManager, 'get').mockImplementation(() => undefined);
+const writeMock = vi.spyOn(configManager, 'write').mockImplementation(() => undefined);
 
-jest.mock('../../lib/configmanager');
+const random = vi.spyOn(globalThis.Math, 'random');
 
-// Mocking Math.random
-const random = jest.spyOn(global.Math, "random");
+afterEach(() => {
+    getMock.mockReset();
+    getMock.mockImplementation(() => undefined);
+    writeMock.mockReset();
+    writeMock.mockImplementation(() => undefined);
+});
 
-test('/koeri - Set rating test', async () => {
-    getMock.mockReturnValue(undefined);
-    
+test('Set rating test', async () => {
     await setRating("abc", 12, 13);
 
-    expect(writeMock.mock.lastCall[0]).toBe("abc");
-    expect(writeMock.mock.lastCall[1]).toBe("koeri");
-    expect(writeMock.mock.lastCall[2]).toEqual({12: 13});
+    expect(writeMock).toHaveBeenLastCalledWith("abc", "koeri", {12: 13});
 });
 
 test('/koeri generate - Test A', async () => {
-    getMock.mockReturnValue(undefined);
     random.mockReturnValueOnce(0.2233);
     // combination 15 - 3, 4, 5, 6
 
-    const mockInput = mockSlash({}, "generate");
+    const mockSlash = new MockSlashCommand(koeri.handler)
+        .setSubcommand("generate");
+    
+    await mockSlash.call();
 
-    await koeri.handler(mockInput.input);
-
-    expect(mockInput.mockFollowUp.mock.lastCall[0]).toEqual({
+    expect(mockSlash).toBeFollowedUpWith({
         content: "Koeri-Kombination: Gewürz 3, Gewürz 4, Gewürz 5, Gewürz 6",
         components: _getGenerateComponents(15)
     })
@@ -42,30 +43,27 @@ test('/koeri generate - Test B', async () => {
     random.mockReturnValueOnce(0.2233);
     // combination 15 - 3, 4, 5, 6 - But colides and becomes 16 - 2
 
-    const mockInput = mockSlash({}, "generate");
+    const mockSlash = new MockSlashCommand(koeri.handler)
+        .setSubcommand("generate");
 
-    await koeri.handler(mockInput.input);
+    await mockSlash.call();
 
-    expect(mockInput.mockFollowUp.mock.lastCall[0]).toEqual({
+    expect(mockSlash).toBeFollowedUpWith({
         content: "Koeri-Kombination: Gewürz 2",
         components: _getGenerateComponents(16)
     })
 });
 
 test('/koeri rate - Test A', async () => {
-    getMock.mockReturnValue(undefined);
+    const mockSlash = new MockSlashCommand(koeri.handler)
+        .setSubcommand("rate")
+        .setArgument("combination", 22)
+        .setArgument("rating", 10);
+    
+    await mockSlash.call();
 
-    const mockInput = mockSlash({
-        "combination": 22,
-        "rating": 10
-    }, "rate");
-
-    await koeri.handler(mockInput.input);
-
-    expect(writeMock.mock.lastCall[0]).toBe("mockUser");
-    expect(writeMock.mock.lastCall[1]).toBe("koeri");
-    expect(writeMock.mock.lastCall[2]).toEqual({22: 10});
-    expect(mockInput.mockFollowUp.mock.lastCall[0]).toEqual({
+    expect(writeMock).toHaveBeenLastCalledWith("mockUser", "koeri", { 22: 10 });
+    expect(mockSlash).toBeFollowedUpWith({
         ephemeral: true,
         content: "Kombination 22 bewertet mit 10"
     });
@@ -74,64 +72,62 @@ test('/koeri rate - Test A', async () => {
 test('/koeri rate - Test B', async () => {
     getMock.mockReturnValue({22: 8, 19: 3});
 
-    const mockInput = mockSlash({
-        "combination": 22,
-        "rating": 10
-    }, "rate");
+    const mockSlash = new MockSlashCommand(koeri.handler)
+        .setSubcommand("rate")
+        .setArgument("combination", 22)
+        .setArgument("rating", 10);
 
-    await koeri.handler(mockInput.input);
+    await mockSlash.call();
 
-    expect(writeMock.mock.lastCall[0]).toBe("mockUser");
-    expect(writeMock.mock.lastCall[1]).toBe("koeri");
-    expect(writeMock.mock.lastCall[2]).toEqual({22: 10, 19: 3});
-    expect(mockInput.mockFollowUp.mock.lastCall[0]).toEqual({
+    expect(writeMock).toHaveBeenLastCalledWith("mockUser", "koeri", { 22: 10, 19: 3 });
+    expect(mockSlash).toBeFollowedUpWith({
         ephemeral: true,
         content: "Kombination 22 bewertet mit 10"
     });
 });
 
 test('/koeri ratings - Test A', async () => {
-    getMock.mockReturnValue(undefined);
-
-    const mockInput = mockSlash({}, "ratings");
-
-    await koeri.handler(mockInput.input);
-
-    expect(mockInput.mockFollowUp.mock.lastCall[0]).toBe("Du musst zunächst koeri essen!")
+    const mockSlash = new MockSlashCommand(koeri.handler)
+        .setSubcommand("ratings");
+    
+    await mockSlash.call();
+    
+    expect(mockSlash).toBeFollowedUpWith("Du musst zunächst koeri essen!");
 });
 
 test('/koeri ratings - Test B', async () => {
     getMock.mockReturnValue({12: 10});
 
-    const mockInput = mockSlash({}, "ratings");
+    const mockSlash = new MockSlashCommand(koeri.handler)
+        .setSubcommand("ratings");
+    
+    await mockSlash.call();
 
-    await koeri.handler(mockInput.input);
-
-    expect(mockInput.mockFollowUp.mock.lastCall[0]).toBe("```Gewürz 3, Gewürz 4 | 10\n```");
+    expect(mockSlash).toBeFollowedUpWith("```Gewürz 3, 4 | 10\n```");
 });
 
 test('/koeri progress - Test A', async () => {
-    getMock.mockReturnValue(undefined);
+    const mockSlash = new MockSlashCommand(koeri.handler)
+        .setSubcommand("progress");
 
-    const mockInput = mockSlash({}, "progress");
+    await mockSlash.call();
 
-    await koeri.handler(mockInput.input);
-
-    expect(mockInput.mockFollowUp.mock.lastCall[0]).toBe("Du musst zunächst koeri essen!")
+    expect(mockSlash).toBeFollowedUpWith("Du musst zunächst koeri essen!")
 });
 
 test('/koeri progress - Test B', async () => {
     getMock.mockReturnValue({19: 10, 20: 10, 63: 6});
 
-    const mockInput = mockSlash({}, "progress");
+    const mockSlash = new MockSlashCommand(koeri.handler)
+        .setSubcommand("progress");
 
-    await koeri.handler(mockInput.input);
+    await mockSlash.call();
 
-    expect(mockInput.mockFollowUp.mock.lastCall[0]).toBe("Koeri-Fortschritt:\n`....................  3 / 63 (4.76%)`")
+    expect(mockSlash).toBeFollowedUpWith("Koeri-Fortschritt:\n`....................  3 / 63 (4.76%)`")
 });
 
 // Utility functions for testing /koeri
-function _getGenerateComponents(combination: number) {
+function _getGenerateComponents(combination: number): ActionRowData<MessageActionRowComponentData>[] {
     return [
         {
             type: ComponentType.ActionRow,

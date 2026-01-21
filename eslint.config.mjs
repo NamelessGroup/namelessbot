@@ -36,7 +36,8 @@ export default defineConfig([
                 },
                 "contexts": [ "ExportDefaultDeclaration", "MethodDefinition[override!=true]" ]
             }],
-            "jsdoc/tag-lines": "off"
+            "jsdoc/tag-lines": "off",
+            "eqeqeq": ['error', 'always', {null: 'never'}]
         }
     },
     {

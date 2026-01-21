@@ -209,7 +209,7 @@ async function handler(interaction: CommandInteraction): Promise<void> {
         const startingCombination = combination;
         while(_hasHadCombination(interaction.user.id, combination)
             || (legendaryCombinations.includes(combination) && !_hadEveryCombination(interaction.user.id))
-            || (options.getInteger("amount_seasonings") !== null && options.getInteger("amount_seasonings") !== _combinationToAmountSeasonings(combination))) {
+            || (options.getInteger("amount_seasonings") != null && options.getInteger("amount_seasonings") !== _combinationToAmountSeasonings(combination))) {
             combination += 1;
             combination %= maxPossibleCombinations;
             if(combination === 0) {

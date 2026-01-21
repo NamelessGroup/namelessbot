@@ -1,21 +1,14 @@
-import { mockSlash } from '../utils';
-import testSlash from "../../slashCommands/test";
+import { test, expect } from 'vitest';
+import { MockSlashCommand } from '../utils';
+import testSlash from "../../modules/test";
 
 test('/test - Test A', async () => {
     // Getting our mock input
-    const mockInput = mockSlash({
-        "test_argument": "Some Argument"
-    });
+    const testMock = new MockSlashCommand(testSlash.handler);
 
-    // Executing our handler
-    await testSlash.handler(mockInput.input);
+    testMock.setArgument("test_argument", "Some Argument");
 
-    // Checking our mock function values
-
-    // deferReply was called once
-    expect(mockInput.mockDeferReply.mock.calls.length).toBe(1);
-    // followUp was called once
-    expect(mockInput.mockFollowUp.mock.calls.length).toBe(1);
-    // Checking first argument to first followUp-call
-    expect(mockInput.mockFollowUp.mock.calls[0][0]).toBe("You typed: `Some Argument`");
+    await testMock.call();
+    expect(testMock).toBeDeferred();
+    expect(testMock).toBeFollowedUpWith("You typed: `Some Argument`");
 });
