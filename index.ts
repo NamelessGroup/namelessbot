@@ -31,7 +31,7 @@ async function main(): Promise<void> {
     });
 
     // Event handlers
-    addListeners(client, true);
+    addListeners(client);
 
     // Recurring tasks
     startRecurringTaskLoop(client);

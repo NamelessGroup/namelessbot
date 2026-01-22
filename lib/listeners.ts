@@ -7,16 +7,13 @@ import { LISTENERS, SLASH_COMMANDS } from "./registry";
  * Adds all event listeners to the supplied client.
  *
  * @param client Client to add listeners to
- * @param includeElevated If true, elevated listeners will also be added
  */
-export function addListeners(client: Client, includeElevated = false): void {
+export function addListeners(client: Client): void {
     for (const l of LISTENERS) {
-        if (!l.elevated || includeElevated) {
-            if (l.once) {
-                client.once(l.event, l.handler);
-            } else {
-                client.on(l.event, l.handler);
-            }
+        if (l.once) {
+            client.once(l.event, l.handler);
+        } else {
+            client.on(l.event, l.handler);
         }
     }
 
@@ -29,13 +26,10 @@ export function addListeners(client: Client, includeElevated = false): void {
  * Removes all event listeners from the supplied client.
  *
  * @param client Client to remove listeners from
- * @param includeElevated If true, elevated listeners will also be removed
  */
-export function removeListeners(client: Client, includeElevated = false): void {
+export function removeListeners(client: Client): void {
     for (const l of LISTENERS) {
-        if (!l.elevated || includeElevated) {
-            client.removeListener(l.event, l.handler);
-        }
+        client.removeListener(l.event, l.handler);
     }
 }
 

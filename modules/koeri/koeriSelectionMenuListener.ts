@@ -8,7 +8,6 @@ const REGEX = /koeri-u(\d+)\$(\d+)/;
  */
 export default {
     event: "interactionCreate",
-    elevated: true,
     handler: async function (interaction: Interaction): Promise<void> {
         if (!interaction.isStringSelectMenu()) return;
         const match = REGEX.exec(interaction.customId);

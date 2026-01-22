@@ -31,11 +31,6 @@ export interface IEventListener {
      */
     event: string;
     /**
-     * If true, listener will be marked as elevated.
-     * Listener may be treated differently by {@link lib/listeners.addListeners} and {@link lib/listeners.removeListeners}
-     */
-    elevated?: boolean;
-    /**
      * Handler to be executed when the event is triggered.
      */
     handler: EventHandler;

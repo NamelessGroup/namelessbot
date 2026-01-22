@@ -8,7 +8,6 @@ const REGEX = /attendancetracker-(\d)-(.+)/;
  */
 export default {
     event: "interactionCreate",
-    elevated: false,
     /**
      * The handler function for the Button interaction
      *
