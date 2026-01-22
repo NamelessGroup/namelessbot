@@ -1,6 +1,6 @@
 import { test, expect, vi, afterEach } from "vitest";
 import * as configManager from "../../lib/configmanager";
-import { MockStringSelectMenu } from "../utils";
+import { MockStringSelectMenuInteractionBuilder } from "../utils";
 import koeriSelectionMenuListener from "../../modules/koeri/koeriSelectionMenuListener";
 
 // Mocking the config manager
@@ -19,14 +19,13 @@ afterEach(() => {
 });
 
 test("Valid interaction", async () => {
-    const mockInteraction = new MockStringSelectMenu(
-        koeriSelectionMenuListener.handler,
-    )
-        .setMockUserId("1234")
+    const mockInteraction = new MockStringSelectMenuInteractionBuilder()
+        .setUserId("1234")
         .setCustomId("koeri-u1234$12")
-        .addValue("8");
+        .addValue("8")
+        .build();
 
-    await mockInteraction.call();
+    await koeriSelectionMenuListener.handler(mockInteraction);
 
     expect(mockInteraction).toBeDeferred();
     expect(mockInteraction).toBeFollowedUpWith({

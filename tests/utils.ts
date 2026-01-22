@@ -1,149 +1,288 @@
 import { vi, type Mock, expect } from "vitest";
 import {
-    BaseInteraction,
+    APIApplicationCommandInteractionDataOption,
+    APIApplicationCommandInteractionDataSubcommandOption,
+    APIBaseInteraction,
+    APIChatInputApplicationCommandInteraction,
+    APIInteractionGuildMember,
+    APIMessage,
+    APIMessageComponentSelectMenuInteraction,
+    APIMessageStringSelectInteractionData,
+    APIPartialInteractionGuild,
+    APITextChannel,
+    APIUser,
+    ApplicationCommandOptionType,
+    ApplicationCommandType,
+    ChannelType,
     ChatInputCommandInteraction,
-    CommandInteraction,
-    Interaction,
+    Client,
+    ComponentType,
+    GuildMemberFlagsBitField,
+    InteractionContextType,
     InteractionReplyOptions,
+    InteractionType,
+    Locale,
     MessagePayload,
+    MessageType,
     StringSelectMenuInteraction,
 } from "discord.js";
+import { RawInteractionData } from "discord.js/typings/rawDataTypes";
 
-interface SlashCommandArguments {
-    [key: string]: string | number | boolean;
-}
-
-export class MockInteraction {
-    deferReply: Mock;
-    followUp: Mock;
-    mockUserId: string;
-
-    constructor() {
+class MockChatInputCommandInteraction extends ChatInputCommandInteraction {
+    constructor(client: Client, data: RawInteractionData) {
+        super(client as Client<true>, data);
         this.deferReply = vi.fn();
         this.followUp = vi.fn();
-        this.mockUserId = "mockUserId";
-    }
-
-    setMockUserId(userId: string): this {
-        this.mockUserId = userId;
-        return this;
-    }
-
-    protected buildInteraction(): BaseInteraction &
-        Pick<CommandInteraction, "deferReply" | "followUp"> {
-        return {
-            deferReply: this.deferReply,
-            followUp: this.followUp,
-            isAnySelectMenu: () => false,
-            isAutocomplete: () => false,
-            isButton: () => false,
-            isChannelSelectMenu: () => false,
-            isChatInputCommand: () => false,
-            isCommand: () => false,
-            isContextMenuCommand: () => false,
-            isMentionableSelectMenu: () => false,
-            isMessageComponent: () => false,
-            isMessageContextMenuCommand: () => false,
-            isModalSubmit: () => false,
-            isPrimaryEntryPointCommand: () => false,
-            isRepliable: () => false,
-            isRoleSelectMenu: () => false,
-            isStringSelectMenu: () => false,
-            isUserContextMenuCommand: () => false,
-            isUserSelectMenu: () => false,
-            user: {
-                id: this.mockUserId,
-            },
-        } as unknown as BaseInteraction &
-            Pick<CommandInteraction, "deferReply" | "followUp">;
     }
 }
 
-export class MockSlashCommand extends MockInteraction {
-    arguments: SlashCommandArguments;
-    subcommand?: string;
-    handler: (interaction: CommandInteraction) => void | Promise<void>;
-
+class MockStringSelectMenuInteraction extends StringSelectMenuInteraction {
     constructor(
-        handler: (interaction: CommandInteraction) => void | Promise<void>,
+        client: Client,
+        data: APIMessageComponentSelectMenuInteraction,
     ) {
-        super();
-        this.arguments = {};
-        this.handler = handler;
-    }
-
-    setSubcommand(subcommand: string): this {
-        this.subcommand = subcommand;
-        return this;
-    }
-
-    setArgument(key: string, value: string | number | boolean): this {
-        this.arguments[key] = value;
-        return this;
-    }
-
-    async call(): Promise<void> {
-        await this.handler(this.buildInteraction());
-    }
-
-    protected override buildInteraction(): ChatInputCommandInteraction {
-        return {
-            ...super.buildInteraction(),
-            options: {
-                data: this.arguments,
-                getString: (key: string) => this.arguments[key] as string,
-                getBoolean: (key: string) => this.arguments[key] as boolean,
-                getInteger: (key: string) => this.arguments[key] as number,
-                getNumber: (key: string) => this.arguments[key] as number,
-                getSubcommand: () => this.subcommand,
-            },
-        } as unknown as ChatInputCommandInteraction;
+        super(
+            client as Client<true>,
+            data as unknown as APIMessageStringSelectInteractionData,
+        );
+        this.deferReply = vi.fn();
+        this.followUp = vi.fn();
     }
 }
 
-export class MockStringSelectMenu extends MockInteraction {
-    values: string[];
-    customId: string;
-    handler: (interaction: Interaction) => void | Promise<void>;
+export class MockBuilder {
+    protected readonly client: Client;
+    protected user: APIUser;
 
-    constructor(handler: (interaction: Interaction) => void | Promise<void>) {
-        super();
-        this.values = [];
-        this.customId = "";
-        this.handler = handler;
+    constructor(client?: Client) {
+        this.client = client ?? new Client({ intents: [] });
+        this.user = {
+            id: "mockUserId",
+            username: "mockuser",
+            avatar: "",
+            discriminator: "",
+            global_name: "Mock User",
+            locale: Locale.EnglishGB,
+        };
     }
 
-    setCustomId(id: string): this {
-        this.customId = id;
+    public setUserId(userId: string): this {
+        this.user.id = userId;
         return this;
     }
 
-    addValue(value: string): this {
-        this.values.push(value);
-        return this;
-    }
-
-    async call(): Promise<void> {
-        await this.handler(this.buildInteraction());
-    }
-
-    protected override buildInteraction(): StringSelectMenuInteraction {
+    protected mockGuild(): APIPartialInteractionGuild {
         return {
-            ...super.buildInteraction(),
-            isStringSelectMenu: () => true,
-            values: this.values,
-            customId: this.customId,
-        } as unknown as StringSelectMenuInteraction;
+            id: "",
+            features: [],
+            locale: Locale.EnglishGB,
+        };
     }
+
+    protected mockTextChannel(): APITextChannel {
+        return {
+            id: "",
+            name: "",
+            position: 0,
+            type: ChannelType.GuildText,
+        };
+    }
+
+    protected mockMember(): APIInteractionGuildMember {
+        return {
+            user: this.user,
+            deaf: false,
+            flags: GuildMemberFlagsBitField.Flags,
+            joined_at: "",
+            mute: false,
+            permissions: "",
+            roles: [],
+        };
+    }
+
+    protected mockMessage(): APIMessage {
+        return {
+            id: "",
+            attachments: [],
+            author: this.user,
+            channel_id: "",
+            content: "",
+            edited_timestamp: "",
+            embeds: [],
+            mention_everyone: false,
+            mention_roles: [],
+            mentions: [],
+            pinned: false,
+            timestamp: "",
+            tts: false,
+            type: MessageType.Default,
+        };
+    }
+
+    protected buildBaseInteraction<T extends InteractionType, D>(
+        type: T,
+    ): APIBaseInteraction<T, D> {
+        return {
+            id: "",
+            application_id: "",
+            type: type,
+            token: "",
+            version: 1,
+            entitlements: [],
+            authorizing_integration_owners: {},
+            attachment_size_limit: -1,
+            guild: this.mockGuild(),
+            guild_id: this.mockGuild().id,
+            guild_locale: this.mockGuild().locale,
+            channel: this.mockTextChannel(),
+            app_permissions: "",
+            locale: this.user.locale,
+            context: InteractionContextType.Guild,
+            user: this.user,
+            member: this.mockMember(),
+            message: this.mockMessage(),
+        } as APIBaseInteraction<T, D>;
+    }
+}
+
+export class MockChatInputCommandInteractionBuilder extends MockBuilder {
+    private slashCommandId: string;
+    private slashCommandName: string;
+    private slashCommandOptions: APIApplicationCommandInteractionDataOption<InteractionType.ApplicationCommand>[];
+    private subcommand: APIApplicationCommandInteractionDataSubcommandOption<InteractionType.ApplicationCommand>;
+
+    constructor(client?: Client) {
+        super(client);
+        this.slashCommandId = "";
+        this.slashCommandName = "";
+        this.slashCommandOptions = [];
+        this.subcommand = null;
+    }
+
+    public setCommandId(commandId: string): this {
+        this.slashCommandId = commandId;
+        return this;
+    }
+
+    public setCommandName(commandName: string): this {
+        this.slashCommandName = commandName;
+        return this;
+    }
+
+    public setSubcommand(subcommand: string): this {
+        this.subcommand = {
+            name: subcommand,
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [],
+        };
+        return this;
+    }
+
+    public addStringOption(name: string, value: string): this {
+        (this.subcommand?.options ?? this.slashCommandOptions).push({
+            name,
+            value,
+            type: ApplicationCommandOptionType.String,
+        });
+        return this;
+    }
+
+    public addNumberOption(name: string, value: number): this {
+        (this.subcommand?.options ?? this.slashCommandOptions).push({
+            name,
+            value,
+            type: ApplicationCommandOptionType.Number,
+        });
+        return this;
+    }
+
+    public addIntegerOption(name: string, value: number): this {
+        (this.subcommand?.options ?? this.slashCommandOptions).push({
+            name,
+            value,
+            type: ApplicationCommandOptionType.Integer,
+        });
+        return this;
+    }
+
+    public addBooleanOption(name: string, value: boolean): this {
+        (this.subcommand?.options ?? this.slashCommandOptions).push({
+            name,
+            value,
+            type: ApplicationCommandOptionType.Boolean,
+        });
+        return this;
+    }
+
+    public build(): MockChatInputCommandInteraction {
+        if (this.subcommand != null) {
+            this.slashCommandOptions.push(this.subcommand);
+        }
+
+        return new MockChatInputCommandInteraction(this.client, {
+            ...this.buildBaseInteraction(InteractionType.ApplicationCommand),
+            data: {
+                id: this.slashCommandId,
+                name: this.slashCommandName,
+                type: ApplicationCommandType.ChatInput,
+                guild_id: this.mockGuild().id,
+                options: this.slashCommandOptions,
+            },
+        } as APIChatInputApplicationCommandInteraction);
+    }
+}
+
+export class MockStringSelectMenuInteractionBuilder extends MockBuilder {
+    private stringSelectMenuId: string;
+    private stringSelectMenuValues: string[];
+
+    constructor(client?: Client) {
+        super(client);
+        this.stringSelectMenuId = "";
+        this.stringSelectMenuValues = [];
+    }
+
+    public setCustomId(customId: string): this {
+        this.stringSelectMenuId = customId;
+        return this;
+    }
+
+    public addValue(value: string): this {
+        this.stringSelectMenuValues.push(value);
+        return this;
+    }
+
+    public build(): MockStringSelectMenuInteraction {
+        return new MockStringSelectMenuInteraction(this.client, {
+            ...this.buildBaseInteraction(InteractionType.MessageComponent),
+            data: {
+                component_type: ComponentType.StringSelect,
+                custom_id: this.stringSelectMenuId,
+                values: this.stringSelectMenuValues,
+            },
+            channel_id: this.mockTextChannel().id,
+        } as APIMessageComponentSelectMenuInteraction);
+    }
+}
+
+function hasMockAttribute<T>(
+    received: Partial<T>,
+    key: keyof T,
+): received is T {
+    return (
+        typeof received === "object" &&
+        key in received &&
+        typeof received[key] === "function" &&
+        "mock" in received[key]
+    );
 }
 
 expect.extend({
     toBeDeferred(received: unknown) {
-        if (!(received instanceof MockInteraction)) {
+        if (!hasMockAttribute<{ deferReply: Mock }>(received, "deferReply")) {
             return {
                 pass: false,
-                message: () =>
-                    `expected object of type MockInteraction, received ${typeof received}`,
+                message: () => "received object has no mock of 'deferReply'",
             };
         }
 
@@ -157,7 +296,7 @@ expect.extend({
         received: unknown,
         expected: string | MessagePayload | InteractionReplyOptions,
     ) {
-        if (!(received instanceof MockInteraction)) {
+        if (!hasMockAttribute<{ followUp: Mock }>(received, "followUp")) {
             return {
                 pass: false,
                 message: () =>

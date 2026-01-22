@@ -1,14 +1,17 @@
 import { test, expect } from "vitest";
-import { MockSlashCommand } from "./utils";
+import { MockChatInputCommandInteractionBuilder } from "./utils";
 import testSlash from "../modules/test";
+import { Client } from "discord.js";
 
 test("/test - Test A", async () => {
     // Getting our mock input
-    const testMock = new MockSlashCommand(testSlash.handler);
+    const client = new Client({ intents: [] });
+    const mockInteraction = new MockChatInputCommandInteractionBuilder(client)
+        .addStringOption("test_argument", "Some Argument")
+        .build();
 
-    testMock.setArgument("test_argument", "Some Argument");
+    await testSlash.handler(mockInteraction);
 
-    await testMock.call();
-    expect(testMock).toBeDeferred();
-    expect(testMock).toBeFollowedUpWith("You typed: `Some Argument`");
+    expect(mockInteraction).toBeDeferred();
+    expect(mockInteraction).toBeFollowedUpWith("You typed: `Some Argument`");
 });
