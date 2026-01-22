@@ -1,9 +1,7 @@
 import {
-    CommandInteraction,
     Message,
     EmbedBuilder,
     ApplicationCommandOptionType,
-    CommandInteractionOptionResolver,
     ActionRowBuilder,
     ButtonBuilder,
     ButtonStyle,
@@ -16,6 +14,7 @@ import {
     GuildMember,
     Snowflake,
     Interaction,
+    ChatInputCommandInteraction,
 } from "discord.js";
 import { ISlashCommand } from "../../types";
 import { ConfigurationFile, get } from "../../lib/configmanager";
@@ -53,7 +52,7 @@ export default {
             },
         ],
     },
-    handler: async function (interaction: CommandInteraction) {
+    handler: async function (interaction: ChatInputCommandInteraction) {
         try {
             await interaction.channel.fetch();
         } catch {
@@ -67,7 +66,7 @@ export default {
         let msg = "";
 
         // --- Variables with input
-        const options = interaction.options as CommandInteractionOptionResolver;
+        const options = interaction.options;
         const time = options.getInteger("votetime", false);
         const timed = time != null;
         const title = options.getString("name", true);

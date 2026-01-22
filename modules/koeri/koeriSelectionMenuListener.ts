@@ -1,5 +1,6 @@
 import { Interaction } from "discord.js";
 import { setRating } from "./koeriCommand";
+import { IEventListener } from "../../types";
 
 const REGEX = /koeri-u(\d+)\$(\d+)/;
 
@@ -30,4 +31,4 @@ export default {
             content: `Kombination ${match[2]} bewertet mit ${interaction.values[0]}`,
         });
     },
-};
+} as IEventListener;

@@ -1,8 +1,7 @@
 import { ISlashCommand } from "../../types";
 import {
     ApplicationCommandOptionType,
-    CommandInteraction,
-    CommandInteractionOptionResolver,
+    ChatInputCommandInteraction,
 } from "discord.js";
 import {
     addBlock,
@@ -179,8 +178,8 @@ export default {
      *
      * @param interaction Interaction of the command
      */
-    handler: async function (interaction: CommandInteraction) {
-        const options = interaction.options as CommandInteractionOptionResolver;
+    handler: async function (interaction: ChatInputCommandInteraction) {
+        const options = interaction.options;
         if (options.getSubcommand() === "list") {
             await interaction.deferReply({ ephemeral: true });
             await interaction.followUp({

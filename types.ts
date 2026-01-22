@@ -1,7 +1,7 @@
 import {
     ApplicationCommandData,
+    ChatInputCommandInteraction,
     Client,
-    CommandInteraction,
 } from "discord.js";
 
 /**
@@ -35,13 +35,16 @@ export interface ISlashCommand {
      *
      * @param interaction Interaction sent to the event handler
      */
-    handler(this: void, interaction: CommandInteraction): void | Promise<void>;
+    handler(
+        this: void,
+        interaction: ChatInputCommandInteraction,
+    ): void | Promise<void>;
 }
 
 /**
  * Interface for EventHandler
  */
-export type EventHandler = (...args: any[]) => Promise<void>; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type EventHandler = (this: void, ...args: any[]) => Promise<void>; // eslint-disable-line @typescript-eslint/no-explicit-any
 /**
  * Interface for Task executors
  */

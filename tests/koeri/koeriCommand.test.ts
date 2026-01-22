@@ -73,7 +73,9 @@ test("/koeri rate - Test A", async () => {
 
     await mockSlash.call();
 
-    expect(writeMock).toHaveBeenLastCalledWith("mockUser", "koeri", { 22: 10 });
+    expect(writeMock).toHaveBeenLastCalledWith("mockUserId", "koeri", {
+        22: 10,
+    });
     expect(mockSlash).toBeFollowedUpWith({
         ephemeral: true,
         content: "Kombination 22 bewertet mit 10",
@@ -90,7 +92,7 @@ test("/koeri rate - Test B", async () => {
 
     await mockSlash.call();
 
-    expect(writeMock).toHaveBeenLastCalledWith("mockUser", "koeri", {
+    expect(writeMock).toHaveBeenLastCalledWith("mockUserId", "koeri", {
         22: 10,
         19: 3,
     });
@@ -156,7 +158,7 @@ function _getGenerateComponents(
             components: [
                 {
                     type: ComponentType.StringSelect,
-                    customId: `koeri-umockUser$${combination}`,
+                    customId: `koeri-umockUserId$${combination}`,
                     options: _getRateOptions(),
                     placeholder: "Bewertung",
                 },

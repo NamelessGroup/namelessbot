@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
-import { MockSlashCommand } from "../utils";
-import testSlash from "../../modules/test";
+import { MockSlashCommand } from "./utils";
+import testSlash from "../modules/test";
 
 test("/test - Test A", async () => {
     // Getting our mock input

@@ -1,8 +1,7 @@
 import { ISlashCommand } from "../../types";
 import {
     ApplicationCommandOptionType,
-    CommandInteraction,
-    CommandInteractionOptionResolver,
+    ChatInputCommandInteraction,
 } from "discord.js";
 import { generateTruthTable, parse } from "./truthtableParser";
 
@@ -22,9 +21,9 @@ export default {
             },
         ],
     },
-    handler: async function (interaction: CommandInteraction) {
+    handler: async function (interaction: ChatInputCommandInteraction) {
         await interaction.deferReply();
-        const options = interaction.options as CommandInteractionOptionResolver;
+        const options = interaction.options;
 
         try {
             const parsedExpression = parse(

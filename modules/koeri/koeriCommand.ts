@@ -2,8 +2,7 @@ import { ISlashCommand } from "../../types";
 import {
     ApplicationCommandData,
     ApplicationCommandOptionType,
-    CommandInteraction,
-    CommandInteractionOptionResolver,
+    ChatInputCommandInteraction,
     ComponentType,
     MessageSelectOption,
     Snowflake,
@@ -105,6 +104,24 @@ export async function setRating(
 }
 
 /**
+ * Converts a combination number to an array of booleans, indicating true, if the seasoning is set, false otherwise
+ *
+ * @param combination Combination to convert
+ * @returns Boolean array
+ */
+function _combinationToBooleanArray(combination: number): boolean[] {
+    const result = new Array<boolean>(Math.log2(maxPossibleCombinations)).fill(
+        false,
+    );
+    for (let i = 0; i < result.length; i++) {
+        if (combination & (1 << i)) {
+            result[i] = true;
+        }
+    }
+    return result.toReversed();
+}
+
+/**
  * Converts a combination number to a string.
  *
  * @param combination Combination to convert
@@ -115,18 +132,14 @@ function _combinationToSeasonings(
     combination: number,
     prefix = "Gewürz ",
 ): string {
-    let s = (combination >>> 0).toString(2);
-    while (s.length < Math.log2(maxPossibleCombinations)) {
-        s = "0" + s;
-    }
-    let result = "";
-    const sSplit = s.split("");
-    sSplit.forEach((val, i) => {
-        if (val === "1") {
-            result += prefix + (i - 1 + 2) + ",";
+    const bits = _combinationToBooleanArray(combination);
+    const seasonings: string[] = [];
+    bits.forEach((val, i) => {
+        if (val) {
+            seasonings.push(prefix + (i + 1));
         }
     });
-    return result.substring(0, result.length - 2);
+    return seasonings.join(", ");
 }
 
 /**
@@ -136,18 +149,14 @@ function _combinationToSeasonings(
  * @returns The amount of seasonings inside that combination
  */
 function _combinationToAmountSeasonings(combination: number): number {
-    let s = (combination >>> 0).toString(2);
-    while (s.length < Math.log2(maxPossibleCombinations)) {
-        s = "0" + s;
-    }
-    let result = 0;
-    const sSplit = s.split("");
-    for (const i of sSplit) {
-        if (i === "1") {
-            result += 1;
+    const bits = _combinationToBooleanArray(combination);
+    let count = 0;
+    for (const b of bits) {
+        if (b) {
+            count += 1;
         }
     }
-    return result;
+    return count;
 }
 
 const command = {
@@ -209,8 +218,10 @@ const command = {
  *
  * @param interaction Interaction to handle
  */
-async function handler(interaction: CommandInteraction): Promise<void> {
-    const options = interaction.options as CommandInteractionOptionResolver;
+async function handler(
+    interaction: ChatInputCommandInteraction,
+): Promise<void> {
+    const options = interaction.options;
     if (options.getSubcommand() === "generate") {
         await interaction.deferReply();
         if (_hadEveryCombination(interaction.user.id, true)) {

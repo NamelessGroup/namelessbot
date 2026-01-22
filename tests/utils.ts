@@ -1,17 +1,65 @@
 import { vi, type Mock, expect } from "vitest";
 import {
+    BaseInteraction,
+    ChatInputCommandInteraction,
     CommandInteraction,
+    Interaction,
     InteractionReplyOptions,
     MessagePayload,
+    StringSelectMenuInteraction,
 } from "discord.js";
 
 interface SlashCommandArguments {
     [key: string]: string | number | boolean;
 }
 
-export class MockSlashCommand {
+export class MockInteraction {
     deferReply: Mock;
     followUp: Mock;
+    mockUserId: string;
+
+    constructor() {
+        this.deferReply = vi.fn();
+        this.followUp = vi.fn();
+        this.mockUserId = "mockUserId";
+    }
+
+    setMockUserId(userId: string): this {
+        this.mockUserId = userId;
+        return this;
+    }
+
+    protected buildInteraction(): BaseInteraction &
+        Pick<CommandInteraction, "deferReply" | "followUp"> {
+        return {
+            deferReply: this.deferReply,
+            followUp: this.followUp,
+            isAnySelectMenu: () => false,
+            isAutocomplete: () => false,
+            isButton: () => false,
+            isChannelSelectMenu: () => false,
+            isChatInputCommand: () => false,
+            isCommand: () => false,
+            isContextMenuCommand: () => false,
+            isMentionableSelectMenu: () => false,
+            isMessageComponent: () => false,
+            isMessageContextMenuCommand: () => false,
+            isModalSubmit: () => false,
+            isPrimaryEntryPointCommand: () => false,
+            isRepliable: () => false,
+            isRoleSelectMenu: () => false,
+            isStringSelectMenu: () => false,
+            isUserContextMenuCommand: () => false,
+            isUserSelectMenu: () => false,
+            user: {
+                id: this.mockUserId,
+            },
+        } as unknown as BaseInteraction &
+            Pick<CommandInteraction, "deferReply" | "followUp">;
+    }
+}
+
+export class MockSlashCommand extends MockInteraction {
     arguments: SlashCommandArguments;
     subcommand?: string;
     handler: (interaction: CommandInteraction) => void | Promise<void>;
@@ -19,8 +67,7 @@ export class MockSlashCommand {
     constructor(
         handler: (interaction: CommandInteraction) => void | Promise<void>,
     ) {
-        this.deferReply = vi.fn();
-        this.followUp = vi.fn();
+        super();
         this.arguments = {};
         this.handler = handler;
     }
@@ -39,10 +86,9 @@ export class MockSlashCommand {
         await this.handler(this.buildInteraction());
     }
 
-    private buildInteraction(): CommandInteraction {
+    protected override buildInteraction(): ChatInputCommandInteraction {
         return {
-            deferReply: this.deferReply,
-            followUp: this.followUp,
+            ...super.buildInteraction(),
             options: {
                 data: this.arguments,
                 getString: (key: string) => this.arguments[key] as string,
@@ -51,37 +97,71 @@ export class MockSlashCommand {
                 getNumber: (key: string) => this.arguments[key] as number,
                 getSubcommand: () => this.subcommand,
             },
-            user: {
-                id: "mockUser",
-            },
-        } as unknown as CommandInteraction;
+        } as unknown as ChatInputCommandInteraction;
+    }
+}
+
+export class MockStringSelectMenu extends MockInteraction {
+    values: string[];
+    customId: string;
+    handler: (interaction: Interaction) => void | Promise<void>;
+
+    constructor(handler: (interaction: Interaction) => void | Promise<void>) {
+        super();
+        this.values = [];
+        this.customId = "";
+        this.handler = handler;
+    }
+
+    setCustomId(id: string): this {
+        this.customId = id;
+        return this;
+    }
+
+    addValue(value: string): this {
+        this.values.push(value);
+        return this;
+    }
+
+    async call(): Promise<void> {
+        await this.handler(this.buildInteraction());
+    }
+
+    protected override buildInteraction(): StringSelectMenuInteraction {
+        return {
+            ...super.buildInteraction(),
+            isStringSelectMenu: () => true,
+            values: this.values,
+            customId: this.customId,
+        } as unknown as StringSelectMenuInteraction;
     }
 }
 
 expect.extend({
     toBeDeferred(received: unknown) {
-        if (!(received instanceof MockSlashCommand)) {
+        if (!(received instanceof MockInteraction)) {
             return {
                 pass: false,
                 message: () =>
-                    `expected object of type MockSlashCommand, received ${typeof received}`,
+                    `expected object of type MockInteraction, received ${typeof received}`,
             };
         }
 
         return {
             pass: received.deferReply.mock.calls.length === 1,
-            message: () => "expected slash command to be deferred exactly once",
+            message: () =>
+                `expected interaction to be deferred exactly once, received: ${received.deferReply.mock.calls.length}`,
         };
     },
     toBeFollowedUpWith(
         received: unknown,
         expected: string | MessagePayload | InteractionReplyOptions,
     ) {
-        if (!(received instanceof MockSlashCommand)) {
+        if (!(received instanceof MockInteraction)) {
             return {
                 pass: false,
                 message: () =>
-                    `expected object of type MockSlashCommand, received ${typeof received}`,
+                    `expected object of type MockInteraction, received ${typeof received}`,
             };
         }
 
@@ -89,13 +169,13 @@ expect.extend({
             return {
                 pass: false,
                 message: () =>
-                    `expected slash command to be followed up exactly once`,
+                    `expected interaction to be followed up exactly once`,
             };
         }
 
         return {
             pass: this.equals(received.followUp.mock.lastCall[0], expected),
-            message: () => `expected slash command to be followed up with`,
+            message: () => `expected interaction to be followed up with`,
             actual: received.followUp.mock.lastCall[0] as unknown,
             expected: expected,
         };
