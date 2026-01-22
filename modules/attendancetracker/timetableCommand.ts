@@ -1,13 +1,22 @@
-import {ISlashCommand} from "../../types";
+import { ISlashCommand } from "../../types";
 import {
     ApplicationCommandOptionType,
     CommandInteraction,
-    CommandInteractionOptionResolver
+    CommandInteractionOptionResolver,
 } from "discord.js";
-import { addBlock, getBlocks, getTrackedAttendace, removeBlock, updateBlock } from "./attendanceTracker";
+import {
+    addBlock,
+    getBlocks,
+    getTrackedAttendace,
+    removeBlock,
+    updateBlock,
+} from "./attendanceTracker";
 import { Weekday } from "../../lib/tasks/recurringtask";
-import {buildResultEmbed, buildTimeTableEmbed} from "./attendanceTrackerVisuals";
-import {DateTime} from "luxon";
+import {
+    buildResultEmbed,
+    buildTimeTableEmbed,
+} from "./attendanceTrackerVisuals";
+import { DateTime } from "luxon";
 
 /**
  * Slash command definition for /timetable
@@ -32,15 +41,16 @@ export default {
                             { name: "Tuesday", value: Weekday.TUESDAY },
                             { name: "Wednesday", value: Weekday.WEDNESDAY },
                             { name: "Thursday", value: Weekday.THURSDAY },
-                            { name: "Friday", value: Weekday.FRIDAY }
-                        ]
-                    }, {
+                            { name: "Friday", value: Weekday.FRIDAY },
+                        ],
+                    },
+                    {
                         type: ApplicationCommandOptionType.Boolean,
                         name: "includeindex",
                         description: "Including the index in the block list",
-                        required: false
-                    }
-                ]
+                        required: false,
+                    },
+                ],
             },
             {
                 type: ApplicationCommandOptionType.Subcommand,
@@ -57,28 +67,28 @@ export default {
                             { name: "Tuesday", value: Weekday.TUESDAY },
                             { name: "Wednesday", value: Weekday.WEDNESDAY },
                             { name: "Thursday", value: Weekday.THURSDAY },
-                            { name: "Friday", value: Weekday.FRIDAY }
-                        ]
+                            { name: "Friday", value: Weekday.FRIDAY },
+                        ],
                     },
                     {
                         type: ApplicationCommandOptionType.String,
                         name: "starttime",
                         description: "Starting time of the block",
-                        required: true
+                        required: true,
                     },
                     {
                         type: ApplicationCommandOptionType.String,
                         name: "endtime",
                         description: "Ending time of the block",
-                        required: true
+                        required: true,
                     },
                     {
                         type: ApplicationCommandOptionType.String,
                         name: "title",
                         description: "Title of the block",
-                        required: true
-                    }
-                ]
+                        required: true,
+                    },
+                ],
             },
             {
                 type: ApplicationCommandOptionType.Subcommand,
@@ -89,9 +99,9 @@ export default {
                         type: ApplicationCommandOptionType.Integer,
                         name: "index",
                         description: "Index to delete",
-                        required: true
-                    }
-                ]
+                        required: true,
+                    },
+                ],
             },
             {
                 type: ApplicationCommandOptionType.Subcommand,
@@ -102,7 +112,7 @@ export default {
                         type: ApplicationCommandOptionType.Integer,
                         name: "index",
                         description: "Index to update",
-                        required: true
+                        required: true,
                     },
                     {
                         type: ApplicationCommandOptionType.Integer,
@@ -114,28 +124,28 @@ export default {
                             { name: "Tuesday", value: Weekday.TUESDAY },
                             { name: "Wednesday", value: Weekday.WEDNESDAY },
                             { name: "Thursday", value: Weekday.THURSDAY },
-                            { name: "Friday", value: Weekday.FRIDAY }
-                        ]
+                            { name: "Friday", value: Weekday.FRIDAY },
+                        ],
                     },
                     {
                         type: ApplicationCommandOptionType.String,
                         name: "starttime",
                         description: "Starting time of the block",
-                        required: true
+                        required: true,
                     },
                     {
                         type: ApplicationCommandOptionType.String,
                         name: "endtime",
                         description: "Ending time of the block",
-                        required: true
+                        required: true,
                     },
                     {
                         type: ApplicationCommandOptionType.String,
                         name: "title",
                         description: "Title of the block",
-                        required: true
-                    }
-                ]
+                        required: true,
+                    },
+                ],
             },
             {
                 type: ApplicationCommandOptionType.Subcommand,
@@ -146,56 +156,80 @@ export default {
                         type: ApplicationCommandOptionType.String,
                         name: "filter",
                         description: "Regex to use as filter for block names",
-                        required: false
+                        required: false,
                     },
                     {
                         type: ApplicationCommandOptionType.String,
                         name: "start",
                         description: "First day to look at",
-                        required: false
+                        required: false,
                     },
                     {
                         type: ApplicationCommandOptionType.String,
                         name: "end",
                         description: "Last day to look at",
-                        required: false
-                    }
-                ]
-            }
-        ]
+                        required: false,
+                    },
+                ],
+            },
+        ],
     },
     /**
      * Handler for the /timetable command
      *
      * @param interaction Interaction of the command
      */
-    handler: async function(interaction: CommandInteraction) {
+    handler: async function (interaction: CommandInteraction) {
         const options = interaction.options as CommandInteractionOptionResolver;
         if (options.getSubcommand() === "list") {
             await interaction.deferReply({ ephemeral: true });
-            await interaction.followUp({ ephemeral: true,
-                                         embeds:[buildTimeTableEmbed(getBlocks(options.getInteger("weekday"), false, options.getBoolean("includeindex")),
-                                             options.getInteger("weekday"))]});
+            await interaction.followUp({
+                ephemeral: true,
+                embeds: [
+                    buildTimeTableEmbed(
+                        getBlocks(
+                            options.getInteger("weekday"),
+                            false,
+                            options.getBoolean("includeindex"),
+                        ),
+                        options.getInteger("weekday"),
+                    ),
+                ],
+            });
         } else if (options.getSubcommand() === "add") {
             await interaction.deferReply({ ephemeral: true });
             const result = await addBlock({
                 weekday: options.getInteger("weekday"),
                 startingTime: options.getString("starttime"),
                 endingTime: options.getString("endtime"),
-                title: options.getString("title")
+                title: options.getString("title"),
             });
             if (result) {
-                await interaction.followUp({ ephemeral: true, content: "Added successful" });
+                await interaction.followUp({
+                    ephemeral: true,
+                    content: "Added successful",
+                });
             } else {
-                await interaction.followUp({ ephemeral: true, content: "Couldn't add block. Make sure the times are formatted as hh:mm."});
+                await interaction.followUp({
+                    ephemeral: true,
+                    content:
+                        "Couldn't add block. Make sure the times are formatted as hh:mm.",
+                });
             }
         } else if (options.getSubcommand() === "remove") {
             await interaction.deferReply({ ephemeral: true });
             const result = await removeBlock(options.getInteger("index"));
             if (result) {
-                await interaction.followUp({ ephemeral: true, content: "Removed block successfully. Be aware that block indexes might have shifted now." });
+                await interaction.followUp({
+                    ephemeral: true,
+                    content:
+                        "Removed block successfully. Be aware that block indexes might have shifted now.",
+                });
             } else {
-                await interaction.followUp({ ephemeral: true, content: "Error while removing block." });
+                await interaction.followUp({
+                    ephemeral: true,
+                    content: "Error while removing block.",
+                });
             }
         } else if (options.getSubcommand() === "update") {
             await interaction.deferReply({ ephemeral: true });
@@ -203,26 +237,50 @@ export default {
                 weekday: options.getInteger("weekday"),
                 startingTime: options.getString("starttime"),
                 endingTime: options.getString("endtime"),
-                title: options.getString("title")
+                title: options.getString("title"),
             });
             if (result) {
-                await interaction.followUp({ ephemeral: true, content: "Updated block successfully." });
+                await interaction.followUp({
+                    ephemeral: true,
+                    content: "Updated block successfully.",
+                });
             } else {
-                await interaction.followUp({ ephemeral: true, content: "Error while updating block. Make sure the times are formatted as hh:mm." });
+                await interaction.followUp({
+                    ephemeral: true,
+                    content:
+                        "Error while updating block. Make sure the times are formatted as hh:mm.",
+                });
             }
         } else if (options.getSubcommand() === "stats") {
             const dateRegex = /[0-9]{2}.[0-9]{2}.[0-9]{4}/;
             const filter = options.getString("filter");
             const startTime = options.getString("start");
             const endTime = options.getString("end");
-            if (startTime != null && !startTime.match(dateRegex) || endTime != null && !startTime.match(dateRegex)) {
-                await interaction.reply({ephemeral: false, content: "One time had the wrong format"});
+            if (
+                (startTime != null && !startTime.match(dateRegex)) ||
+                (endTime != null && !startTime.match(dateRegex))
+            ) {
+                await interaction.reply({
+                    ephemeral: false,
+                    content: "One time had the wrong format",
+                });
                 return;
             }
-            await interaction.deferReply({ephemeral: false});
-            const start = startTime != null ? DateTime.fromFormat(startTime, "dd.MM.yyyy") : undefined;
-            const end = endTime != null ? DateTime.fromFormat(endTime, "dd.MM.yyyy") : undefined;
-            await getTrackedAttendace().then(a => interaction.followUp({ephemeral: false, embeds: [buildResultEmbed(a, filter, start, end)]}));
+            await interaction.deferReply({ ephemeral: false });
+            const start =
+                startTime != null
+                    ? DateTime.fromFormat(startTime, "dd.MM.yyyy")
+                    : undefined;
+            const end =
+                endTime != null
+                    ? DateTime.fromFormat(endTime, "dd.MM.yyyy")
+                    : undefined;
+            await getTrackedAttendace().then((a) =>
+                interaction.followUp({
+                    ephemeral: false,
+                    embeds: [buildResultEmbed(a, filter, start, end)],
+                }),
+            );
         }
-    }
+    },
 } as ISlashCommand;

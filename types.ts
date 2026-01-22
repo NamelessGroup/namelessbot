@@ -1,10 +1,15 @@
-import {ApplicationCommandData, Client, CommandInteraction, Message} from "discord.js";
+import {
+    ApplicationCommandData,
+    Client,
+    CommandInteraction,
+    Message,
+} from "discord.js";
 
 /**
  * List for storing {@link IChatCommandHandler}
  */
 export interface IChatCommandList {
-    [key: string]: IChatCommandHandler
+    [key: string]: IChatCommandHandler;
 }
 
 /**
@@ -14,7 +19,7 @@ export interface IChatCommandHandler {
     /**
      * Handler to be executed when the command is invoked
      */
-    handler: ChatCommandExecutor
+    handler: ChatCommandExecutor;
 }
 
 /**
@@ -59,7 +64,7 @@ export interface ISlashCommand {
 /**
  * Interface for EventHandler
  */
-export type EventHandler = (...args: any[]) => Promise<void>;  // eslint-disable-line @typescript-eslint/no-explicit-any
+export type EventHandler = (...args: any[]) => Promise<void>; // eslint-disable-line @typescript-eslint/no-explicit-any
 /**
  * Interface for Task executors
  */
@@ -73,12 +78,12 @@ export type ChatCommandExecutor = (message: Message) => Promise<void>;
  * List for storing {@link Config} files
  */
 export interface ConfigList {
-    [configName: string]: Config
+    [configName: string]: Config;
 }
 
 /**
  * Representation of a single config
  */
 export interface Config {
-    [key: string]: unknown
+    [key: string]: unknown;
 }

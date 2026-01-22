@@ -5,17 +5,17 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
-    schedule:
-      interval: "weekly"
-    labels:
-      - "dependencies"
-    reviewers:
-      - "c0derMo"
-      - "Kr0nox"
-      - "MartinKrausewitz"
-    allow:
-      - dependency-name: "discord.js"
-      - dependency-name: "ka-mensa-fetch"
-      - dependency-name: "feiertagejs"
+    - package-ecosystem: "npm" # See documentation for possible values
+      directory: "/" # Location of package manifests
+      schedule:
+          interval: "weekly"
+      labels:
+          - "dependencies"
+      reviewers:
+          - "c0derMo"
+          - "Kr0nox"
+          - "MartinKrausewitz"
+      allow:
+          - dependency-name: "discord.js"
+          - dependency-name: "ka-mensa-fetch"
+          - dependency-name: "feiertagejs"

@@ -1,6 +1,6 @@
-import {Client} from "discord.js";
-import {TaskExecutor} from "../../types";
-import {DateTime} from "luxon";
+import { Client } from "discord.js";
+import { TaskExecutor } from "../../types";
+import { DateTime } from "luxon";
 
 /**
  * Enum representing each weekday
@@ -12,7 +12,7 @@ export enum Weekday {
     THURSDAY = 4,
     FRIDAY = 5,
     SATURDAY = 6,
-    SUNDAY = 7
+    SUNDAY = 7,
 }
 
 /**
@@ -27,19 +27,25 @@ export class RecurringTask {
 
     /**
      * Creates a new recurring task, which will always get run at the specified day & time.
-     * 
+     *
      * @param weekday Weekday on which the task should run
      * @param hour Hour which the task should run
      * @param minute Minute which the task should run
      * @param runner Function to execute
      * @param functionArguments Array of additional parameters to pass to the runner function
      */
-    constructor(weekday: Weekday, hour: number, minute: number, runner: TaskExecutor, functionArguments?: unknown[]) {
+    constructor(
+        weekday: Weekday,
+        hour: number,
+        minute: number,
+        runner: TaskExecutor,
+        functionArguments?: unknown[],
+    ) {
         this.weekday = weekday;
         this.hour = hour;
         this.minute = minute;
         this.runner = runner;
-        if(functionArguments) {
+        if (functionArguments) {
             this.arguments = functionArguments;
         } else {
             this.arguments = [];
@@ -48,13 +54,13 @@ export class RecurringTask {
 
     /**
      * Runs this recurring task and catches exceptions.
-     * 
+     *
      * @param client Client to run the task with
      */
     public run(client: Client): void {
         try {
             this.runner(client, ...this.arguments);
-        } catch(e) {
+        } catch (e) {
             console.log("Caught exception in RecurringTask");
             console.log(e);
         }
@@ -67,6 +73,10 @@ export class RecurringTask {
      * @returns Whether the task should be executed
      */
     public shouldRunAtTime(time: DateTime): boolean {
-        return (this.weekday as number) === time.weekday && this.hour === time.hour  && this.minute === time.minute;
+        return (
+            (this.weekday as number) === time.weekday &&
+            this.hour === time.hour &&
+            this.minute === time.minute
+        );
     }
 }

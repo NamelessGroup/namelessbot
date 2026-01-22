@@ -1,7 +1,12 @@
 import { Message } from "discord.js";
-import {ConfigurationFile, get, readConfigFile, write} from "../../lib/configmanager";
+import {
+    ConfigurationFile,
+    get,
+    readConfigFile,
+    write,
+} from "../../lib/configmanager";
 import { Weekday } from "../../lib/tasks/recurringtask";
-import {buildTimeTableEmbed, getNextTime} from "./attendanceTrackerVisuals";
+import { buildTimeTableEmbed, getNextTime } from "./attendanceTrackerVisuals";
 
 export interface CalendarBlock {
     startingTime: string;
@@ -29,7 +34,11 @@ let attendanceMap = {} as AttendanceMap;
  * @param includeIndex Whether to include the block index or not
  * @returns Array of CalendarBlocks
  */
-export function getBlocks(weekday?: Weekday, includeAttendence?: boolean, includeIndex?: boolean): CalendarBlock[] {
+export function getBlocks(
+    weekday?: Weekday,
+    includeAttendence?: boolean,
+    includeIndex?: boolean,
+): CalendarBlock[] {
     let allBlocks = get("blocks", ConfigurationFile.TIMETABLE);
 
     if (includeIndex) {
@@ -41,10 +50,17 @@ export function getBlocks(weekday?: Weekday, includeAttendence?: boolean, includ
     allBlocks.sort(sortBlocks);
 
     if (weekday != null) {
-        const filteredBlocks = allBlocks.filter(e => { return e.weekday === weekday; });
+        const filteredBlocks = allBlocks.filter((e) => {
+            return e.weekday === weekday;
+        });
         if (includeAttendence) {
-            return filteredBlocks.map(e => {
-                return Object.assign(e, { attendance: attendanceMap[e.title.toLowerCase().replace(/\s/g, "_")] });
+            return filteredBlocks.map((e) => {
+                return Object.assign(e, {
+                    attendance:
+                        attendanceMap[
+                            e.title.toLowerCase().replace(/\s/g, "_")
+                        ],
+                });
             });
         }
         return filteredBlocks;
@@ -92,11 +108,18 @@ function sortBlocks(blockA: CalendarBlock, blockB: CalendarBlock): number {
  * @returns true, if the block was added successfully, false otherwise
  */
 export async function addBlock(block: CalendarBlock): Promise<boolean> {
-    if (!block.startingTime.match(TIME_REGEX) || !block.endingTime.match(TIME_REGEX)) {
+    if (
+        !block.startingTime.match(TIME_REGEX) ||
+        !block.endingTime.match(TIME_REGEX)
+    ) {
         return false;
     }
     const allBlocks = get("blocks", ConfigurationFile.TIMETABLE);
-    if (allBlocks.some(b => { return b.title === block.title && b.weekday === block.weekday; })) {
+    if (
+        allBlocks.some((b) => {
+            return b.title === block.title && b.weekday === block.weekday;
+        })
+    ) {
         return false;
     }
     allBlocks.push(block);
@@ -111,15 +134,25 @@ export async function addBlock(block: CalendarBlock): Promise<boolean> {
  * @param block New block data
  * @returns true, if the update was successful, false otherwise
  */
-export async function updateBlock(index: number, block: CalendarBlock): Promise<boolean> {
-    if (!block.startingTime.match(TIME_REGEX) || !block.endingTime.match(TIME_REGEX)) {
+export async function updateBlock(
+    index: number,
+    block: CalendarBlock,
+): Promise<boolean> {
+    if (
+        !block.startingTime.match(TIME_REGEX) ||
+        !block.endingTime.match(TIME_REGEX)
+    ) {
         return false;
     }
     const allBlocks = get("blocks", ConfigurationFile.TIMETABLE);
     if (allBlocks.length <= index) {
         return false;
     }
-    if (allBlocks.some(b => { return b.title === block.title && b.weekday === block.weekday; })) {
+    if (
+        allBlocks.some((b) => {
+            return b.title === block.title && b.weekday === block.weekday;
+        })
+    ) {
         return false;
     }
     allBlocks[index] = block;
@@ -151,18 +184,27 @@ export async function removeBlock(index: number): Promise<boolean> {
  * @param block Block title to update attendance for
  * @param userId User to update attendance for
  */
-export async function updateAttendance(message: Message, weekday: Weekday, block: string, userId: string): Promise<void> {
+export async function updateAttendance(
+    message: Message,
+    weekday: Weekday,
+    block: string,
+    userId: string,
+): Promise<void> {
     if (attendanceMap[block] === undefined) {
         attendanceMap[block] = [];
     }
     if (attendanceMap[block].includes(userId)) {
-        attendanceMap[block] = attendanceMap[block].filter(e => { return e !== userId; });
+        attendanceMap[block] = attendanceMap[block].filter((e) => {
+            return e !== userId;
+        });
     } else {
         attendanceMap[block].push(userId);
     }
     await updateAttendanceFile(weekday, block, userId);
 
-    await message.edit({embeds: [buildTimeTableEmbed(getBlocks(weekday, true), weekday)]});
+    await message.edit({
+        embeds: [buildTimeTableEmbed(getBlocks(weekday, true), weekday)],
+    });
 }
 
 /**
@@ -179,13 +221,16 @@ export function resetAttendance(): void {
  * @param block Block to update attendance for
  * @param userId User to update attendance for
  */
-async function updateAttendanceFile(weekday: Weekday, block: string, userId: string): Promise<void> {
+async function updateAttendanceFile(
+    weekday: Weekday,
+    block: string,
+    userId: string,
+): Promise<void> {
     const key = getNextTime(weekday, 0, 0).toFormat("dd.MM.yyyy") + "-" + block;
     const fileContent = get(key, ConfigurationFile.ATTENDANCE);
     fileContent[userId] = !fileContent[userId];
     await write(key, ConfigurationFile.ATTENDANCE, fileContent);
 }
-
 
 /**
  * Adds all blocks to the attendance tracker file.
@@ -193,9 +238,15 @@ async function updateAttendanceFile(weekday: Weekday, block: string, userId: str
  * @param weekday Weekday to add blocks for
  * @param blocks Blocks to add
  */
-export async function writeAllBlocksToAttendanceFile(weekday: Weekday, blocks: CalendarBlock[]): Promise<void> {
+export async function writeAllBlocksToAttendanceFile(
+    weekday: Weekday,
+    blocks: CalendarBlock[],
+): Promise<void> {
     for (const block of blocks) {
-        const key = getNextTime(weekday, 0, 0).toFormat("dd.MM.yyyy") + "-" + block.title.toLowerCase().replace(/\s/g, "_");
+        const key =
+            getNextTime(weekday, 0, 0).toFormat("dd.MM.yyyy") +
+            "-" +
+            block.title.toLowerCase().replace(/\s/g, "_");
         if (get(key, ConfigurationFile.ATTENDANCE) == null) {
             await write(key, ConfigurationFile.ATTENDANCE, {});
         }
@@ -207,6 +258,11 @@ export async function writeAllBlocksToAttendanceFile(weekday: Weekday, blocks: C
  *
  * @returns all tracked attendance
  */
-export async function getTrackedAttendace(): Promise<Record<string, Record<string, boolean>>> {
-    return await readConfigFile("attendance.json") as Record<string, Record<string, boolean>>;
+export async function getTrackedAttendace(): Promise<
+    Record<string, Record<string, boolean>>
+> {
+    return (await readConfigFile("attendance.json")) as Record<
+        string,
+        Record<string, boolean>
+    >;
 }

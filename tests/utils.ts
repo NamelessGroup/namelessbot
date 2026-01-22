@@ -1,5 +1,9 @@
-import { vi, type Mock, expect } from 'vitest';
-import { CommandInteraction, InteractionReplyOptions, MessagePayload } from "discord.js";
+import { vi, type Mock, expect } from "vitest";
+import {
+    CommandInteraction,
+    InteractionReplyOptions,
+    MessagePayload,
+} from "discord.js";
 
 interface SlashCommandArguments {
     [key: string]: string | number | boolean;
@@ -12,7 +16,9 @@ export class MockSlashCommand {
     subcommand?: string;
     handler: (interaction: CommandInteraction) => void | Promise<void>;
 
-    constructor(handler: (interaction: CommandInteraction) => void | Promise<void>) {
+    constructor(
+        handler: (interaction: CommandInteraction) => void | Promise<void>,
+    ) {
         this.deferReply = vi.fn();
         this.followUp = vi.fn();
         this.arguments = {};
@@ -46,9 +52,9 @@ export class MockSlashCommand {
                 getSubcommand: () => this.subcommand,
             },
             user: {
-                id: "mockUser"
-            }
-        } as unknown as CommandInteraction
+                id: "mockUser",
+            },
+        } as unknown as CommandInteraction;
     }
 }
 
@@ -57,28 +63,34 @@ expect.extend({
         if (!(received instanceof MockSlashCommand)) {
             return {
                 pass: false,
-                message: () => `expected object of type MockSlashCommand, received ${typeof received}`
-            }
+                message: () =>
+                    `expected object of type MockSlashCommand, received ${typeof received}`,
+            };
         }
 
         return {
             pass: received.deferReply.mock.calls.length === 1,
-            message: () => 'expected slash command to be deferred exactly once'
-        }
+            message: () => "expected slash command to be deferred exactly once",
+        };
     },
-    toBeFollowedUpWith(received: unknown, expected: string | MessagePayload | InteractionReplyOptions) {
+    toBeFollowedUpWith(
+        received: unknown,
+        expected: string | MessagePayload | InteractionReplyOptions,
+    ) {
         if (!(received instanceof MockSlashCommand)) {
             return {
                 pass: false,
-                message: () => `expected object of type MockSlashCommand, received ${typeof received}`
-            }
+                message: () =>
+                    `expected object of type MockSlashCommand, received ${typeof received}`,
+            };
         }
 
         if (received.followUp.mock.calls.length !== 1) {
             return {
                 pass: false,
-                message: () => `expected slash command to be followed up exactly once`
-            }
+                message: () =>
+                    `expected slash command to be followed up exactly once`,
+            };
         }
 
         return {
@@ -86,15 +98,17 @@ expect.extend({
             message: () => `expected slash command to be followed up with`,
             actual: received.followUp.mock.lastCall[0] as unknown,
             expected: expected,
-        }
-    }
-})
+        };
+    },
+});
 
 interface CustomMatchers<R = unknown> {
-    toBeDeferred: () => R
-    toBeFollowedUpWith: (followUp: string | MessagePayload | InteractionReplyOptions) => R
+    toBeDeferred: () => R;
+    toBeFollowedUpWith: (
+        followUp: string | MessagePayload | InteractionReplyOptions,
+    ) => R;
 }
 
-declare module 'vitest' {
+declare module "vitest" {
     interface Matchers<T = any> extends CustomMatchers<T> {} // eslint-disable-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any
 }

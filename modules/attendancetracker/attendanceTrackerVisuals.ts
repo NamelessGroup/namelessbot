@@ -1,6 +1,12 @@
-import {CalendarBlock, getBlocks} from "./attendanceTracker";
-import {ActionRowBuilder, APIEmbedField, ButtonBuilder, ButtonStyle, EmbedBuilder} from "discord.js";
-import {DateTime} from "luxon";
+import { CalendarBlock, getBlocks } from "./attendanceTracker";
+import {
+    ActionRowBuilder,
+    APIEmbedField,
+    ButtonBuilder,
+    ButtonStyle,
+    EmbedBuilder,
+} from "discord.js";
+import { DateTime } from "luxon";
 
 /**
  * Builds the embed that containing the day(s) requested in the timetable layout
@@ -9,10 +15,15 @@ import {DateTime} from "luxon";
  * @param weekday Optional parameter. If given only the corresponding day will be in the embed. Otherwise, the entire week will be added
  * @returns The built embed
  */
-export function buildTimeTableEmbed(blocks: CalendarBlock[], weekday?: number) : EmbedBuilder {
+export function buildTimeTableEmbed(
+    blocks: CalendarBlock[],
+    weekday?: number,
+): EmbedBuilder {
     const embed = new EmbedBuilder();
 
-    embed.setTitle("Stundenplan" + (weekday != null ? " für " + dayFromInt(weekday):""));
+    embed.setTitle(
+        "Stundenplan" + (weekday != null ? " für " + dayFromInt(weekday) : ""),
+    );
 
     if (weekday == null) {
         for (let i = 0; i < 5; i++) {
@@ -33,22 +44,27 @@ export function buildTimeTableEmbed(blocks: CalendarBlock[], weekday?: number) :
  * @param blocks Blocks that should be given a button. Buttons will be added in the order of this array
  * @returns Array of ActionRowBuilder containing the buttons
  */
-export function buildAttendanceAction(blocks: CalendarBlock[]) : ActionRowBuilder<ButtonBuilder>[] {
+export function buildAttendanceAction(
+    blocks: CalendarBlock[],
+): ActionRowBuilder<ButtonBuilder>[] {
     const blockCount = Math.min(blocks.length, 25);
     let curCount = 0;
     const builders = [] as ActionRowBuilder<ButtonBuilder>[];
     for (let i = 0; i < Math.ceil(blockCount / 5.0); i++) {
         // this inner loop creates the buttons for one row
         const builder = new ActionRowBuilder<ButtonBuilder>();
-        for (let j = 0; j < Math.min(5, blockCount-curCount); j++) {
-
-            const block = blocks[i*5+j];
+        for (let j = 0; j < Math.min(5, blockCount - curCount); j++) {
+            const block = blocks[i * 5 + j];
             builder.addComponents(
                 new ButtonBuilder()
                     .setLabel(block.title)
-                    .setCustomId("attendancetracker-" + block.weekday + "-"
-                        + block.title.toLowerCase().replace(/\s/g, "_"))
-                    .setStyle(ButtonStyle.Primary)
+                    .setCustomId(
+                        "attendancetracker-" +
+                            block.weekday +
+                            "-" +
+                            block.title.toLowerCase().replace(/\s/g, "_"),
+                    )
+                    .setStyle(ButtonStyle.Primary),
             );
         }
         builders.push(builder);
@@ -64,18 +80,26 @@ export function buildAttendanceAction(blocks: CalendarBlock[]) : ActionRowBuilde
  * @param weekday Day this field is for
  * @returns Single embed field for the given day
  */
-function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField {
+function buildDayField(
+    blocks: CalendarBlock[],
+    weekday: number,
+): APIEmbedField {
     if (blocks == null || blocks.length === 0) {
         return {
             name: dayFromInt(weekday),
             value: "\u200b",
-            inline: true
+            inline: true,
         } as APIEmbedField;
     }
-    const value = blocks.map(
-        e => {
+    const value = blocks
+        .map((e) => {
             // map each day to a string of its times and title
-            const top = prettyTime(weekday, e.startingTime) + " - " + prettyTime(weekday, e.endingTime) + ": " + e.title;
+            const top =
+                prettyTime(weekday, e.startingTime) +
+                " - " +
+                prettyTime(weekday, e.endingTime) +
+                ": " +
+                e.title;
             let result = top;
 
             // add the index if it is given
@@ -87,25 +111,30 @@ function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField
 
             // add the attendance if it is given
             if (e.attendance !== undefined) {
-                const attendance = e.attendance.map(e => { return "<@" + e + ">"; }).join("\n");
+                const attendance = e.attendance
+                    .map((e) => {
+                        return "<@" + e + ">";
+                    })
+                    .join("\n");
                 result += attendance;
             }
 
             return result;
-        }).reduce(
-        // concatenate all string representations of blocks into a single string
-        (sumTillThisPoint, nextElement) => {
-            if (nextElement !== "") {
-                return sumTillThisPoint + "\n" + nextElement;
-            }
-            return sumTillThisPoint;
-        }
-    );
+        })
+        .reduce(
+            // concatenate all string representations of blocks into a single string
+            (sumTillThisPoint, nextElement) => {
+                if (nextElement !== "") {
+                    return sumTillThisPoint + "\n" + nextElement;
+                }
+                return sumTillThisPoint;
+            },
+        );
 
     return {
         name: dayFromInt(weekday),
         value: value !== "" ? value : "\u200b",
-        inline: true
+        inline: true,
     } as APIEmbedField;
 }
 
@@ -116,16 +145,32 @@ function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField
  * @param unPrettyTime Any time representation of format: ([0-9]{1-2}) [:.] (([0-9]{1-2}.*)|[0-9]{0-2})
  * @returns Formatted time
  */
-function prettyTime(weekday: number, unPrettyTime: string) : string {
+function prettyTime(weekday: number, unPrettyTime: string): string {
     const parts = unPrettyTime.split(/:|\\./);
     const hours = parts[0].match(/\d+/) ? parts[0] : "0";
-    const minutes = parts.length >= 2 ? (parts[1].match(/\d+/) ? parts[1] : "0") : "0";
+    const minutes =
+        parts.length >= 2 ? (parts[1].match(/\d+/) ? parts[1] : "0") : "0";
     try {
-        return "<t:" + Math.trunc(getNextTime(weekday, parseInt(hours), parseInt(minutes)).toMillis() / 1000) + ":t>";
+        return (
+            "<t:" +
+            Math.trunc(
+                getNextTime(
+                    weekday,
+                    parseInt(hours),
+                    parseInt(minutes),
+                ).toMillis() / 1000,
+            ) +
+            ":t>"
+        );
     } catch {
-        return (hours.length === 1 ? "0":"") + hours + ":" + (minutes.length === 1 ? "0":"") + minutes;
+        return (
+            (hours.length === 1 ? "0" : "") +
+            hours +
+            ":" +
+            (minutes.length === 1 ? "0" : "") +
+            minutes
+        );
     }
-
 }
 
 /**
@@ -134,7 +179,7 @@ function prettyTime(weekday: number, unPrettyTime: string) : string {
  * @param weekday Weekday requested
  * @returns String representation of the given weekday
  */
-function dayFromInt(weekday: number) : string {
+function dayFromInt(weekday: number): string {
     return ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"][weekday];
 }
 
@@ -146,10 +191,14 @@ function dayFromInt(weekday: number) : string {
  * @param minute Minutes in the hour
  * @returns Date of the next day with this weekday
  */
-export function getNextTime(weekday: number, hour: number, minute: number) : DateTime {
+export function getNextTime(
+    weekday: number,
+    hour: number,
+    minute: number,
+): DateTime {
     let date = DateTime.now().setZone("Europe/Berlin");
     while (date.weekday - 1 !== weekday) {
-        date = date.plus({days:1});
+        date = date.plus({ days: 1 });
     }
     date = date.set({ hour: hour, minute: minute, second: 0, millisecond: 0 });
     return date;
@@ -170,7 +219,12 @@ interface Attendable {
  * @param end End of the time range
  * @returns Discord Embed
  */
-export function buildResultEmbed(results: Record<string, Record<string, boolean>>, filter?:string, start?: DateTime, end?: DateTime): EmbedBuilder  {
+export function buildResultEmbed(
+    results: Record<string, Record<string, boolean>>,
+    filter?: string,
+    start?: DateTime,
+    end?: DateTime,
+): EmbedBuilder {
     let name = "Attendance";
     if (filter) {
         name += " with filter: " + filter;
@@ -185,7 +239,11 @@ export function buildResultEmbed(results: Record<string, Record<string, boolean>
     embed.setTitle(name);
 
     const blocks = countAttandances(results, start, end);
-    const total = {id: "Total", count: 0, attendances: new Map()} as Attendable;
+    const total = {
+        id: "Total",
+        count: 0,
+        attendances: new Map(),
+    } as Attendable;
 
     for (const block of blocks) {
         if (block.count === 0) {
@@ -198,14 +256,17 @@ export function buildResultEmbed(results: Record<string, Record<string, boolean>
         total.count += block.count;
         for (const [attandie, count] of block.attendances) {
             if (total.attendances.has(attandie)) {
-                total.attendances.set(attandie, total.attendances.get(attandie) + count);
+                total.attendances.set(
+                    attandie,
+                    total.attendances.get(attandie) + count,
+                );
             } else {
                 total.attendances.set(attandie, count);
             }
         }
         embed.addFields(buildResultEmbedField(block));
     }
-    embed.addFields({ name: '\u200B', value: '\u200B', inline: false });
+    embed.addFields({ name: "\u200B", value: "\u200B", inline: false });
     if (total.count > 0) {
         embed.addFields(buildResultEmbedField(total));
     }
@@ -223,13 +284,13 @@ export function buildResultEmbed(results: Record<string, Record<string, boolean>
 function buildResultEmbedField(block: Attendable): APIEmbedField {
     let value = "";
     for (const [attandie, count] of block.attendances) {
-        value += `<@${attandie}> ${count}/${block.count} (${Math.round(100 * count/block.count)}%) \n`;
+        value += `<@${attandie}> ${count}/${block.count} (${Math.round((100 * count) / block.count)}%) \n`;
     }
 
     return {
         name: block.id,
-        value: value !== "" ? value : '\u200B',
-        inline: false
+        value: value !== "" ? value : "\u200B",
+        inline: false,
     } as APIEmbedField;
 }
 
@@ -241,7 +302,11 @@ function buildResultEmbedField(block: Attendable): APIEmbedField {
  * @param end End of the time range
  * @returns Array of blocks with their attendances
  */
-function countAttandances(results: Record<string, Record<string, boolean>>, start?: DateTime, end?: DateTime): Attendable[] {
+function countAttandances(
+    results: Record<string, Record<string, boolean>>,
+    start?: DateTime,
+    end?: DateTime,
+): Attendable[] {
     const blocks: Attendable[] = [];
 
     for (const blockKey of Object.keys(results)) {
@@ -258,7 +323,7 @@ function countAttandances(results: Record<string, Record<string, boolean>>, star
         }
 
         if (!found) {
-            blocks.push({id: name, count:0, attendances: new Map()});
+            blocks.push({ id: name, count: 0, attendances: new Map() });
         }
     }
 
@@ -280,7 +345,10 @@ function countAttandances(results: Record<string, Record<string, boolean>>, star
                 for (const attandie in results[blockKey]) {
                     if (results[blockKey][attandie]) {
                         if (block.attendances.has(attandie)) {
-                            block.attendances.set(attandie, block.attendances.get(attandie) + 1);
+                            block.attendances.set(
+                                attandie,
+                                block.attendances.get(attandie) + 1,
+                            );
                         } else {
                             block.attendances.set(attandie, 1);
                         }

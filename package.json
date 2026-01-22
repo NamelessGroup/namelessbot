@@ -1,40 +1,42 @@
 {
-  "name": "namelessbot",
-  "version": "2.0.0",
-  "type": "module",
-  "main": "index.js",
-  "repository": "https://github.com/NamelessGroup/namelessbot",
-  "contributors": [
-    "c0derMo",
-    "Kr0nox",
-    "ProgramPhoenix",
-    "myphyk"
-  ],
-  "license": "MIT",
-  "devDependencies": {
-    "@eslint/js": "^9.39.2",
-    "@types/luxon": "^3.7.1",
-    "@types/node": "^20.14.8",
-    "eslint": "^9.39.2",
-    "eslint-plugin-jsdoc": "^62.3.0",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.53.1",
-    "vitest": "^4.0.17"
-  },
-  "dependencies": {
-    "discord.js": "^14.25.1",
-    "dotenv": "^17.2.3",
-    "esbuild": "^0.27.2",
-    "feiertagejs": "^1.4.1",
-    "install": "^0.13.0",
-    "luxon": "^3.7.2",
-    "ofetch": "^1.5.1"
-  },
-  "scripts": {
-    "start": "tsx ./index.ts",
-    "lint": "eslint .",
-    "test": "vitest",
-    "build": "esbuild index.ts --bundle --outfile=app.cjs --platform=node"
-  }
+    "name": "namelessbot",
+    "version": "2.0.0",
+    "type": "module",
+    "main": "index.js",
+    "repository": "https://github.com/NamelessGroup/namelessbot",
+    "contributors": [
+        "c0derMo",
+        "Kr0nox",
+        "ProgramPhoenix",
+        "myphyk"
+    ],
+    "license": "MIT",
+    "devDependencies": {
+        "@eslint/js": "^9.39.2",
+        "@types/luxon": "^3.7.1",
+        "@types/node": "^20.14.8",
+        "eslint": "^9.39.2",
+        "eslint-plugin-jsdoc": "^62.3.0",
+        "tsx": "^4.21.0",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.53.1",
+        "vitest": "^4.0.17"
+    },
+    "dependencies": {
+        "discord.js": "^14.25.1",
+        "dotenv": "^17.2.3",
+        "esbuild": "^0.27.2",
+        "feiertagejs": "^1.4.1",
+        "install": "^0.13.0",
+        "luxon": "^3.7.2",
+        "ofetch": "^1.5.1",
+        "prettier": "^3.8.1"
+    },
+    "scripts": {
+        "start": "tsx ./index.ts",
+        "lint": "eslint .",
+        "test": "vitest",
+        "build": "esbuild index.ts --bundle --outfile=app.cjs --platform=node",
+        "prettier": "prettier --write ."
+    }
 }

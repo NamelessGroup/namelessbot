@@ -1,18 +1,21 @@
-import {lstat, mkdir, readFile, writeFile} from "node:fs/promises";
+import { lstat, mkdir, readFile, writeFile } from "node:fs/promises";
 import { CalendarBlock } from "../modules/attendancetracker/attendanceTracker";
 import { IKoeriList } from "../modules/koeri/koeriCommand";
 
 export enum ConfigurationFile {
-    AOC = 'aoc',
-    ATTENDANCE = 'attendance',
-    GENERAL = 'config',
-    KOERI = 'koeri',
-    TIMETABLE = 'timetable'
+    AOC = "aoc",
+    ATTENDANCE = "attendance",
+    GENERAL = "config",
+    KOERI = "koeri",
+    TIMETABLE = "timetable",
 }
 
 const defaultConfigs = {
     [ConfigurationFile.AOC]: { id: 0 },
-    [ConfigurationFile.ATTENDANCE]: {} as Record<string, Record<string, boolean>>,
+    [ConfigurationFile.ATTENDANCE]: {} as Record<
+        string,
+        Record<string, boolean>
+    >,
     [ConfigurationFile.GENERAL]: {
         announcement_channel: "",
         default_guild: "",
@@ -20,7 +23,7 @@ const defaultConfigs = {
     },
     [ConfigurationFile.KOERI]: {} as Record<string, IKoeriList>,
     [ConfigurationFile.TIMETABLE]: {
-        blocks: [] as CalendarBlock[]
+        blocks: [] as CalendarBlock[],
     },
 } as const;
 
@@ -34,13 +37,13 @@ const configs: Map<ConfigurationFile, unknown> = new Map();
  */
 async function recreateNonexistantConfigs(): Promise<void> {
     try {
-        await mkdir('config');
+        await mkdir("config");
     } catch {
         // This is fine (directory already exists)
     }
 
     let count = 0;
-    
+
     for (const key of Object.values(ConfigurationFile)) {
         const fileName = `${key}.json`;
         try {
@@ -50,7 +53,7 @@ async function recreateNonexistantConfigs(): Promise<void> {
             count++;
         }
     }
-    if(count > 0) console.log(`Recreated ${count} config files.`);
+    if (count > 0) console.log(`Recreated ${count} config files.`);
 }
 
 /**
@@ -60,12 +63,12 @@ async function recreateNonexistantConfigs(): Promise<void> {
  */
 export async function readConfig(): Promise<void> {
     await recreateNonexistantConfigs();
-    
+
     for (const key of Object.values(ConfigurationFile)) {
         const fileName = `${key}.json`;
         try {
             configs[key] = await readConfigFile(fileName);
-        } catch(e) {
+        } catch (e) {
             console.error(`Error while reading config file ${fileName}: `);
             console.error(e);
         }
@@ -83,7 +86,7 @@ export async function writeConfig(): Promise<void> {
 
 /**
  * Reads a file from the config directory and returns it's contents.
- * 
+ *
  * @param path Path to the file
  * @returns File contents
  */
@@ -93,12 +96,19 @@ export async function readConfigFile(path: string): Promise<unknown> {
 
 /**
  * Writes a config file to disk.
- * 
+ *
  * @param path Path to config file
  * @param content File contents
  */
-export async function writeConfigFile(path: string, content: unknown): Promise<void> {
-    await writeFile("config/" + path, JSON.stringify(content, null, 4), 'utf-8');
+export async function writeConfigFile(
+    path: string,
+    content: unknown,
+): Promise<void> {
+    await writeFile(
+        "config/" + path,
+        JSON.stringify(content, null, 4),
+        "utf-8",
+    );
 }
 
 /**
@@ -106,16 +116,22 @@ export async function writeConfigFile(path: string, content: unknown): Promise<v
  * The key is tried to be read from the supplied config.
  * If the config doesn't exist in-memory, a ReferenceError will be thrown.
  * If the key doesn't exist, undefined will be returned.
- * 
+ *
  * @param key Key to look up
  * @param config Config to look up
  * @throws {ReferenceError} Config doesn't exist
  * @returns Value at key in supplied config, or undefined
  */
-export function get<F extends ConfigurationFile, K extends ConfigKey<F>>(key: K, config: F): DefaultConfigs[F][K] {
-    if (!configs.has(config)) throw new ReferenceError(`Config ${config} doesn't exist`);
+export function get<F extends ConfigurationFile, K extends ConfigKey<F>>(
+    key: K,
+    config: F,
+): DefaultConfigs[F][K] {
+    if (!configs.has(config))
+        throw new ReferenceError(`Config ${config} doesn't exist`);
     if (configs.get(config)[key] == null) return undefined;
-    return JSON.parse(JSON.stringify(configs.get(config)[key]) || "{}") as DefaultConfigs[F][K];
+    return JSON.parse(
+        JSON.stringify(configs.get(config)[key]) || "{}",
+    ) as DefaultConfigs[F][K];
 }
 
 /**
@@ -128,8 +144,12 @@ export function get<F extends ConfigurationFile, K extends ConfigKey<F>>(key: K,
  * @param value Value to write
  * @throws {ReferenceError} Config doesn't exist
  */
-export async function write<F extends ConfigurationFile, K extends ConfigKey<F>>(key: K, config: F, value: DefaultConfigs[F][K]): Promise<void> {
-    if (!configs.has(config)) throw new ReferenceError(`Config ${config} doesn't exist`);
+export async function write<
+    F extends ConfigurationFile,
+    K extends ConfigKey<F>,
+>(key: K, config: F, value: DefaultConfigs[F][K]): Promise<void> {
+    if (!configs.has(config))
+        throw new ReferenceError(`Config ${config} doesn't exist`);
     configs.get(config)[key] = value;
     await writeConfig();
 }

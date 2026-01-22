@@ -1,13 +1,14 @@
-import {DateTime} from "luxon";
+import { DateTime } from "luxon";
 import { ofetch } from "ofetch";
 
 /**
  * Parser for transforming the lecture dates from the kit website and checking whether dates are in this span
  */
 export default class KitDateParser {
-
-    private static dateRegex = '[0-9]{2}[.][0-9]{2}[.][0-9]{4} - [0-9]{2}[.][0-9]{2}[.][0-9]{4}';
-    private static dateURL = 'https://www.sle.kit.edu/imstudium/termine-fristen.php';
+    private static dateRegex =
+        "[0-9]{2}[.][0-9]{2}[.][0-9]{4} - [0-9]{2}[.][0-9]{2}[.][0-9]{4}";
+    private static dateURL =
+        "https://www.sle.kit.edu/imstudium/termine-fristen.php";
 
     private timeSpans: TimeSpan[];
 
@@ -60,11 +61,15 @@ export default class KitDateParser {
                 break;
             }
             for (let i = 0; i < 3; i++) {
-                while (!html.substring(index, index + 23).match(KitDateParser.dateRegex)) {
+                while (
+                    !html
+                        .substring(index, index + 23)
+                        .match(KitDateParser.dateRegex)
+                ) {
                     index++;
                 }
                 if (i !== 0) {
-                    allTimes.push(html.substring(index, index+23));
+                    allTimes.push(html.substring(index, index + 23));
                 }
 
                 index += 25;
@@ -87,8 +92,12 @@ export default class KitDateParser {
             const splitsAll = dateStrings[i].split(" - ");
             const splitsFree = dateStrings[i + 1].split(" - ");
 
-            tempTimeSpans.push(this.makeTimeSpan(splitsAll[0], splitsFree[0], 0));
-            tempTimeSpans.push(this.makeTimeSpan(splitsFree[1], splitsAll[1], 2));
+            tempTimeSpans.push(
+                this.makeTimeSpan(splitsAll[0], splitsFree[0], 0),
+            );
+            tempTimeSpans.push(
+                this.makeTimeSpan(splitsFree[1], splitsAll[1], 2),
+            );
         }
 
         return tempTimeSpans;
@@ -102,12 +111,16 @@ export default class KitDateParser {
      * @param startHourSetter Days to add to start date
      * @returns The corresponding TimeSpan
      */
-    private makeTimeSpan(start: string, end:string, startHourSetter?: number): TimeSpan {
+    private makeTimeSpan(
+        start: string,
+        end: string,
+        startHourSetter?: number,
+    ): TimeSpan {
         const dateStart = this.stringToDate(start);
         const dateEnd = this.stringToDate(end);
 
         if (startHourSetter != null) {
-            dateStart.plus({days: startHourSetter});
+            dateStart.plus({ days: startHourSetter });
         }
 
         return new TimeSpan(dateStart, dateEnd);
@@ -121,7 +134,7 @@ export default class KitDateParser {
      */
     private stringToDate(d: string): DateTime {
         const date = DateTime.fromFormat(d, "dd.MM.yyyy");
-        date.set({hour: 0, minute: 0, second: 0, millisecond: 0});
+        date.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
         return date;
     }
 
@@ -131,8 +144,10 @@ export default class KitDateParser {
      * @param url Website to fetch from
      * @returns the html source code
      */
-    private async getHTML(url: string): Promise<string>  {
-        const response = await ofetch<string>(url, { parseResponse: (txt) => txt });
+    private async getHTML(url: string): Promise<string> {
+        const response = await ofetch<string>(url, {
+            parseResponse: (txt) => txt,
+        });
         return response;
     }
 }
@@ -146,7 +161,7 @@ class TimeSpan {
 
     /**
      * Creates timespan [start, end)
-     * 
+     *
      * @param start start time (inclusive)
      * @param end end time (exclusive)
      */
