@@ -501,7 +501,7 @@ function isWhitespace(str: string): boolean {
  * @returns Scan result with proper variable indexes
  */
 function transformVariableSet(preliminary: PreliniaryScanResult): ScanResult {
-    const variables = [];
+    const variables = [] as string[];
     for (const key in preliminary.variableSet) {
         variables.push(key);
     }
@@ -565,9 +565,7 @@ export function parse(input: string): ParserResult {
      */
     let needOperand = true;
 
-    for (const i in tokens) {
-        const currToken = tokens[i];
-
+    for (const currToken of tokens) {
         if (needOperand) {
             if (isOperand(currToken)) {
                 addOperand(wrapOperand(currToken), operands, operators);
@@ -587,7 +585,6 @@ export function parse(input: string): ParserResult {
             }
         } else {
             if (isBinaryOperator(currToken) || currToken.type === EOF_TOKEN) {
-                // eslint-disable-next-line no-constant-condition
                 while (true) {
                     if (operators.length === 0) break;
                     if (topOf(operators).type === "(") break;
@@ -602,9 +599,8 @@ export function parse(input: string): ParserResult {
 
                 operators.push(currToken);
                 needOperand = true;
-                if (currToken.type == EOF_TOKEN) break;
+                if (currToken.type === EOF_TOKEN) break;
             } else if (currToken.type === ")") {
-                // eslint-disable-next-line no-constant-condition
                 while (true) {
                     if (operators.length === 0) {
                         throw new Error("Missing open parenthesis.");
@@ -765,9 +761,9 @@ interface TruthTable {
  * @returns Truthtable with variables & results for given variable assignments
  */
 export function generateTruthTable(parseResult: ParserResult): TruthTable {
-    const results = [];
+    const results = [] as { assignment: boolean[]; result: boolean; }[];
 
-    const assignment = [];
+    const assignment = [] as boolean[];
     for (let i = 0; i < parseResult.variables.length; i++) {
         assignment.push(false);
     }

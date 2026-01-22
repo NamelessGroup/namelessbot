@@ -15,7 +15,7 @@ export default class KitDateParser {
      * Fetches the current dates on startup
      */
     constructor() {
-        this.fetchData();
+        void this.fetchData();
     }
 
     /**
@@ -25,7 +25,7 @@ export default class KitDateParser {
      * @returns True if it is inside a week, where lectures are held, false otherwise. True if no timeSpans found
      */
     public isLectureTime(date: DateTime): boolean {
-        if (this.timeSpans.length == 0) {
+        if (this.timeSpans.length === 0) {
             return true;
         }
         for (const t of this.timeSpans) {
@@ -39,10 +39,9 @@ export default class KitDateParser {
     /**
      * Updates the timeSpans array
      */
-    private fetchData(): void {
-        this.getHTML(KitDateParser.dateURL).then(html => {
-            this.timeSpans = this.parseDateStrings(this.queryDateStrings(html));
-        });
+    private async fetchData(): Promise<void> {
+        const html = await this.getHTML(KitDateParser.dateURL);
+        this.timeSpans = this.parseDateStrings(this.queryDateStrings(html));
     }
 
     /**
@@ -54,24 +53,24 @@ export default class KitDateParser {
     private queryDateStrings(html: string): string[] {
         let tableStart = html.indexOf("<table");
         let index = -1;
-        const allTimes = [];
+        const allTimes = [] as string[];
         do {
             index = html.indexOf("<tr", tableStart);
-            if (index == -1) {
+            if (index === -1) {
                 break;
             }
             for (let i = 0; i < 3; i++) {
                 while (!html.substring(index, index + 23).match(KitDateParser.dateRegex)) {
                     index++;
                 }
-                if (i != 0) {
+                if (i !== 0) {
                     allTimes.push(html.substring(index, index+23));
                 }
 
                 index += 25;
             }
             tableStart = index;
-        } while (index != 1);
+        } while (index !== 1);
         return allTimes;
     }
 
@@ -107,7 +106,7 @@ export default class KitDateParser {
         const dateStart = this.stringToDate(start);
         const dateEnd = this.stringToDate(end);
 
-        if (startHourSetter != undefined) {
+        if (startHourSetter != null) {
             dateStart.plus({days: startHourSetter});
         }
 
@@ -133,7 +132,7 @@ export default class KitDateParser {
      * @returns the html source code
      */
     private async getHTML(url: string): Promise<string>  {
-        const response = await ofetch(url, { parseResponse: (txt) => txt });
+        const response = await ofetch<string>(url, { parseResponse: (txt) => txt });
         return response;
     }
 }

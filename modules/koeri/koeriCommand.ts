@@ -106,11 +106,11 @@ function _combinationToSeasonings(combination: number, prefix = "Gewürz "): str
     }
     let result = "";
     const sSplit = s.split("");
-    for(const i in sSplit) {
-        if(sSplit[i] === "1") {
-            result += prefix + (parseInt(i) - 1 + 2) + ", ";
+    sSplit.forEach((val, i) => {
+        if (val === "1") {
+            result += prefix + (i - 1 + 2) + ",";
         }
-    }
+    });
     return result.substring(0, result.length-2);
 }
 
@@ -127,8 +127,8 @@ function _combinationToAmountSeasonings(combination: number): number {
     }
     let result = 0;
     const sSplit = s.split("");
-    for(const i in sSplit) {
-        if(sSplit[i] === "1") {
+    for (const i of sSplit) {
+        if (i === "1") {
             result += 1;
         }
     }

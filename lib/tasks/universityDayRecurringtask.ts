@@ -1,7 +1,7 @@
 import {RecurringTask, Weekday} from "./recurringtask";
 import {DateTime} from "luxon";
 import KitDateParser from "./KitDateParser";
-import {isHoliday} from "feiertagejs/build/feiertage.js";
+import { isHoliday } from "feiertagejs";
 import {TaskExecutor} from "../../types";
 
 /**

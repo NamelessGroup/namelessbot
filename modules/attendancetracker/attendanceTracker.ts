@@ -40,8 +40,8 @@ export function getBlocks(weekday?: Weekday, includeAttendence?: boolean, includ
 
     allBlocks.sort(sortBlocks);
 
-    if (weekday !== null) {
-        const filteredBlocks = allBlocks.filter(e => { return e.weekday == weekday; });
+    if (weekday != null) {
+        const filteredBlocks = allBlocks.filter(e => { return e.weekday === weekday; });
         if (includeAttendence) {
             return filteredBlocks.map(e => {
                 return Object.assign(e, { attendance: attendanceMap[e.title.toLowerCase().replace(/\s/g, "_")] });
@@ -207,6 +207,6 @@ export async function writeAllBlocksToAttendanceFile(weekday: Weekday, blocks: C
  *
  * @returns all tracked attendance
  */
-export async function getTrackedAttendace(): Promise<object[]> {
-    return await readConfigFile("attendance.json") as object[];
+export async function getTrackedAttendace(): Promise<Record<string, Record<string, boolean>>> {
+    return await readConfigFile("attendance.json") as Record<string, Record<string, boolean>>;
 }

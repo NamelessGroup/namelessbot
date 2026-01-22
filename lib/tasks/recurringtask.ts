@@ -4,17 +4,15 @@ import {DateTime} from "luxon";
 
 /**
  * Enum representing each weekday
- * 
- * @enum
  */
 export enum Weekday {
-    MONDAY,
-    TUESDAY,
-    WEDNESDAY,
-    THURSDAY,
-    FRIDAY,
-    SATURDAY,
-    SUNDAY
+    MONDAY = 1,
+    TUESDAY = 2,
+    WEDNESDAY = 3,
+    THURSDAY = 4,
+    FRIDAY = 5,
+    SATURDAY = 6,
+    SUNDAY = 7
 }
 
 /**
@@ -53,7 +51,7 @@ export class RecurringTask {
      * 
      * @param client Client to run the task with
      */
-    public async run(client: Client): Promise<void> {
+    public run(client: Client): void {
         try {
             this.runner(client, ...this.arguments);
         } catch(e) {
@@ -69,6 +67,6 @@ export class RecurringTask {
      * @returns Whether the task should be executed
      */
     public shouldRunAtTime(time: DateTime): boolean {
-        return this.weekday == time.weekday - 1 && this.hour == time.hour  && this.minute == time.minute;
+        return (this.weekday as number) === time.weekday && this.hour === time.hour  && this.minute === time.minute;
     }
 }

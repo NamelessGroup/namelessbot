@@ -33,7 +33,7 @@ export default {
             }
             table += "| Result\n";
             for (const result of truthTable.results) {
-                for (const assig in result.assignment) {
+                for (let assig = 0; assig < result.assignment.length; assig++) {
                     const padding = (truthTable.variables[assig].length - 1) / 2;
                     table += " ".repeat(Math.floor(padding) + 1);
                     table += result.assignment[assig] ? "T" : "F";
@@ -46,7 +46,7 @@ export default {
             table += "```";
             await interaction.followUp("TruthTable for `" + parsedExpression.ast.toString(parsedExpression.variables) + "`:\n" + table);
         } catch(e) {
-            await interaction.followUp("`" + e.toString() + "`");
+            await interaction.followUp("`" + String(e) + "`");
         }
     }
 } as ISlashCommand;

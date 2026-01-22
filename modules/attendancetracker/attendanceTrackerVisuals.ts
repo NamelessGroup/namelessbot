@@ -12,9 +12,9 @@ import {DateTime} from "luxon";
 export function buildTimeTableEmbed(blocks: CalendarBlock[], weekday?: number) : EmbedBuilder {
     const embed = new EmbedBuilder();
 
-    embed.setTitle("Stundenplan" + (weekday != undefined ? " für " + dayFromInt(weekday):""));
+    embed.setTitle("Stundenplan" + (weekday != null ? " für " + dayFromInt(weekday):""));
 
-    if (weekday == undefined) {
+    if (weekday == null) {
         for (let i = 0; i < 5; i++) {
             embed.addFields(buildDayField(getBlocks(i), i));
         }
@@ -36,7 +36,7 @@ export function buildTimeTableEmbed(blocks: CalendarBlock[], weekday?: number) :
 export function buildAttendanceAction(blocks: CalendarBlock[]) : ActionRowBuilder<ButtonBuilder>[] {
     const blockCount = Math.min(blocks.length, 25);
     let curCount = 0;
-    const builders = [];
+    const builders = [] as ActionRowBuilder<ButtonBuilder>[];
     for (let i = 0; i < Math.ceil(blockCount / 5.0); i++) {
         // this inner loop creates the buttons for one row
         const builder = new ActionRowBuilder<ButtonBuilder>();
@@ -65,7 +65,7 @@ export function buildAttendanceAction(blocks: CalendarBlock[]) : ActionRowBuilde
  * @returns Single embed field for the given day
  */
 function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField {
-    if (blocks == undefined || blocks.length == 0) {
+    if (blocks == null || blocks.length === 0) {
         return {
             name: dayFromInt(weekday),
             value: "\u200b",
@@ -95,7 +95,7 @@ function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField
         }).reduce(
         // concatenate all string representations of blocks into a single string
         (sumTillThisPoint, nextElement) => {
-            if (nextElement != "") {
+            if (nextElement !== "") {
                 return sumTillThisPoint + "\n" + nextElement;
             }
             return sumTillThisPoint;
@@ -104,7 +104,7 @@ function buildDayField(blocks: CalendarBlock[], weekday: number) : APIEmbedField
 
     return {
         name: dayFromInt(weekday),
-        value: value != "" ? value : "\u200b",
+        value: value !== "" ? value : "\u200b",
         inline: true
     } as APIEmbedField;
 }
@@ -122,8 +122,8 @@ function prettyTime(weekday: number, unPrettyTime: string) : string {
     const minutes = parts.length >= 2 ? (parts[1].match(/\d+/) ? parts[1] : "0") : "0";
     try {
         return "<t:" + Math.trunc(getNextTime(weekday, parseInt(hours), parseInt(minutes)).toMillis() / 1000) + ":t>";
-    } catch (e) {
-        return (hours.length == 1 ? "0":"") + hours + ":" + (minutes.length == 1 ? "0":"") + minutes;
+    } catch {
+        return (hours.length === 1 ? "0":"") + hours + ":" + (minutes.length === 1 ? "0":"") + minutes;
     }
 
 }
@@ -148,7 +148,7 @@ function dayFromInt(weekday: number) : string {
  */
 export function getNextTime(weekday: number, hour: number, minute: number) : DateTime {
     let date = DateTime.now().setZone("Europe/Berlin");
-    while (date.weekday - 1 != weekday) {
+    while (date.weekday - 1 !== weekday) {
         date = date.plus({days:1});
     }
     date = date.set({ hour: hour, minute: minute, second: 0, millisecond: 0 });
@@ -170,7 +170,7 @@ interface Attendable {
  * @param end End of the time range
  * @returns Discord Embed
  */
-export function buildResultEmbed(results: object[], filter?:string, start?: DateTime, end?: DateTime): EmbedBuilder  {
+export function buildResultEmbed(results: Record<string, Record<string, boolean>>, filter?:string, start?: DateTime, end?: DateTime): EmbedBuilder  {
     let name = "Attendance";
     if (filter) {
         name += " with filter: " + filter;
@@ -188,10 +188,10 @@ export function buildResultEmbed(results: object[], filter?:string, start?: Date
     const total = {id: "Total", count: 0, attendances: new Map()} as Attendable;
 
     for (const block of blocks) {
-        if (block.count == 0) {
+        if (block.count === 0) {
             continue;
         }
-        if (!block.id.match(filter == undefined ? ".*" : filter)) {
+        if (!block.id.match(filter ?? ".*")) {
             continue;
         }
 
@@ -228,7 +228,7 @@ function buildResultEmbedField(block: Attendable): APIEmbedField {
 
     return {
         name: block.id,
-        value: value != "" ? value : '\u200B',
+        value: value !== "" ? value : '\u200B',
         inline: false
     } as APIEmbedField;
 }
@@ -241,17 +241,17 @@ function buildResultEmbedField(block: Attendable): APIEmbedField {
  * @param end End of the time range
  * @returns Array of blocks with their attendances
  */
-function countAttandances(results: object[], start?: DateTime, end?: DateTime): Attendable[] {
+function countAttandances(results: Record<string, Record<string, boolean>>, start?: DateTime, end?: DateTime): Attendable[] {
     const blocks: Attendable[] = [];
 
-    for (const blockKey in results) {
+    for (const blockKey of Object.keys(results)) {
         const s = blockKey.split("-");
         const name = s[s.length - 1].replace("_", " ");
 
         let found = false;
 
         for (const block of blocks) {
-            if (block.id == name) {
+            if (block.id === name) {
                 found = true;
                 continue;
             }
@@ -262,20 +262,20 @@ function countAttandances(results: object[], start?: DateTime, end?: DateTime): 
         }
     }
 
-    for (const blockKey in results) {
+    for (const blockKey of Object.keys(results)) {
         const s = blockKey.split("-");
         const name = s[s.length - 1].replace("_", " ");
         const time = DateTime.fromFormat(s[0], "dd.MM.yyyy");
 
-        if (start != undefined && start > time) {
+        if (start != null && start > time) {
             continue;
         }
-        if (end != undefined && end < time) {
+        if (end != null && end < time) {
             continue;
         }
 
         for (const block of blocks) {
-            if (block.id == name) {
+            if (block.id === name) {
                 block.count++;
                 for (const attandie in results[blockKey]) {
                     if (results[blockKey][attandie]) {

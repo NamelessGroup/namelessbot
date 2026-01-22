@@ -25,7 +25,7 @@ export default {
     handler: async function(interaction: CommandInteraction) {
         const options = interaction.options as CommandInteractionOptionResolver;
         const requestedYear = options.getInteger("year", false);
-        const year =  (requestedYear === null)? DateTime.now().setZone("Europe/Berlin").year : requestedYear;
+        const year =  (requestedYear == null)? DateTime.now().setZone("Europe/Berlin").year : requestedYear;
         const embed = await embedLeaderboard(get("id", ConfigurationFile.AOC), year);
         await interaction.reply({ embeds: [embed] });
     }

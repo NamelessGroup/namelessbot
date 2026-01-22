@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import {Client, CommandInteraction, Interaction} from "discord.js";
 import { ConfigurationFile, get } from "./configmanager";
 import { LISTENERS, SLASH_COMMANDS } from "./registry";

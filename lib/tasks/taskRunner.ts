@@ -9,11 +9,11 @@ let taskLoop: NodeJS.Timer;
  * 
  * @param client Client to run the tasks with
  */
-async function checkForTasks(client: Client): Promise<void> {
+function checkForTasks(client: Client): void {
     const now = DateTime.now().setZone("Europe/Berlin");
     for(const t of TASKS) {
         if(t.shouldRunAtTime(now)) {
-            await t.run(client);
+            void t.run(client);
         }
     }
 }

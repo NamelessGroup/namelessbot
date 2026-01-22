@@ -171,12 +171,12 @@ export default {
      */
     handler: async function(interaction: CommandInteraction) {
         const options = interaction.options as CommandInteractionOptionResolver;
-        if (options.getSubcommand() == "list") {
+        if (options.getSubcommand() === "list") {
             await interaction.deferReply({ ephemeral: true });
             await interaction.followUp({ ephemeral: true,
                                          embeds:[buildTimeTableEmbed(getBlocks(options.getInteger("weekday"), false, options.getBoolean("includeindex")),
                                              options.getInteger("weekday"))]});
-        } else if (options.getSubcommand() == "add") {
+        } else if (options.getSubcommand() === "add") {
             await interaction.deferReply({ ephemeral: true });
             const result = await addBlock({
                 weekday: options.getInteger("weekday"),
@@ -189,7 +189,7 @@ export default {
             } else {
                 await interaction.followUp({ ephemeral: true, content: "Couldn't add block. Make sure the times are formatted as hh:mm."});
             }
-        } else if (options.getSubcommand() == "remove") {
+        } else if (options.getSubcommand() === "remove") {
             await interaction.deferReply({ ephemeral: true });
             const result = await removeBlock(options.getInteger("index"));
             if (result) {
@@ -197,7 +197,7 @@ export default {
             } else {
                 await interaction.followUp({ ephemeral: true, content: "Error while removing block." });
             }
-        } else if (options.getSubcommand() == "update") {
+        } else if (options.getSubcommand() === "update") {
             await interaction.deferReply({ ephemeral: true });
             const result = await updateBlock(options.getInteger("index"), {
                 weekday: options.getInteger("weekday"),
@@ -210,18 +210,18 @@ export default {
             } else {
                 await interaction.followUp({ ephemeral: true, content: "Error while updating block. Make sure the times are formatted as hh:mm." });
             }
-        } else if (options.getSubcommand() == "stats") {
+        } else if (options.getSubcommand() === "stats") {
             const dateRegex = /[0-9]{2}.[0-9]{2}.[0-9]{4}/;
             const filter = options.getString("filter");
             const startTime = options.getString("start");
             const endTime = options.getString("end");
-            if (startTime != undefined && !startTime.match(dateRegex) || endTime != undefined && !startTime.match(dateRegex)) {
-                interaction.reply({ephemeral: false, content: "One time had the wrong format"});
+            if (startTime != null && !startTime.match(dateRegex) || endTime != null && !startTime.match(dateRegex)) {
+                await interaction.reply({ephemeral: false, content: "One time had the wrong format"});
                 return;
             }
             await interaction.deferReply({ephemeral: false});
-            const start = startTime != undefined ? DateTime.fromFormat(startTime, "dd.MM.yyyy") : undefined;
-            const end = endTime != undefined ? DateTime.fromFormat(endTime, "dd.MM.yyyy") : undefined;
+            const start = startTime != null ? DateTime.fromFormat(startTime, "dd.MM.yyyy") : undefined;
+            const end = endTime != null ? DateTime.fromFormat(endTime, "dd.MM.yyyy") : undefined;
             await getTrackedAttendace().then(a => interaction.followUp({ephemeral: false, embeds: [buildResultEmbed(a, filter, start, end)]}));
         }
     }

@@ -12,7 +12,8 @@ import {
     GuildMemberRoleManager,
     BaseMessageOptions,
     CollectedInteraction,
-    Role, GuildMember, Snowflake
+    Role, GuildMember, Snowflake,
+    Interaction
 } from "discord.js";
 import {ISlashCommand} from "../../types";
 import {ConfigurationFile, get} from "../../lib/configmanager";
@@ -63,12 +64,12 @@ export default {
         // --- Variables with input
         const options = interaction.options as CommandInteractionOptionResolver;
         const time = options.getInteger("votetime", false);
-        const timed = time != undefined;
+        const timed = time != null;
         const title = options.getString("name", true);
         let maingroup = options.getRole("votegroup", false) as Role;
-        if (maingroup == undefined) {
+        if (maingroup == null) {
             const guid = get("vote_group", ConfigurationFile.GENERAL);
-            maingroup = (JSON.stringify(guid) == "{}" || guid == "")? interaction.guild.roles.everyone: interaction.guild.roles.cache.get(guid);
+            maingroup = (JSON.stringify(guid) === "{}" || guid === "")? interaction.guild.roles.everyone: interaction.guild.roles.cache.get(guid);
         }
 
         if (membercantstartvote(interaction.member as GuildMember, maingroup)) {
@@ -87,15 +88,15 @@ export default {
             const groupmembers = maingroup.members.map(m=>m.user.id);
             usedVotes = Math.ceil(groupmembers.length/2);
             // further variables set
-            usedVotes = ((usedVotes == 0) ? 1 : usedVotes);
+            usedVotes = ((usedVotes === 0) ? 1 : usedVotes);
             msg += "This is a majority voting. " + usedVotes + " Votes are required for one of the sides!";
         }
 
         const embed = getEmbedOptions(title, msg, maingroup.id);
-        const reply = await interaction.reply({ embeds: embed.embeds, components: embed.components, fetchReply: true }) as Message;
+        const response = await interaction.reply({ embeds: embed.embeds, components: embed.components, withResponse: true });
+        const reply = response.resource.message;
 
-        // eslint-disable-next-line
-        const filter = (interaction) => {
+        const filter = (interaction: Interaction): boolean => {
             if (!interaction.isButton()) {
                 return false;
             }
@@ -112,37 +113,37 @@ export default {
             const id = interaction.user.id;
             const roles = interaction.member.roles as GuildMemberRoleManager;
             if (!roles.cache.some((role) => role.id === maingroup.id)) {
-                interaction.reply({content:"You are not allowed to vote. Please contact an Administrator!", ephemeral:true});
+                void interaction.reply({content:"You are not allowed to vote. Please contact an Administrator!", ephemeral:true});
                 return;
             }
-            if (interaction.customId == "vote_up") {
+            if (interaction.customId === "vote_up") {
                 pro.add(id);
                 if (con.has(id)) {
                     con.delete(id);
-                    interaction.reply({content:"You now support the voting!", ephemeral:true});
+                    void interaction.reply({content:"You now support the voting!", ephemeral:true});
                     return;
                 }
-                interaction.reply({content:"Voting successful. You support the voting!", ephemeral:true});
-            } else if (interaction.customId == "vote_down") {
+                void interaction.reply({content:"Voting successful. You support the voting!", ephemeral:true});
+            } else if (interaction.customId === "vote_down") {
                 con.add(id);
                 if (pro.has(id)) {
                     pro.delete(id);
-                    interaction.reply({content:"You are now against the voting!", ephemeral:true});
+                    void interaction.reply({content:"You are now against the voting!", ephemeral:true});
                     return;
                 }
-                interaction.reply({content:"Voting successful. You are against the topic!", ephemeral:true});
+                void interaction.reply({content:"Voting successful. You are against the topic!", ephemeral:true});
             }
-            if (!timed && (pro.size == usedVotes || con.size == usedVotes)) {
-                reply.edit(getEmbedOptions(title, msg, maingroup.id, Math.ceil(Date.now()/1000 + 30)));
+            if (!timed && (pro.size === usedVotes || con.size === usedVotes)) {
+                void reply.edit(getEmbedOptions(title, msg, maingroup.id, Math.ceil(Date.now()/1000 + 30)));
                 setTimeout(() => {
-                    printVotes(pro, con, reply, title, collector);
+                    void printVotes(pro, con, reply, title, collector);
                 }, 30000 );
             }
         });
 
         if (timed) {
             setTimeout(() => {
-                printVotes(pro, con, reply, title, collector);
+                void printVotes(pro, con, reply, title, collector);
             }, 1000*time);
         }
 
@@ -169,8 +170,8 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
         return "🔴 <@" + e + ">";
     }).join("\n");
 
-    upVotes = (upVotes == "") ? "None" : upVotes;
-    downVotes = (downVotes == "") ? "None" : downVotes;
+    upVotes = (upVotes === "") ? "None" : upVotes;
+    downVotes = (downVotes === "") ? "None" : downVotes;
 
     //finished embed
     const msgEmbed = new EmbedBuilder()
@@ -180,7 +181,7 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
         .setTimestamp();
 
     //if a title were specified it will be displayed
-    if (title != "") {
+    if (title !== "") {
         msgEmbed.setDescription(title);
     }
     //show embed
@@ -195,7 +196,7 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
  * @returns True if the member cant start a vote False if he can
  */
 function membercantstartvote (member: GuildMember, selectedRole: Role): boolean {
-    const roles = member.roles as GuildMemberRoleManager;
+    const roles = member.roles;
     return !roles.cache.has(selectedRole.id);
 }
 
@@ -210,12 +211,12 @@ function membercantstartvote (member: GuildMember, selectedRole: Role): boolean 
  */
 function getEmbedOptions(title:string, msg: string, group:Snowflake, timestamp?:number): BaseMessageOptions {
     const voteEmbed = new EmbedBuilder()
-        .setTitle((title == "") ? "Simple Voting ": title)
+        .setTitle((title === "") ? "Simple Voting ": title)
         .setDescription(msg)
         .setColor("#477ce0")
         .addFields({name:"Allowed Groups", value:"Voting for Group <@&" + group + ">"});
 
-    if (timestamp != undefined) {
+    if (timestamp != null) {
         voteEmbed.addFields({name: "Vote is ending", value: "This vote ends <t:" + timestamp + ":R> \n"});
     }
 

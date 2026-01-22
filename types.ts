@@ -53,7 +53,7 @@ export interface ISlashCommand {
      *
      * @param interaction Interaction sent to the event handler
      */
-    handler(interaction: CommandInteraction): void;
+    handler(this: void, interaction: CommandInteraction): void | Promise<void>;
 }
 
 /**

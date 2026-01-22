@@ -43,7 +43,7 @@ export class MockSlashCommand {
                 getBoolean: (key: string) => this.arguments[key] as boolean,
                 getInteger: (key: string) => this.arguments[key] as number,
                 getNumber: (key: string) => this.arguments[key] as number,
-                getSubcommand: (key: string) => this.subcommand,
+                getSubcommand: () => this.subcommand,
             },
             user: {
                 id: "mockUser"
@@ -84,7 +84,7 @@ expect.extend({
         return {
             pass: this.equals(received.followUp.mock.lastCall[0], expected),
             message: () => `expected slash command to be followed up with`,
-            actual: received.followUp.mock.lastCall[0],
+            actual: received.followUp.mock.lastCall[0] as unknown,
             expected: expected,
         }
     }
@@ -96,5 +96,5 @@ interface CustomMatchers<R = unknown> {
 }
 
 declare module 'vitest' {
-    interface Matchers<T = any> extends CustomMatchers<T> {}
+    interface Matchers<T = any> extends CustomMatchers<T> {} // eslint-disable-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any
 }

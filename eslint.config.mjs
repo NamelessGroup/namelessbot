@@ -11,7 +11,7 @@ export default defineConfig([
     }),
     {
         "ignores": [
-            "docs"
+            "eslint.config.mjs"
         ]
     },
     {
@@ -24,7 +24,7 @@ export default defineConfig([
     {
         rules: {
             "no-var": "error",
-            "@typescript-eslint/explicit-function-return-type": "error",
+            "@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
             "jsdoc/require-jsdoc": ["warn", {
                 "require": {
                     "ArrowFunctionExpression": false,

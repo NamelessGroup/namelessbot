@@ -11,25 +11,31 @@ const INTENTS = [
     IntentsBitField.Flags.GuildMembers
 ];
 
-const client = new Client({intents: INTENTS});
+/**
+ * Main bot function
+ */
+async function main(): Promise<void> {
+    const client = new Client({intents: INTENTS});
 
-client.on("ready", (client) => {
-    console.log(`Logged in as ${client.user.tag}`);
-});
+    client.on("ready", (client) => {
+        console.log(`Logged in as ${client.user.tag}`);
+    });
 
-// Graceful shutdown
-process.on('SIGINT', () => {
-    client.destroy();
-    stopRecurringTaskLoop();
-});
+    // Graceful shutdown
+    process.on('SIGINT', () => {
+        void client.destroy();
+        stopRecurringTaskLoop();
+    });
 
-// Event handlers
-addListeners(client, true);
+    // Event handlers
+    addListeners(client, true);
+    
+    // Recurring tasks
+    startRecurringTaskLoop(client);
+    
+    // Reading config
+    await readConfig();
+    await client.login(process.env.DISCORD_TOKEN);
+}
 
-// Recurring tasks
-startRecurringTaskLoop(client);
-
-// Reading config
-readConfig().then(() => {
-    void client.login(process.env.DISCORD_TOKEN);
-});
+await main();

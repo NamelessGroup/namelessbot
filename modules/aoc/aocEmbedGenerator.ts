@@ -16,8 +16,8 @@ export async function embedLeaderboard(id:number, year: number) : Promise<EmbedB
         map[m.name] = "";
         for (const k in m.completion_day_level) {
             let emoji = ":eight_pointed_black_star:";
-            if (m.completion_day_level[k]["1"] != undefined && m.completion_day_level[k]["1"].get_star_ts != 0) {
-                if (m.completion_day_level[k]["2"] != undefined && m.completion_day_level[k]["2"].get_star_ts != 0) {
+            if (m.completion_day_level[k]["1"] != null && m.completion_day_level[k]["1"].get_star_ts !== 0) {
+                if (m.completion_day_level[k]["2"] != null && m.completion_day_level[k]["2"].get_star_ts !== 0) {
                     emoji = ":star2:";
                 } else {
                     emoji = ":star:";
@@ -29,7 +29,7 @@ export async function embedLeaderboard(id:number, year: number) : Promise<EmbedB
     
     return new EmbedBuilder().setURL("https://adventofcode.com").setTitle("Advent of Code Leaderboard")
         .addFields(
-            ...members.filter(m => map[m.name] != undefined && map[m.name].length > 0)
+            ...members.filter(m => map[m.name] != null && map[m.name].length > 0)
                 .map(m => {
                     return {
                         name: m.name + ": " + m.local_score,

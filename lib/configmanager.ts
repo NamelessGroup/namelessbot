@@ -35,7 +35,9 @@ const configs: Map<ConfigurationFile, unknown> = new Map();
 async function recreateNonexistantConfigs(): Promise<void> {
     try {
         await mkdir('config');
-    } catch {}
+    } catch {
+        // This is fine (directory already exists)
+    }
 
     let count = 0;
     
@@ -107,13 +109,13 @@ export async function writeConfigFile(path: string, content: unknown): Promise<v
  * 
  * @param key Key to look up
  * @param config Config to look up
- * @throws ReferenceError Config doesn't exist
+ * @throws {ReferenceError} Config doesn't exist
  * @returns Value at key in supplied config, or undefined
  */
 export function get<F extends ConfigurationFile, K extends ConfigKey<F>>(key: K, config: F): DefaultConfigs[F][K] {
     if (!configs.has(config)) throw new ReferenceError(`Config ${config} doesn't exist`);
     if (configs.get(config)[key] == null) return undefined;
-    return JSON.parse(JSON.stringify(configs.get(config)[key]) || "{}");
+    return JSON.parse(JSON.stringify(configs.get(config)[key]) || "{}") as DefaultConfigs[F][K];
 }
 
 /**
@@ -124,10 +126,10 @@ export function get<F extends ConfigurationFile, K extends ConfigKey<F>>(key: K,
  * @param key Key to write to
  * @param config Config to write to
  * @param value Value to write
- * @throws ReferenceError Config doesn't exist
+ * @throws {ReferenceError} Config doesn't exist
  */
 export async function write<F extends ConfigurationFile, K extends ConfigKey<F>>(key: K, config: F, value: DefaultConfigs[F][K]): Promise<void> {
-    if(configs[config] === undefined) throw new ReferenceError(`Config ${config} doesn't exist`);
-    configs[config][key] = value;
+    if (!configs.has(config)) throw new ReferenceError(`Config ${config} doesn't exist`);
+    configs.get(config)[key] = value;
     await writeConfig();
 }

@@ -2,7 +2,7 @@ import { test, expect, vi, afterEach } from 'vitest';
 import * as configManager from '../../lib/configmanager';
 import koeri, { setRating } from '../../modules/koeri/koeriCommand';
 import { MockSlashCommand } from '../utils';
-import { ActionRowData, ComponentType, MessageActionRowComponentData } from 'discord.js';
+import { ActionRowData, ComponentType, MessageActionRowComponentData, SelectMenuComponentOptionData } from 'discord.js';
 
 // Mocking the config manager
 const getMock = vi.spyOn(configManager, 'get').mockImplementation(() => undefined);
@@ -143,9 +143,9 @@ function _getGenerateComponents(combination: number): ActionRowData<MessageActio
     ]
 }
 
-function _getRateOptions() {
+function _getRateOptions(): SelectMenuComponentOptionData[] {
     const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    const result = [];
+    const result = [] as SelectMenuComponentOptionData[];
     for(const num of numbers) {
         result.push({
             label: num.toString(),
