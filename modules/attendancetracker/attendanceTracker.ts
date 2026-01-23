@@ -261,8 +261,7 @@ export async function writeAllBlocksToAttendanceFile(
 export async function getTrackedAttendace(): Promise<
     Record<string, Record<string, boolean>>
 > {
-    return (await readConfigFile("attendance.json")) as Record<
-        string,
-        Record<string, boolean>
-    >;
+    return (await readConfigFile(
+        ConfigurationFile.ATTENDANCE + ".json",
+    )) as Record<string, Record<string, boolean>>;
 }

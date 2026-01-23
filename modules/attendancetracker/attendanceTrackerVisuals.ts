@@ -26,7 +26,7 @@ export function buildTimeTableEmbed(
     );
 
     if (weekday == null) {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 1; i < 6; i++) {
             embed.addFields(buildDayField(getBlocks(i), i));
         }
     } else {
@@ -180,7 +180,9 @@ function prettyTime(weekday: number, unPrettyTime: string): string {
  * @returns String representation of the given weekday
  */
 function dayFromInt(weekday: number): string {
-    return ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"][weekday];
+    return ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"][
+        weekday - 1
+    ];
 }
 
 /**
@@ -313,14 +315,7 @@ function countAttandances(
         const s = blockKey.split("-");
         const name = s[s.length - 1].replace("_", " ");
 
-        let found = false;
-
-        for (const block of blocks) {
-            if (block.id === name) {
-                found = true;
-                continue;
-            }
-        }
+        const found = blocks.some((block) => block.id === name);
 
         if (!found) {
             blocks.push({ id: name, count: 0, attendances: new Map() });

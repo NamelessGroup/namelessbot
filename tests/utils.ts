@@ -33,6 +33,7 @@ class MockChatInputCommandInteraction extends ChatInputCommandInteraction {
         super(client as Client<true>, data);
         this.deferReply = vi.fn();
         this.followUp = vi.fn();
+        this.reply = vi.fn();
     }
 }
 
@@ -299,8 +300,7 @@ expect.extend({
         if (!hasMockAttribute<{ followUp: Mock }>(received, "followUp")) {
             return {
                 pass: false,
-                message: () =>
-                    `expected object of type MockInteraction, received ${typeof received}`,
+                message: () => "received object has no mock of 'followUp'",
             };
         }
 
@@ -319,12 +319,41 @@ expect.extend({
             expected: expected,
         };
     },
+    toBeRepliedToWith(
+        received: unknown,
+        expected: string | MessagePayload | InteractionReplyOptions,
+    ) {
+        if (!hasMockAttribute<{ reply: Mock }>(received, "reply")) {
+            return {
+                pass: false,
+                message: () => "received object has no mock of 'reply'",
+            };
+        }
+
+        if (received.reply.mock.calls.length !== 1) {
+            return {
+                pass: false,
+                message: () =>
+                    `expected interaction to be replied to exactly once`,
+            };
+        }
+
+        return {
+            pass: this.equals(received.reply.mock.lastCall[0], expected),
+            message: () => `expected interaction to be replied up with`,
+            actual: received.reply.mock.lastCall[0] as unknown,
+            expected: expected,
+        };
+    },
 });
 
 interface CustomMatchers<R = unknown> {
     toBeDeferred: () => R;
     toBeFollowedUpWith: (
         followUp: string | MessagePayload | InteractionReplyOptions,
+    ) => R;
+    toBeRepliedToWith: (
+        reply: string | MessagePayload | InteractionReplyOptions,
     ) => R;
 }
 
