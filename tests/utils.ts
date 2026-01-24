@@ -13,6 +13,7 @@ import {
     APIUser,
     ApplicationCommandOptionType,
     ApplicationCommandType,
+    ButtonInteraction,
     ChannelType,
     ChatInputCommandInteraction,
     Client,
@@ -22,11 +23,16 @@ import {
     InteractionReplyOptions,
     InteractionType,
     Locale,
+    MessageComponentInteraction,
+    MessageEditOptions,
     MessagePayload,
     MessageType,
     StringSelectMenuInteraction,
 } from "discord.js";
-import { RawInteractionData } from "discord.js/typings/rawDataTypes";
+import {
+    RawInteractionData,
+    RawMessageComponentInteractionData,
+} from "discord.js/typings/rawDataTypes";
 
 class MockChatInputCommandInteraction extends ChatInputCommandInteraction {
     constructor(client: Client, data: RawInteractionData) {
@@ -48,6 +54,15 @@ class MockStringSelectMenuInteraction extends StringSelectMenuInteraction {
         );
         this.deferReply = vi.fn();
         this.followUp = vi.fn();
+    }
+}
+
+class MockMessageComponentInteraction extends MessageComponentInteraction {
+    constructor(client: Client, data: RawMessageComponentInteractionData) {
+        super(client as Client<true>, data);
+        this.deferReply = vi.fn();
+        this.followUp = vi.fn();
+        this.message.edit = vi.fn();
     }
 }
 
@@ -266,6 +281,31 @@ export class MockStringSelectMenuInteractionBuilder extends MockBuilder {
     }
 }
 
+export class MockButtonInteractionBuilder extends MockBuilder {
+    private customButtonId: string;
+
+    constructor(client?: Client) {
+        super(client);
+        this.customButtonId = "";
+    }
+
+    public setButtonId(buttonId: string): this {
+        this.customButtonId = buttonId;
+        return this;
+    }
+
+    public build(): ButtonInteraction {
+        return new MockMessageComponentInteraction(this.client, {
+            ...this.buildBaseInteraction(InteractionType.MessageComponent),
+            data: {
+                component_type: ComponentType.Button,
+                custom_id: this.customButtonId,
+            },
+            channel_id: this.mockTextChannel().id,
+        } as RawMessageComponentInteractionData) as ButtonInteraction;
+    }
+}
+
 function hasMockAttribute<T>(
     received: Partial<T>,
     key: keyof T,
@@ -345,6 +385,31 @@ expect.extend({
             expected: expected,
         };
     },
+    toBeEditedWith(
+        received: unknown,
+        expected: string | MessagePayload | MessageEditOptions,
+    ) {
+        if (!hasMockAttribute<{ edit: Mock }>(received, "edit")) {
+            return {
+                pass: false,
+                message: () => "received object has no mock of 'edit'",
+            };
+        }
+
+        if (received.edit.mock.calls.length !== 1) {
+            return {
+                pass: false,
+                message: () => `expected object to be edited to exactly once`,
+            };
+        }
+
+        return {
+            pass: this.equals(received.edit.mock.lastCall[0], expected),
+            message: () => `expected object to be edited with`,
+            actual: received.edit.mock.lastCall[0] as unknown,
+            expected: expected,
+        };
+    },
 });
 
 interface CustomMatchers<R = unknown> {
@@ -355,6 +420,7 @@ interface CustomMatchers<R = unknown> {
     toBeRepliedToWith: (
         reply: string | MessagePayload | InteractionReplyOptions,
     ) => R;
+    toBeEditedWith: (edit: string | MessagePayload | MessageEditOptions) => R;
 }
 
 declare module "vitest" {

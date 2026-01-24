@@ -238,6 +238,7 @@ test("/timetable update", async () => {
 });
 
 test("/timetable stats", async () => {
+    vi.setSystemTime(1768777200000);
     const mockSlash = new MockChatInputCommandInteractionBuilder()
         .setSubcommand("stats")
         .build();
