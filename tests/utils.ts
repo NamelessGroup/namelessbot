@@ -18,7 +18,7 @@ import {
     ChatInputCommandInteraction,
     Client,
     ComponentType,
-    GuildMemberFlagsBitField,
+    GuildMemberFlags,
     InteractionContextType,
     InteractionReplyOptions,
     InteractionType,
@@ -34,7 +34,7 @@ import {
     RawMessageComponentInteractionData,
 } from "discord.js/typings/rawDataTypes";
 
-class MockChatInputCommandInteraction extends ChatInputCommandInteraction {
+export class MockChatInputCommandInteraction extends ChatInputCommandInteraction {
     constructor(client: Client, data: RawInteractionData) {
         super(client as Client<true>, data);
         this.deferReply = vi.fn();
@@ -108,7 +108,7 @@ export class MockBuilder {
         return {
             user: this.user,
             deaf: false,
-            flags: GuildMemberFlagsBitField.Flags,
+            flags: GuildMemberFlags.IsGuest,
             joined_at: "",
             mute: false,
             permissions: "",

@@ -1,15 +1,14 @@
 import { test, expect } from "vitest";
+import { MockChatInputCommandInteractionBuilder } from "./utils";
 import testSlash from "../modules/test";
-import { MockChatInputCommandInteractionBuilder } from "./discord.js-mock/interactions/MockChatInputCommandInteractionBuilder";
+import { Client } from "discord.js";
 
 test("/test - Test A", async () => {
     // Getting our mock input
-    const mockInteraction = new MockChatInputCommandInteractionBuilder()
+    const client = new Client({ intents: [] });
+    const mockInteraction = new MockChatInputCommandInteractionBuilder(client)
         .addStringOption("test_argument", "Some Argument")
         .build();
-
-    console.log(mockInteraction.channel);
-    console.log(mockInteraction.guild);
 
     await testSlash.handler(mockInteraction);
 
