@@ -74,9 +74,9 @@ export class RecurringTask {
      */
     public shouldRunAtTime(time: DateTime): boolean {
         return (
-            (this.weekday as number) === time.weekday &&
-            this.hour === time.hour &&
-            this.minute === time.minute
+            (this.weekday as number) === time.get('weekday') &&
+            this.hour === time.get('hour') &&
+            this.minute === time.get('minute')
         );
     }
 }
