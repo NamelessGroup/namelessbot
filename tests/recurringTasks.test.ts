@@ -76,7 +76,9 @@ test("TaskRunner", () => {
             day: 4,
             hour: 6,
             minute: 17,
-        }).toJSDate(),
+        })
+            .setZone("Europe/Berlin")
+            .toJSDate(),
     );
 
     startRecurringTaskLoop(null);
