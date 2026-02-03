@@ -73,6 +73,9 @@ export class RecurringTask {
      * @returns Whether the task should be executed
      */
     public shouldRunAtTime(time: DateTime): boolean {
+        console.log(time.get('weekday'))
+        console.log(time.get('hour'))
+        console.log(time.get('minute'))
         return (
             (this.weekday as number) === time.get('weekday') &&
             this.hour === time.get('hour') &&
