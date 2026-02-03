@@ -11,6 +11,7 @@ let taskLoop: NodeJS.Timeout;
  */
 function checkForTasks(client: Client): void {
     const now = DateTime.now().setZone("Europe/Berlin");
+    console.log(now);
     for (const t of TASKS) {
         if (t.shouldRunAtTime(now)) {
             void t.run(client);
