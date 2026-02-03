@@ -77,7 +77,7 @@ test("TaskRunner", () => {
             hour: 6,
             minute: 17,
         })
-            .setZone("Europe/Berlin")
+            .setZone("Europe/Berlin", { keepLocalTime: true })
             .toJSDate(),
     );
 
