@@ -1,9 +1,24 @@
-import { APIBaseInteraction, APIGuildMember, APIMessage, APIPartialInteractionGuild, APITextChannel, APIUser, Client, Guild, GuildMember, InteractionContextType, InteractionType, Locale, Message, TextChannel, User } from "discord.js";
+import {
+    APIBaseInteraction,
+    APIPartialInteractionGuild,
+    APITextChannel,
+    APIUser,
+    Client,
+    Guild,
+    GuildMember,
+    InteractionContextType,
+    InteractionType,
+    Locale,
+    Message,
+    TextChannel,
+    User,
+} from "discord.js";
 import { MockGuildBuilder } from "../objects/MockGuild";
 import { MockTextChannelBuilder } from "../objects/MockTextChannel";
 import { MockMessageBuilder } from "../objects/MockMessage";
 import { MockUserBuilder } from "../objects/MockUser";
 import { MockMemberBuilder } from "../objects/MockMember";
+import "../matchers";
 
 export class BaseMockInteractionBuilder {
     protected readonly client: Client;
@@ -13,7 +28,7 @@ export class BaseMockInteractionBuilder {
     private user: User;
     private member: GuildMember;
 
-    constructor (client?: Client) {
+    constructor(client?: Client) {
         this.client = client ?? new Client({ intents: [] });
         this.guild = null;
         this.textChannel = null;
@@ -32,28 +47,49 @@ export class BaseMockInteractionBuilder {
         return this.guild;
     }
 
-    public setTextChannel(textChannel: TextChannel): this {
-        this.textChannel = textChannel;
+    public setTextChannel(
+        textChannel: TextChannel | ((c: Client) => TextChannel),
+    ): this {
+        if (typeof textChannel === "function") {
+            this.textChannel = textChannel(this.client);
+        } else {
+            this.textChannel = textChannel;
+        }
         return this;
     }
 
     public getTextChannel(): TextChannel {
-        this.textChannel ??= new MockTextChannelBuilder(this.client, this.getGuild()).build();
+        this.textChannel ??= new MockTextChannelBuilder(
+            this.client,
+            this.getGuild(),
+        ).build();
         return this.textChannel;
     }
 
-    public setMessage(message: Message): this {
-        this.message = message;
+    public setMessage(message: Message | ((c: Client) => Message)): this {
+        if (typeof message === "function") {
+            this.message = message(this.client);
+        } else {
+            this.message = message;
+        }
         return this;
     }
 
     public getMessage(): Message {
-        this.message ??= new MockMessageBuilder(this.client, this.getTextChannel(), this.getUser()).build();
+        this.message ??= new MockMessageBuilder(
+            this.client,
+            this.getTextChannel(),
+            this.getUser(),
+        ).build();
         return this.message;
     }
 
-    public setUser(user: User): this {
-        this.user = user;
+    public setUser(user: User | ((c: Client) => User)): this {
+        if (typeof user === "function") {
+            this.user = user(this.client);
+        } else {
+            this.user = user;
+        }
         return this;
     }
 
@@ -62,20 +98,27 @@ export class BaseMockInteractionBuilder {
         return this.user;
     }
 
-    public setMember(member: GuildMember): this {
-        this.member = member;
+    public setMember(member: GuildMember | ((c: Client) => GuildMember)): this {
+        if (typeof member === "function") {
+            this.member = member(this.client);
+        } else {
+            this.member = member;
+        }
         return this;
     }
 
     public getMember(): GuildMember {
-        this.member ??= new MockMemberBuilder(this.client, this.getGuild(), this.getUser()).build();
+        this.member ??= new MockMemberBuilder(
+            this.client,
+            this.getGuild(),
+            this.getUser(),
+        ).build();
         return this.member;
     }
 
     protected buildBaseInteraction<T extends InteractionType, D>(
-        type: T
+        type: T,
     ): APIBaseInteraction<T, D> {
-        console.log(this.getMember().toJSON());
         return {
             id: "",
             application_id: "",
@@ -94,7 +137,7 @@ export class BaseMockInteractionBuilder {
             context: InteractionContextType.Guild,
             user: this.getUser().toJSON() as APIUser,
             member: MockMemberBuilder.asAPIGuildMember(this.getMember()),
-            message: this.getMessage().toJSON() as APIMessage,
+            message: MockMessageBuilder.asAPIMessage(this.getMessage()),
         } as APIBaseInteraction<T, D>;
     }
 }

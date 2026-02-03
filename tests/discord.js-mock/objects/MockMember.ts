@@ -1,4 +1,11 @@
-import { APIGuildMember, APIUser, Client, Guild, GuildMember, User } from "discord.js"
+import {
+    APIGuildMember,
+    APIUser,
+    Client,
+    Guild,
+    GuildMember,
+    User,
+} from "discord.js";
 import { RawGuildMemberData } from "discord.js/typings/rawDataTypes";
 import { MockUserBuilder } from "./MockUser";
 
@@ -19,15 +26,15 @@ export class MockMemberBuilder {
             permissions: "",
             roles: [],
             joined_at: new Date().toISOString(),
-            user: this.user.toJSON() as APIUser
-        }
+            user: this.user.toJSON() as APIUser,
+        };
     }
 
     public build(): GuildMember {
-        const guildMember =  Reflect.construct(GuildMember, [
+        const guildMember = Reflect.construct(GuildMember, [
             this.client,
             this.buildData(),
-            this.guild
+            this.guild,
         ]) as GuildMember;
 
         this.guild.members.cache.set(guildMember.id, guildMember);
@@ -42,7 +49,7 @@ export class MockMemberBuilder {
             mute: false,
             flags: member.flags.toJSON(),
             joined_at: member.joinedAt.toISOString(),
-            user: MockUserBuilder.asAPIUser(member.user)
-        }
+            user: MockUserBuilder.asAPIUser(member.user),
+        };
     }
 }

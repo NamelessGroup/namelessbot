@@ -8,9 +8,6 @@ test("/test - Test A", async () => {
         .addStringOption("test_argument", "Some Argument")
         .build();
 
-    console.log(mockInteraction.channel);
-    console.log(mockInteraction.guild);
-
     await testSlash.handler(mockInteraction);
 
     expect(mockInteraction).toBeDeferred();

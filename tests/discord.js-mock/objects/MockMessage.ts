@@ -1,4 +1,11 @@
-import { Client, Message, MessageType, TextChannel, User } from "discord.js"
+import {
+    APIMessage,
+    Client,
+    Message,
+    MessageType,
+    TextChannel,
+    User,
+} from "discord.js";
 import { RawMessageData } from "discord.js/typings/rawDataTypes";
 import { MockUserBuilder } from "./MockUser";
 
@@ -31,17 +38,36 @@ export class MockMessageBuilder {
             pinned: false,
             type: MessageType.Default,
             mentions: [],
-        }
+        };
     }
 
     public build(): Message {
-        const message =  Reflect.construct(Message, [
+        const message = Reflect.construct(Message, [
             this.client,
-            this.buildData()
+            this.buildData(),
         ]) as Message<true>;
 
         this.channel.messages.cache.set(message.id, message);
 
         return message;
+    }
+
+    public static asAPIMessage(message: Message): APIMessage {
+        return {
+            channel_id: message.channelId,
+            id: message.id,
+            author: MockUserBuilder.asAPIUser(message.author),
+            content: message.content,
+            timestamp: message.createdAt.toISOString(),
+            edited_timestamp: message.editedAt?.toISOString() ?? null,
+            tts: message.tts,
+            mention_everyone: message.mentions.everyone,
+            mention_roles: [],
+            attachments: [],
+            embeds: message.embeds,
+            pinned: message.pinned,
+            type: message.type,
+            mentions: [],
+        };
     }
 }

@@ -1,6 +1,14 @@
-import { APIApplicationCommandInteractionDataOption, InteractionType, APIApplicationCommandInteractionDataSubcommandOption, Client, ApplicationCommandOptionType, ApplicationCommandType, APIChatInputApplicationCommandInteraction } from "discord.js";
-import { MockChatInputCommandInteraction } from "../../utils";
+import {
+    APIApplicationCommandInteractionDataOption,
+    InteractionType,
+    APIApplicationCommandInteractionDataSubcommandOption,
+    Client,
+    ApplicationCommandOptionType,
+    ApplicationCommandType,
+    ChatInputCommandInteraction,
+} from "discord.js";
 import { BaseMockInteractionBuilder } from "./BaseMockInteractionBuilder";
+import { vi } from "vitest";
 
 export class MockChatInputCommandInteractionBuilder extends BaseMockInteractionBuilder {
     private slashCommandId: string;
@@ -71,20 +79,31 @@ export class MockChatInputCommandInteractionBuilder extends BaseMockInteractionB
         return this;
     }
 
-    public build(): MockChatInputCommandInteraction {
+    public build(): ChatInputCommandInteraction {
         if (this.subcommand != null) {
             this.slashCommandOptions.push(this.subcommand);
         }
 
-        return new MockChatInputCommandInteraction(this.client, {
-            ...this.buildBaseInteraction(InteractionType.ApplicationCommand),
-            data: {
-                id: this.slashCommandId,
-                name: this.slashCommandName,
-                type: ApplicationCommandType.ChatInput,
-                guild_id: this.getGuild().id,
-                options: this.slashCommandOptions,
+        const interaction = Reflect.construct(ChatInputCommandInteraction, [
+            this.client,
+            {
+                ...this.buildBaseInteraction(
+                    InteractionType.ApplicationCommand,
+                ),
+                data: {
+                    id: this.slashCommandId,
+                    name: this.slashCommandName,
+                    type: ApplicationCommandType.ChatInput,
+                    guild_id: this.getGuild().id,
+                    options: this.slashCommandOptions,
+                },
             },
-        } as APIChatInputApplicationCommandInteraction);
+        ]) as ChatInputCommandInteraction;
+
+        interaction.deferReply = vi.fn();
+        interaction.followUp = vi.fn();
+        interaction.reply = vi.fn();
+
+        return interaction;
     }
 }

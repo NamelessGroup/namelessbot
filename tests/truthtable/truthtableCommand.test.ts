@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
-import { MockChatInputCommandInteractionBuilder } from "../utils";
 import truthtableCommand from "../../modules/truthtable/truthtableCommand";
+import { MockChatInputCommandInteractionBuilder } from "../discord.js-mock/interactions/MockChatInputCommandInteractionBuilder";
 
 test("/truthtable - Test A", async () => {
     const mockSlash = new MockChatInputCommandInteractionBuilder()

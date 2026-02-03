@@ -1,4 +1,16 @@
-import { Client, Guild, GuildDefaultMessageNotifications, GuildExplicitContentFilter, GuildHubType, GuildMFALevel, GuildNSFWLevel, GuildPremiumTier, GuildVerificationLevel, Locale, SystemChannelFlagsBitField } from "discord.js"
+import {
+    Client,
+    Guild,
+    GuildDefaultMessageNotifications,
+    GuildExplicitContentFilter,
+    GuildHubType,
+    GuildMFALevel,
+    GuildNSFWLevel,
+    GuildPremiumTier,
+    GuildVerificationLevel,
+    Locale,
+    SystemChannelFlagsBitField,
+} from "discord.js";
 import { RawGuildData } from "discord.js/typings/rawDataTypes";
 
 export class MockGuildBuilder {
@@ -20,7 +32,8 @@ export class MockGuildBuilder {
             afk_timeout: 60,
             application_id: null,
             banner: null,
-            default_message_notifications: GuildDefaultMessageNotifications.AllMessages,
+            default_message_notifications:
+                GuildDefaultMessageNotifications.AllMessages,
             description: null,
             discovery_splash: null,
             emojis: [],
@@ -45,14 +58,14 @@ export class MockGuildBuilder {
             system_channel_id: null,
             vanity_url_code: null,
             verification_level: GuildVerificationLevel.None,
-            region: ""
-        }
+            region: "",
+        };
     }
 
     public build(): Guild {
-        const guild =  Reflect.construct(Guild, [
+        const guild = Reflect.construct(Guild, [
             this.client,
-            this.buildData()
+            this.buildData(),
         ]) as Guild;
 
         this.client.guilds.cache.set(guild.id, guild);

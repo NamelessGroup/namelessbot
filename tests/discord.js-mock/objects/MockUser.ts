@@ -1,4 +1,4 @@
-import { APIUser, Client, User } from "discord.js"
+import { APIUser, Client, User } from "discord.js";
 import { RawUserData } from "discord.js/typings/rawDataTypes";
 
 export class MockUserBuilder {
@@ -15,12 +15,17 @@ export class MockUserBuilder {
     private buildData(): RawUserData {
         return {
             username: this.name,
-            id: this.id
-        }
+            id: this.id,
+        };
+    }
+
+    public setId(id: string): this {
+        this.id = id;
+        return this;
     }
 
     public build(): User {
-        const user =  Reflect.construct(User, [
+        const user = Reflect.construct(User, [
             this.client,
             this.buildData(),
         ]) as User;
@@ -37,6 +42,6 @@ export class MockUserBuilder {
             discriminator: user.discriminator,
             global_name: user.globalName,
             avatar: user.avatar,
-        }
+        };
     }
 }

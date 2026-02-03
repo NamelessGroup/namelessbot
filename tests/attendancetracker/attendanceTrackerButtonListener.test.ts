@@ -1,9 +1,9 @@
 import { test, expect, vi, afterEach } from "vitest";
 import * as configManager from "../../lib/configmanager";
-import { MockButtonInteractionBuilder } from "../utils";
 import attendanceTrackerButtonListener from "../../modules/attendancetracker/attendanceTrackerButtonListener";
 import * as luxon from "luxon";
 import { EmbedBuilder } from "discord.js";
+import { MockButtonInteractionBuilder } from "../discord.js-mock/interactions/MockButtonInteractionBuilder";
 
 // Mocking the config manager
 const getMock = vi.spyOn(configManager, "get").mockImplementation((_, file) => {
@@ -50,7 +50,7 @@ test("Valid interaction", async () => {
                 .addFields({
                     inline: true,
                     name: "Montag",
-                    value: "<t:1768888800:t> - <t:1768896000:t>: Noone attends\n<@mockUserId>",
+                    value: "<t:1768888800:t> - <t:1768896000:t>: Noone attends\n<@9012>",
                 })
                 .setTitle("Stundenplan für Montag"),
         ],
@@ -58,6 +58,6 @@ test("Valid interaction", async () => {
     expect(writeMock).toHaveBeenLastCalledWith(
         "20.01.2026-noone_attends",
         configManager.ConfigurationFile.ATTENDANCE,
-        { mockUserId: true },
+        { 9012: true },
     );
 });

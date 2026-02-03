@@ -1,7 +1,7 @@
 import { test, expect, vi, afterEach } from "vitest";
 import * as configManager from "../../lib/configmanager";
-import { MockStringSelectMenuInteractionBuilder } from "../utils";
 import koeriSelectionMenuListener from "../../modules/koeri/koeriSelectionMenuListener";
+import { MockStringSelectMenuInteractionBuilder } from "../discord.js-mock/interactions/MockStringSelectMenuInteractionBuilder";
 
 // Mocking the config manager
 const getMock = vi
@@ -20,8 +20,7 @@ afterEach(() => {
 
 test("Valid interaction", async () => {
     const mockInteraction = new MockStringSelectMenuInteractionBuilder()
-        .setUserId("1234")
-        .setCustomId("koeri-u1234$12")
+        .setCustomId("koeri-u9012$12")
         .addValue("8")
         .build();
 
@@ -33,7 +32,7 @@ test("Valid interaction", async () => {
         content: "Kombination 12 bewertet mit 8",
     });
     expect(writeMock).toHaveBeenLastCalledWith(
-        "1234",
+        "9012",
         configManager.ConfigurationFile.KOERI,
         { 12: 8 },
     );

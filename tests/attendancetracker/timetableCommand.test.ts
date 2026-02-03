@@ -1,10 +1,10 @@
 import { test, expect, vi, afterEach } from "vitest";
 import * as configManager from "../../lib/configmanager";
-import { MockChatInputCommandInteractionBuilder } from "../utils";
 import timetableCommand from "../../modules/attendancetracker/timetableCommand";
 import { EmbedBuilder } from "discord.js";
 import * as luxon from "luxon";
 import { Weekday } from "../../lib/tasks/recurringtask";
+import { MockChatInputCommandInteractionBuilder } from "../discord.js-mock/interactions/MockChatInputCommandInteractionBuilder";
 
 // Mocking the config manager
 const getMock = vi.spyOn(configManager, "get").mockReturnValue([

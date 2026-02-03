@@ -1,13 +1,13 @@
 import { test, expect, vi, afterEach } from "vitest";
 import * as configManager from "../../lib/configmanager";
 import koeri, { setRating } from "../../modules/koeri/koeriCommand";
-import { MockChatInputCommandInteractionBuilder } from "../utils";
 import {
     ActionRowData,
     ComponentType,
     MessageActionRowComponentData,
     SelectMenuComponentOptionData,
 } from "discord.js";
+import { MockChatInputCommandInteractionBuilder } from "../discord.js-mock/interactions/MockChatInputCommandInteractionBuilder";
 
 // Mocking the config manager
 const getMock = vi
@@ -73,7 +73,7 @@ test("/koeri rate - Test A", async () => {
 
     await koeri.handler(mockSlash);
 
-    expect(writeMock).toHaveBeenLastCalledWith("mockUserId", "koeri", {
+    expect(writeMock).toHaveBeenLastCalledWith("9012", "koeri", {
         22: 10,
     });
     expect(mockSlash).toBeFollowedUpWith({
@@ -93,7 +93,7 @@ test("/koeri rate - Test B", async () => {
 
     await koeri.handler(mockSlash);
 
-    expect(writeMock).toHaveBeenLastCalledWith("mockUserId", "koeri", {
+    expect(writeMock).toHaveBeenLastCalledWith("9012", "koeri", {
         22: 10,
         19: 3,
     });
@@ -159,7 +159,7 @@ function _getGenerateComponents(
             components: [
                 {
                     type: ComponentType.StringSelect,
-                    customId: `koeri-umockUserId$${combination}`,
+                    customId: `koeri-u9012$${combination}`,
                     options: _getRateOptions(),
                     placeholder: "Bewertung",
                 },

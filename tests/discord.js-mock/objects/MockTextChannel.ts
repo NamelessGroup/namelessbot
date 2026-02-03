@@ -1,4 +1,4 @@
-import { ChannelType, Client, Guild, TextChannel } from "discord.js"
+import { ChannelType, Client, Guild, TextChannel } from "discord.js";
 import { RawGuildChannelData } from "discord.js/typings/rawDataTypes";
 
 export class MockTextChannelBuilder {
@@ -19,11 +19,11 @@ export class MockTextChannelBuilder {
             type: ChannelType.GuildText,
             name: this.name,
             id: this.id,
-        }
+        };
     }
 
     public build(): TextChannel {
-        const channel =  Reflect.construct(TextChannel, [
+        const channel = Reflect.construct(TextChannel, [
             this.guild,
             this.buildData(),
             this.client,

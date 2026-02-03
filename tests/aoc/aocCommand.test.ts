@@ -1,10 +1,10 @@
 import { expect, test, vi } from "vitest";
-import { MockChatInputCommandInteractionBuilder } from "../utils";
 import aocCommand from "../../modules/aoc/aocCommand";
 import * as configManager from "../../lib/configmanager";
 import * as ofetch from "ofetch";
 import { EmbedBuilder } from "discord.js";
 import { DateTime } from "luxon";
+import { MockChatInputCommandInteractionBuilder } from "../discord.js-mock/interactions/MockChatInputCommandInteractionBuilder";
 
 // Mocking the config manager
 vi.spyOn(configManager, "get").mockReturnValue("aocLbId");
