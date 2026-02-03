@@ -2,7 +2,7 @@ import { Client } from "discord.js";
 import { DateTime } from "luxon";
 import { TASKS } from "../registry";
 
-let taskLoop: NodeJS.Timer;
+let taskLoop: NodeJS.Timeout;
 
 /**
  * Checks whether any tasks are supposed to be ran now, and runs them
