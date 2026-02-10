@@ -1,5 +1,5 @@
 import {
-    Client,
+    type Client,
     Guild,
     GuildDefaultMessageNotifications,
     GuildExplicitContentFilter,
@@ -11,7 +11,7 @@ import {
     Locale,
     SystemChannelFlagsBitField,
 } from "discord.js";
-import { RawGuildData } from "discord.js/typings/rawDataTypes";
+import type { RawGuildData } from "discord.js/typings/rawDataTypes";
 
 export class MockGuildBuilder {
     private readonly client: Client;

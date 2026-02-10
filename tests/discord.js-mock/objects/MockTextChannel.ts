@@ -1,5 +1,5 @@
-import { ChannelType, Client, Guild, TextChannel } from "discord.js";
-import { RawGuildChannelData } from "discord.js/typings/rawDataTypes";
+import { ChannelType, type Client, type Guild, TextChannel } from "discord.js";
+import type { RawGuildChannelData } from "discord.js/typings/rawDataTypes";
 
 export class MockTextChannelBuilder {
     private readonly client: Client;

@@ -2,10 +2,10 @@ import { test, expect, vi, afterEach } from "vitest";
 import * as configManager from "../../lib/configmanager";
 import koeri, { setRating } from "../../modules/koeri/koeriCommand";
 import {
-    ActionRowData,
+    type ActionRowData,
     ComponentType,
-    MessageActionRowComponentData,
-    SelectMenuComponentOptionData,
+    type MessageActionRowComponentData,
+    type SelectMenuComponentOptionData,
 } from "discord.js";
 import { MockChatInputCommandInteractionBuilder } from "../discord.js-mock/interactions/MockChatInputCommandInteractionBuilder";
 

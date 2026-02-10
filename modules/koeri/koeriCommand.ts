@@ -1,11 +1,11 @@
-import { ISlashCommand } from "../../types";
+import type { ISlashCommand } from "../../types";
 import {
-    ApplicationCommandData,
+    type ApplicationCommandData,
     ApplicationCommandOptionType,
-    ChatInputCommandInteraction,
+    type ChatInputCommandInteraction,
     ComponentType,
-    MessageSelectOption,
-    Snowflake,
+    type MessageSelectOption,
+    type Snowflake,
 } from "discord.js";
 import { ConfigurationFile, get, write } from "../../lib/configmanager";
 

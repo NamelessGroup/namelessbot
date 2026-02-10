@@ -1,5 +1,5 @@
-import { Client, TextChannel } from "discord.js";
-import { TaskExecutor } from "../../types";
+import type { Client, TextChannel } from "discord.js";
+import type { TaskExecutor } from "../../types";
 import { embedLeaderboard } from "./aocEmbedGenerator";
 import { ConfigurationFile, get } from "../../lib/configmanager";
 import { DateTime } from "luxon";

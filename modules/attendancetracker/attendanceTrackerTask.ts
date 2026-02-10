@@ -1,7 +1,7 @@
-import { Client, TextChannel } from "discord.js";
+import type { Client, TextChannel } from "discord.js";
 import { ConfigurationFile, get } from "../../lib/configmanager";
-import { Weekday } from "../../lib/tasks/recurringtask";
-import { TaskExecutor } from "../../types";
+import type { Weekday } from "../../lib/tasks/recurringtask";
+import type { TaskExecutor } from "../../types";
 import {
     buildAttendanceAction,
     buildTimeTableEmbed,

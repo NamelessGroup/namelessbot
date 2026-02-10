@@ -1,8 +1,8 @@
-import { RecurringTask, Weekday } from "./recurringtask";
-import { DateTime } from "luxon";
+import { RecurringTask, type Weekday } from "./recurringtask";
+import type { DateTime } from "luxon";
 import KitDateParser from "./KitDateParser";
 import { isHoliday } from "feiertagejs";
-import { TaskExecutor } from "../../types";
+import type { TaskExecutor } from "../../types";
 
 /**
  * Special kind of Recurring Task that only gets executed in weeks, where lectures are held

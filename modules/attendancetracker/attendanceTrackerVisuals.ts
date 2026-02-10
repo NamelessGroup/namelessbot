@@ -1,7 +1,7 @@
-import { CalendarBlock, getBlocks } from "./attendanceTracker";
+import { type CalendarBlock, getBlocks } from "./attendanceTracker";
 import {
     ActionRowBuilder,
-    APIEmbedField,
+    type APIEmbedField,
     ButtonBuilder,
     ButtonStyle,
     EmbedBuilder,

@@ -1,12 +1,12 @@
 import {
-    APIGuildMember,
-    APIUser,
-    Client,
-    Guild,
+    type APIGuildMember,
+    type APIUser,
+    type Client,
+    type Guild,
     GuildMember,
-    User,
+    type User,
 } from "discord.js";
-import { RawGuildMemberData } from "discord.js/typings/rawDataTypes";
+import type { RawGuildMemberData } from "discord.js/typings/rawDataTypes";
 import { MockUserBuilder } from "./MockUser";
 
 export class MockMemberBuilder {

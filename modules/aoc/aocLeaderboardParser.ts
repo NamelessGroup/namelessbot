@@ -1,4 +1,4 @@
-import { aocData, aocMember } from "./aocTypes";
+import type { aocData, aocMember } from "./aocTypes";
 import { ofetch } from "ofetch";
 
 const url = "https://adventofcode.com/";

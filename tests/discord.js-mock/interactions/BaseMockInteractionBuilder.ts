@@ -1,17 +1,17 @@
 import {
-    APIBaseInteraction,
-    APIPartialInteractionGuild,
-    APITextChannel,
-    APIUser,
+    type APIBaseInteraction,
+    type APIPartialInteractionGuild,
+    type APITextChannel,
+    type APIUser,
     Client,
-    Guild,
-    GuildMember,
+    type Guild,
+    type GuildMember,
     InteractionContextType,
-    InteractionType,
+    type InteractionType,
     Locale,
-    Message,
-    TextChannel,
-    User,
+    type Message,
+    type TextChannel,
+    type User,
 } from "discord.js";
 import { MockGuildBuilder } from "../objects/MockGuild";
 import { MockTextChannelBuilder } from "../objects/MockTextChannel";

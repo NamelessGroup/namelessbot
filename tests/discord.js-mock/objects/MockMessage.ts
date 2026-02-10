@@ -1,12 +1,12 @@
 import {
-    APIMessage,
-    Client,
+    type APIMessage,
+    type Client,
     Message,
     MessageType,
-    TextChannel,
-    User,
+    type TextChannel,
+    type User,
 } from "discord.js";
-import { RawMessageData } from "discord.js/typings/rawDataTypes";
+import type { RawMessageData } from "discord.js/typings/rawDataTypes";
 import { MockUserBuilder } from "./MockUser";
 
 export class MockMessageBuilder {

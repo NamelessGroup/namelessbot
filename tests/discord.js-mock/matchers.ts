@@ -1,9 +1,9 @@
-import {
+import type {
     InteractionReplyOptions,
     MessageEditOptions,
     MessagePayload,
 } from "discord.js";
-import { expect, Mock } from "vitest";
+import { expect, type Mock } from "vitest";
 
 function hasMockAttribute<T>(
     received: Partial<T>,

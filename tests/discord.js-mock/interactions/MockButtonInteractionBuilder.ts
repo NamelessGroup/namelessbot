@@ -1,6 +1,6 @@
 import {
     ButtonInteraction,
-    Client,
+    type Client,
     ComponentType,
     InteractionType,
 } from "discord.js";

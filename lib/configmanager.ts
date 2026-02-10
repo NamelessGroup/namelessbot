@@ -1,6 +1,6 @@
 import { lstat, mkdir, readFile, writeFile } from "node:fs/promises";
-import { CalendarBlock } from "../modules/attendancetracker/attendanceTracker";
-import { IKoeriList } from "../modules/koeri/koeriCommand";
+import type { CalendarBlock } from "../modules/attendancetracker/attendanceTracker";
+import type { IKoeriList } from "../modules/koeri/koeriCommand";
 
 export enum ConfigurationFile {
     AOC = "aoc",

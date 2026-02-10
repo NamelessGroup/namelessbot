@@ -1,6 +1,6 @@
-import { Client } from "discord.js";
-import { TaskExecutor } from "../../types";
-import { DateTime } from "luxon";
+import type { Client } from "discord.js";
+import type { TaskExecutor } from "../../types";
+import type { DateTime } from "luxon";
 
 /**
  * Enum representing each weekday
@@ -74,9 +74,9 @@ export class RecurringTask {
      */
     public shouldRunAtTime(time: DateTime): boolean {
         return (
-            (this.weekday as number) === time.get('weekday') &&
-            this.hour === time.get('hour') &&
-            this.minute === time.get('minute')
+            (this.weekday as number) === time.get("weekday") &&
+            this.hour === time.get("hour") &&
+            this.minute === time.get("minute")
         );
     }
 }

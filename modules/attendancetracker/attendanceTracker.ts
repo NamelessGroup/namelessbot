@@ -1,11 +1,11 @@
-import { Message } from "discord.js";
+import type { Message } from "discord.js";
 import {
     ConfigurationFile,
     get,
     readConfigFile,
     write,
 } from "../../lib/configmanager";
-import { Weekday } from "../../lib/tasks/recurringtask";
+import type { Weekday } from "../../lib/tasks/recurringtask";
 import { buildTimeTableEmbed, getNextTime } from "./attendanceTrackerVisuals";
 
 export interface CalendarBlock {

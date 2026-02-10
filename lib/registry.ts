@@ -1,4 +1,4 @@
-import { IEventListener, ISlashCommand } from "../types";
+import type { IEventListener, ISlashCommand } from "../types";
 import { RecurringTask, Weekday } from "./tasks/recurringtask";
 
 import aocCommand from "../modules/aoc/aocCommand";

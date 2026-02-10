@@ -1,5 +1,5 @@
-import { APIUser, Client, User } from "discord.js";
-import { RawUserData } from "discord.js/typings/rawDataTypes";
+import { type APIUser, type Client, User } from "discord.js";
+import type { RawUserData } from "discord.js/typings/rawDataTypes";
 
 export class MockUserBuilder {
     private readonly client: Client;

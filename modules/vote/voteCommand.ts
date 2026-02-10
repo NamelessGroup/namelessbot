@@ -1,22 +1,22 @@
 import {
-    Message,
+    type Message,
     EmbedBuilder,
     ApplicationCommandOptionType,
     ActionRowBuilder,
     ButtonBuilder,
     ButtonStyle,
-    ButtonInteraction,
-    InteractionCollector,
-    GuildMemberRoleManager,
-    BaseMessageOptions,
-    CollectedInteraction,
-    Role,
-    GuildMember,
-    Snowflake,
-    Interaction,
-    ChatInputCommandInteraction,
+    type ButtonInteraction,
+    type InteractionCollector,
+    type GuildMemberRoleManager,
+    type BaseMessageOptions,
+    type CollectedInteraction,
+    type Role,
+    type GuildMember,
+    type Snowflake,
+    type Interaction,
+    type ChatInputCommandInteraction,
 } from "discord.js";
-import { ISlashCommand } from "../../types";
+import type { ISlashCommand } from "../../types";
 import { ConfigurationFile, get } from "../../lib/configmanager";
 
 const upEmo = "👍";

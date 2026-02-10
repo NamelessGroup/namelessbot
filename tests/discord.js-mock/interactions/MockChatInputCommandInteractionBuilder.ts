@@ -1,8 +1,8 @@
 import {
-    APIApplicationCommandInteractionDataOption,
+    type APIApplicationCommandInteractionDataOption,
     InteractionType,
-    APIApplicationCommandInteractionDataSubcommandOption,
-    Client,
+    type APIApplicationCommandInteractionDataSubcommandOption,
+    type Client,
     ApplicationCommandOptionType,
     ApplicationCommandType,
     ChatInputCommandInteraction,

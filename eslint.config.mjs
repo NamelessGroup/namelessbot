@@ -45,6 +45,7 @@ export default defineConfig([
             ],
             "jsdoc/tag-lines": "off",
             eqeqeq: ["error", "always", { null: "never" }],
+            "@typescript-eslint/consistent-type-imports": "error",
         },
     },
     {

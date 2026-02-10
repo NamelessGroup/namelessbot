@@ -1,6 +1,6 @@
-import { Interaction } from "discord.js";
+import type { Interaction } from "discord.js";
 import { setRating } from "./koeriCommand";
-import { IEventListener } from "../../types";
+import type { IEventListener } from "../../types";
 
 const REGEX = /koeri-u(\d+)\$(\d+)/;
 

@@ -1,7 +1,7 @@
-import { ISlashCommand } from "../../types";
+import type { ISlashCommand } from "../../types";
 import {
     ApplicationCommandOptionType,
-    ChatInputCommandInteraction,
+    type ChatInputCommandInteraction,
 } from "discord.js";
 import { embedLeaderboard } from "./aocEmbedGenerator";
 import { ConfigurationFile, get } from "../../lib/configmanager";
