@@ -20,17 +20,16 @@
         "tsx": "^4.21.0",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.53.1",
-        "vitest": "^4.0.17"
+        "vitest": "^4.0.17",
+        "prettier": "^3.8.1",
+        "esbuild": "^0.27.2"
     },
     "dependencies": {
         "discord.js": "^14.25.1",
         "dotenv": "^17.2.3",
-        "esbuild": "^0.27.2",
         "feiertagejs": "^1.4.1",
-        "install": "^0.13.0",
         "luxon": "^3.7.2",
-        "ofetch": "^1.5.1",
-        "prettier": "^3.8.1"
+        "ofetch": "^1.5.1"
     },
     "scripts": {
         "start": "tsx ./index.ts",

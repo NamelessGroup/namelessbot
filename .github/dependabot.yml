@@ -14,8 +14,7 @@ updates:
       reviewers:
           - "c0derMo"
           - "Kr0nox"
-          - "MartinKrausewitz"
+          - "ProgramPhoenix"
       allow:
           - dependency-name: "discord.js"
-          - dependency-name: "ka-mensa-fetch"
           - dependency-name: "feiertagejs"

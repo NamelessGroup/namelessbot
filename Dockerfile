@@ -23,7 +23,6 @@ FROM base
 ENV NODE_ENV=production
 
 COPY --from=build /app/app.cjs /app/app.cjs
-COPY ./config/templates /app/config/templates
 
 VOLUME /app/config
 
