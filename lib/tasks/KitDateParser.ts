@@ -16,6 +16,7 @@ export default class KitDateParser {
      * Fetches the current dates on startup
      */
     constructor() {
+        this.timeSpans = [];
         void this.fetchData();
     }
 
@@ -134,8 +135,7 @@ export default class KitDateParser {
      */
     private stringToDate(d: string): DateTime {
         const date = DateTime.fromFormat(d, "dd.MM.yyyy");
-        date.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-        return date;
+        return date.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
     }
 
     /**

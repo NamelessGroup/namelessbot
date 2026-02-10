@@ -227,7 +227,7 @@ async function updateAttendanceFile(
     userId: string,
 ): Promise<void> {
     const key = getNextTime(weekday, 0, 0).toFormat("dd.MM.yyyy") + "-" + block;
-    const fileContent = get(key, ConfigurationFile.ATTENDANCE);
+    const fileContent = get(key, ConfigurationFile.ATTENDANCE) ?? {};
     fileContent[userId] = !fileContent[userId];
     await write(key, ConfigurationFile.ATTENDANCE, fileContent);
 }

@@ -57,9 +57,9 @@ export class RecurringTask {
      *
      * @param client Client to run the task with
      */
-    public run(client: Client): void {
+    public async run(client: Client): Promise<void> {
         try {
-            this.runner(client, ...this.arguments);
+            await this.runner(client, ...this.arguments);
         } catch (e) {
             console.log("Caught exception in RecurringTask");
             console.log(e);

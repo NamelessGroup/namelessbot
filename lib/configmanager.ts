@@ -67,7 +67,7 @@ export async function readConfig(): Promise<void> {
     for (const key of Object.values(ConfigurationFile)) {
         const fileName = `${key}.json`;
         try {
-            configs[key] = await readConfigFile(fileName);
+            configs.set(key, await readConfigFile(fileName));
         } catch (e) {
             console.error(`Error while reading config file ${fileName}: `);
             console.error(e);

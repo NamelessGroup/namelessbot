@@ -42,7 +42,7 @@ Some sensitive information shouldn't get stored in config files, these are store
 | Environment variable | Content                                                              |
 | -------------------- | -------------------------------------------------------------------- |
 | `DISCORD_TOKEN`      | Holds the discord bot token used to login                            |
-| `AOC_TOKEN`          | Holds the Advent of Code-Session token used to fetch the leaderboard |
+| `AOC_SESSION`        | Holds the Advent of Code-Session token used to fetch the leaderboard |
 
 ## Internal Components
 

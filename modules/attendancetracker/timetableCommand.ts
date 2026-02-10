@@ -251,13 +251,13 @@ export default {
                 });
             }
         } else if (options.getSubcommand() === "stats") {
-            const dateRegex = /[0-9]{2}.[0-9]{2}.[0-9]{4}/;
+            const dateRegex = /[0-9]{2}\.[0-9]{2}\.[0-9]{4}/;
             const filter = options.getString("filter");
             const startTime = options.getString("start");
             const endTime = options.getString("end");
             if (
                 (startTime != null && !startTime.match(dateRegex)) ||
-                (endTime != null && !startTime.match(dateRegex))
+                (endTime != null && !endTime.match(dateRegex))
             ) {
                 await interaction.reply({
                     ephemeral: false,

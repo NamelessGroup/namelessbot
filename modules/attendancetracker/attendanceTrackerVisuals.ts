@@ -199,7 +199,7 @@ export function getNextTime(
     minute: number,
 ): DateTime {
     let date = DateTime.now().setZone("Europe/Berlin");
-    while (date.weekday - 1 !== weekday) {
+    while (date.weekday !== weekday) {
         date = date.plus({ days: 1 });
     }
     date = date.set({ hour: hour, minute: minute, second: 0, millisecond: 0 });

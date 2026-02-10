@@ -48,4 +48,7 @@ export type EventHandler = (this: void, ...args: any[]) => Promise<void>; // esl
 /**
  * Interface for Task executors
  */
-export type TaskExecutor = (client: Client, ...args: any[]) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type TaskExecutor = (
+    client: Client,
+    ...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+) => void | Promise<void>;

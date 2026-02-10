@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import type { Client, CommandInteraction, Interaction } from "discord.js";
+import type { Client, Interaction } from "discord.js";
 import { ConfigurationFile, get } from "./configmanager";
 import { LISTENERS, SLASH_COMMANDS } from "./registry";
 
@@ -58,17 +58,15 @@ async function registerSlashCommands(client: Client<true>): Promise<void> {
  * @param interaction Interaction to handle
  */
 async function handleSlashCommands(interaction: Interaction): Promise<void> {
-    if (!interaction.isCommand()) return;
+    if (!interaction.isChatInputCommand()) return;
 
     const commands = SLASH_COMMANDS.filter((c) => {
-        return (
-            c.command.name === (interaction as CommandInteraction).commandName
-        );
+        return c.command.name === interaction.commandName;
     });
 
     for (const c of commands) {
         try {
-            await c.handler(interaction as CommandInteraction);
+            await c.handler(interaction);
         } catch (e) {
             console.log(e);
             await interaction.reply(
