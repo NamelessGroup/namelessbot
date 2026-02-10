@@ -93,7 +93,7 @@ test("/timetable list - No parameters", async () => {
                 .addFields(
                     {
                         name: "Montag",
-                        value: "<t:1768888800:t> - <t:1768896000:t>: Noone attends\n",
+                        value: "<t:1768802400:t> - <t:1768809600:t>: Noone attends\n",
                         inline: true,
                     },
                     { name: "Dienstag", value: "\u200b", inline: true },
@@ -121,7 +121,7 @@ test("/timetable list - Specify Weekday", async () => {
             new EmbedBuilder()
                 .addFields({
                     name: "Montag",
-                    value: "<t:1768888800:t> - <t:1768896000:t>: Noone attends\n",
+                    value: "<t:1768802400:t> - <t:1768809600:t>: Noone attends\n",
                     inline: true,
                 })
                 .setTitle("Stundenplan für Montag"),
@@ -145,7 +145,7 @@ test("/timetable list - Include Index", async () => {
                 .addFields(
                     {
                         name: "Montag",
-                        value: "<t:1768888800:t> - <t:1768896000:t>: Noone attends (0)\n",
+                        value: "<t:1768802400:t> - <t:1768809600:t>: Noone attends (0)\n",
                         inline: true,
                     },
                     { name: "Dienstag", value: "\u200b", inline: true },
@@ -174,7 +174,7 @@ test("/timetable list - Specify Weekday & Include Index", async () => {
             new EmbedBuilder()
                 .addFields({
                     name: "Montag",
-                    value: "<t:1768888800:t> - <t:1768896000:t>: Noone attends (0)\n",
+                    value: "<t:1768802400:t> - <t:1768809600:t>: Noone attends (0)\n",
                     inline: true,
                 })
                 .setTitle("Stundenplan für Montag"),

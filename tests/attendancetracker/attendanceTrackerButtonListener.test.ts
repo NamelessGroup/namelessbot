@@ -50,13 +50,13 @@ test("Valid interaction", async () => {
                 .addFields({
                     inline: true,
                     name: "Montag",
-                    value: "<t:1768888800:t> - <t:1768896000:t>: Noone attends\n<@9012>",
+                    value: "<t:1768802400:t> - <t:1768809600:t>: Noone attends\n<@9012>",
                 })
                 .setTitle("Stundenplan für Montag"),
         ],
     });
     expect(writeMock).toHaveBeenLastCalledWith(
-        "20.01.2026-noone_attends",
+        "19.01.2026-noone_attends",
         configManager.ConfigurationFile.ATTENDANCE,
         { 9012: true },
     );

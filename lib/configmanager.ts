@@ -30,7 +30,8 @@ const defaultConfigs = {
 type DefaultConfigs = typeof defaultConfigs;
 type ConfigKey<F extends ConfigurationFile> = keyof DefaultConfigs[F];
 
-const configs: Map<ConfigurationFile, unknown> = new Map();
+const configs: Map<ConfigurationFile, DefaultConfigs[ConfigurationFile]> =
+    new Map();
 
 /**
  * Recreates non-existant template configs into '/config'
@@ -67,7 +68,12 @@ export async function readConfig(): Promise<void> {
     for (const key of Object.values(ConfigurationFile)) {
         const fileName = `${key}.json`;
         try {
-            configs.set(key, await readConfigFile(fileName));
+            configs.set(
+                key,
+                (await readConfigFile(
+                    fileName,
+                )) as DefaultConfigs[ConfigurationFile],
+            );
         } catch (e) {
             console.error(`Error while reading config file ${fileName}: `);
             console.error(e);
@@ -79,8 +85,8 @@ export async function readConfig(): Promise<void> {
  * Write all in-memory-configs to disk.
  */
 export async function writeConfig(): Promise<void> {
-    for (const cfg in configs) {
-        await writeConfigFile(cfg + ".json", configs[cfg]);
+    for (const cfg of configs.keys()) {
+        await writeConfigFile(cfg + ".json", configs.get(cfg));
     }
 }
 
@@ -128,9 +134,10 @@ export function get<F extends ConfigurationFile, K extends ConfigKey<F>>(
 ): DefaultConfigs[F][K] {
     if (!configs.has(config))
         throw new ReferenceError(`Config ${config} doesn't exist`);
-    if (configs.get(config)[key] == null) return undefined;
+    const readConfig = configs.get(config) as DefaultConfigs[F];
+    if (readConfig[key] == null) return undefined;
     return JSON.parse(
-        JSON.stringify(configs.get(config)[key]) || "{}",
+        JSON.stringify(readConfig[key]) || "{}",
     ) as DefaultConfigs[F][K];
 }
 
@@ -150,6 +157,6 @@ export async function write<
 >(key: K, config: F, value: DefaultConfigs[F][K]): Promise<void> {
     if (!configs.has(config))
         throw new ReferenceError(`Config ${config} doesn't exist`);
-    configs.get(config)[key] = value;
+    (configs.get(config) as DefaultConfigs[F])[key] = value;
     await writeConfig();
 }

@@ -7,6 +7,7 @@ import {
     EmbedBuilder,
 } from "discord.js";
 import { DateTime } from "luxon";
+import type { Weekday } from "../../lib/tasks/recurringtask";
 
 /**
  * Builds the embed that containing the day(s) requested in the timetable layout
@@ -17,7 +18,7 @@ import { DateTime } from "luxon";
  */
 export function buildTimeTableEmbed(
     blocks: CalendarBlock[],
-    weekday?: number,
+    weekday?: Weekday,
 ): EmbedBuilder {
     const embed = new EmbedBuilder();
 
@@ -82,7 +83,7 @@ export function buildAttendanceAction(
  */
 function buildDayField(
     blocks: CalendarBlock[],
-    weekday: number,
+    weekday: Weekday,
 ): APIEmbedField {
     if (blocks == null || blocks.length === 0) {
         return {
@@ -145,7 +146,7 @@ function buildDayField(
  * @param unPrettyTime Any time representation of format: ([0-9]{1-2}) [:.] (([0-9]{1-2}.*)|[0-9]{0-2})
  * @returns Formatted time
  */
-function prettyTime(weekday: number, unPrettyTime: string): string {
+function prettyTime(weekday: Weekday, unPrettyTime: string): string {
     const parts = unPrettyTime.split(/:|\\./);
     const hours = parts[0].match(/\d+/) ? parts[0] : "0";
     const minutes =
@@ -179,7 +180,7 @@ function prettyTime(weekday: number, unPrettyTime: string): string {
  * @param weekday Weekday requested
  * @returns String representation of the given weekday
  */
-function dayFromInt(weekday: number): string {
+function dayFromInt(weekday: Weekday): string {
     return ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"][
         weekday - 1
     ];
@@ -194,12 +195,12 @@ function dayFromInt(weekday: number): string {
  * @returns Date of the next day with this weekday
  */
 export function getNextTime(
-    weekday: number,
+    weekday: Weekday,
     hour: number,
     minute: number,
 ): DateTime {
     let date = DateTime.now().setZone("Europe/Berlin");
-    while (date.weekday !== weekday) {
+    while (date.weekday !== (weekday as number)) {
         date = date.plus({ days: 1 });
     }
     date = date.set({ hour: hour, minute: minute, second: 0, millisecond: 0 });
