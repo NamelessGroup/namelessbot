@@ -1,6 +1,9 @@
-import {ISlashCommand} from "../../types";
-import {ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver} from "discord.js";
-import {generateTruthTable, parse} from "./truthtableParser";
+import type { ISlashCommand } from "../../types";
+import {
+    ApplicationCommandOptionType,
+    type ChatInputCommandInteraction,
+} from "discord.js";
+import { generateTruthTable, parse } from "./truthtableParser";
 
 /**
  * Slash command definition for /truthtable
@@ -14,16 +17,18 @@ export default {
                 type: ApplicationCommandOptionType.String,
                 name: "boolean_expression",
                 description: "Expression to evaluate",
-                required: true
-            }
-        ]
+                required: true,
+            },
+        ],
     },
-    handler: async function(interaction: CommandInteraction) {
+    handler: async function (interaction: ChatInputCommandInteraction) {
         await interaction.deferReply();
-        const options = interaction.options as CommandInteractionOptionResolver;
+        const options = interaction.options;
 
         try {
-            const parsedExpression = parse(options.getString("boolean_expression"));
+            const parsedExpression = parse(
+                options.getString("boolean_expression"),
+            );
             const truthTable = generateTruthTable(parsedExpression);
 
             // Building the table
@@ -33,8 +38,9 @@ export default {
             }
             table += "| Result\n";
             for (const result of truthTable.results) {
-                for (const assig in result.assignment) {
-                    const padding = (truthTable.variables[assig].length - 1) / 2;
+                for (let assig = 0; assig < result.assignment.length; assig++) {
+                    const padding =
+                        (truthTable.variables[assig].length - 1) / 2;
                     table += " ".repeat(Math.floor(padding) + 1);
                     table += result.assignment[assig] ? "T" : "F";
                     table += " ".repeat(Math.ceil(padding) + 1) + "|";
@@ -44,9 +50,14 @@ export default {
                 table += "\n";
             }
             table += "```";
-            await interaction.followUp("TruthTable for `" + parsedExpression.ast.toString(parsedExpression.variables) + "`:\n" + table);
-        } catch(e) {
-            await interaction.followUp("`" + e.toString() + "`");
+            await interaction.followUp(
+                "TruthTable for `" +
+                    parsedExpression.ast.toString(parsedExpression.variables) +
+                    "`:\n" +
+                    table,
+            );
+        } catch (e) {
+            await interaction.followUp("`" + String(e) + "`");
         }
-    }
+    },
 } as ISlashCommand;

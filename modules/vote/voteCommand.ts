@@ -1,21 +1,23 @@
 import {
-    CommandInteraction,
-    Message,
+    type Message,
     EmbedBuilder,
     ApplicationCommandOptionType,
-    CommandInteractionOptionResolver,
     ActionRowBuilder,
     ButtonBuilder,
     ButtonStyle,
-    ButtonInteraction,
-    InteractionCollector,
-    GuildMemberRoleManager,
-    BaseMessageOptions,
-    CollectedInteraction,
-    Role, GuildMember, Snowflake
+    type ButtonInteraction,
+    type InteractionCollector,
+    type GuildMemberRoleManager,
+    type BaseMessageOptions,
+    type CollectedInteraction,
+    type Role,
+    type GuildMember,
+    type Snowflake,
+    type Interaction,
+    type ChatInputCommandInteraction,
 } from "discord.js";
-import {ISlashCommand} from "../../types";
-import {get} from "../../lib/configmanager";
+import type { ISlashCommand } from "../../types";
+import { ConfigurationFile, get } from "../../lib/configmanager";
 
 const upEmo = "👍";
 const downEmo = "👎";
@@ -31,29 +33,32 @@ export default {
                 type: ApplicationCommandOptionType.String,
                 name: "name",
                 description: "Give this vote a reason",
-                required: true
+                required: true,
             },
             {
                 type: ApplicationCommandOptionType.Integer,
                 name: "votetime",
                 description: "Time the vote is running in seconds.",
                 required: false,
-                minValue: 0
+                minValue: 0,
             },
             {
                 type: ApplicationCommandOptionType.Role,
                 name: "votegroup",
-                description: "The Group that is allowed to vote (You can only start a vote for a group you are a member of)",
+                description:
+                    "The Group that is allowed to vote (You can only start a vote for a group you are a member of)",
                 required: false,
-                minValue: 0
-            }
-        ]
+                minValue: 0,
+            },
+        ],
     },
-    handler: async function(interaction: CommandInteraction) {
+    handler: async function (interaction: ChatInputCommandInteraction) {
         try {
             await interaction.channel.fetch();
         } catch {
-            await interaction.reply("Not in this channel! Move to a channel the bot has access to.");
+            await interaction.reply(
+                "Not in this channel! Move to a channel the bot has access to.",
+            );
             return;
         }
         // --- Variables
@@ -61,41 +66,61 @@ export default {
         let msg = "";
 
         // --- Variables with input
-        const options = interaction.options as CommandInteractionOptionResolver;
+        const options = interaction.options;
         const time = options.getInteger("votetime", false);
-        const timed = time != undefined;
+        const timed = time != null;
         const title = options.getString("name", true);
         let maingroup = options.getRole("votegroup", false) as Role;
-        if (maingroup == undefined) {
-            const guid = get("vote_group", "config") as string;
-            maingroup = (JSON.stringify(guid) == "{}" || guid == "")? interaction.guild.roles.everyone: interaction.guild.roles.cache.get(guid);
+        if (maingroup == null) {
+            const guid = get("vote_group", ConfigurationFile.GENERAL);
+            maingroup =
+                JSON.stringify(guid) === "{}" || guid === ""
+                    ? interaction.guild.roles.everyone
+                    : interaction.guild.roles.cache.get(guid);
         }
 
         if (membercantstartvote(interaction.member as GuildMember, maingroup)) {
-            await interaction.reply({content:"You need to have the group, you want to start a vote for!", ephemeral:true});
+            await interaction.reply({
+                content:
+                    "You need to have the group, you want to start a vote for!",
+                ephemeral: true,
+            });
             return;
         }
 
         // --- create initial system for time or group voting
 
         if (timed) {
-            msg += "This is a timed vote. The vote is running " + time + " Seconds!\n";
-            msg += "This vote ends <t:" + Math.ceil(Date.now()/1000 + time) + ":R> \n";
+            msg +=
+                "This is a timed vote. The vote is running " +
+                time +
+                " Seconds!\n";
+            msg +=
+                "This vote ends <t:" +
+                Math.ceil(Date.now() / 1000 + time) +
+                ":R> \n";
         } else {
             // get online member
             await maingroup.guild.members.fetch();
-            const groupmembers = maingroup.members.map(m=>m.user.id);
-            usedVotes = Math.ceil(groupmembers.length/2);
+            const groupmembers = maingroup.members.map((m) => m.user.id);
+            usedVotes = Math.ceil(groupmembers.length / 2);
             // further variables set
-            usedVotes = ((usedVotes == 0) ? 1 : usedVotes);
-            msg += "This is a majority voting. " + usedVotes + " Votes are required for one of the sides!";
+            usedVotes = usedVotes === 0 ? 1 : usedVotes;
+            msg +=
+                "This is a majority voting. " +
+                usedVotes +
+                " Votes are required for one of the sides!";
         }
 
         const embed = getEmbedOptions(title, msg, maingroup.id);
-        const reply = await interaction.reply({ embeds: embed.embeds, components: embed.components, fetchReply: true }) as Message;
+        const response = await interaction.reply({
+            embeds: embed.embeds,
+            components: embed.components,
+            withResponse: true,
+        });
+        const reply = response.resource.message;
 
-        // eslint-disable-next-line
-        const filter = (interaction) => {
+        const filter = (interaction: Interaction): boolean => {
             if (!interaction.isButton()) {
                 return false;
             }
@@ -103,50 +128,74 @@ export default {
         };
 
         //reaction controller
-        const collector = reply.createMessageComponentCollector({filter}) as InteractionCollector<CollectedInteraction>;
+        const collector = reply.createMessageComponentCollector({
+            filter,
+        }) as InteractionCollector<CollectedInteraction>;
         const pro = new Set<string>();
         const con = new Set<string>();
 
         //on reaction
-        collector.on('collect', (interaction: ButtonInteraction) => {
+        collector.on("collect", (interaction: ButtonInteraction) => {
             const id = interaction.user.id;
             const roles = interaction.member.roles as GuildMemberRoleManager;
             if (!roles.cache.some((role) => role.id === maingroup.id)) {
-                interaction.reply({content:"You are not allowed to vote. Please contact an Administrator!", ephemeral:true});
+                void interaction.reply({
+                    content:
+                        "You are not allowed to vote. Please contact an Administrator!",
+                    ephemeral: true,
+                });
                 return;
             }
-            if (interaction.customId == "vote_up") {
+            if (interaction.customId === "vote_up") {
                 pro.add(id);
                 if (con.has(id)) {
                     con.delete(id);
-                    interaction.reply({content:"You now support the voting!", ephemeral:true});
+                    void interaction.reply({
+                        content: "You now support the voting!",
+                        ephemeral: true,
+                    });
                     return;
                 }
-                interaction.reply({content:"Voting successful. You support the voting!", ephemeral:true});
-            } else if (interaction.customId == "vote_down") {
+                void interaction.reply({
+                    content: "Voting successful. You support the voting!",
+                    ephemeral: true,
+                });
+            } else if (interaction.customId === "vote_down") {
                 con.add(id);
                 if (pro.has(id)) {
                     pro.delete(id);
-                    interaction.reply({content:"You are now against the voting!", ephemeral:true});
+                    void interaction.reply({
+                        content: "You are now against the voting!",
+                        ephemeral: true,
+                    });
                     return;
                 }
-                interaction.reply({content:"Voting successful. You are against the topic!", ephemeral:true});
+                void interaction.reply({
+                    content: "Voting successful. You are against the topic!",
+                    ephemeral: true,
+                });
             }
-            if (!timed && (pro.size == usedVotes || con.size == usedVotes)) {
-                reply.edit(getEmbedOptions(title, msg, maingroup.id, Math.ceil(Date.now()/1000 + 30)));
+            if (!timed && (pro.size === usedVotes || con.size === usedVotes)) {
+                void reply.edit(
+                    getEmbedOptions(
+                        title,
+                        msg,
+                        maingroup.id,
+                        Math.ceil(Date.now() / 1000 + 30),
+                    ),
+                );
                 setTimeout(() => {
-                    printVotes(pro, con, reply, title, collector);
-                }, 30000 );
+                    void printVotes(pro, con, reply, title, collector);
+                }, 30000);
             }
         });
 
         if (timed) {
             setTimeout(() => {
-                printVotes(pro, con, reply, title, collector);
-            }, 1000*time);
+                void printVotes(pro, con, reply, title, collector);
+            }, 1000 * time);
         }
-
-    }
+    },
 } as ISlashCommand;
 
 /**
@@ -159,32 +208,45 @@ export default {
  * @param title the title of the vote
  * @param collector the collector related to the vote, that will be closed
  */
-async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, title: string, collector: InteractionCollector<CollectedInteraction>): Promise<void> {
+async function printVotes(
+    pro: Set<string>,
+    con: Set<string>,
+    reply: Message,
+    title: string,
+    collector: InteractionCollector<CollectedInteraction>,
+): Promise<void> {
     collector.stop();
 
-    let upVotes = Array.from(pro).map(e => {
-        return "🟢 <@" + e + ">";
-    }).join("\n");
-    let downVotes = Array.from(con).map(e => {
-        return "🔴 <@" + e + ">";
-    }).join("\n");
+    let upVotes = Array.from(pro)
+        .map((e) => {
+            return "🟢 <@" + e + ">";
+        })
+        .join("\n");
+    let downVotes = Array.from(con)
+        .map((e) => {
+            return "🔴 <@" + e + ">";
+        })
+        .join("\n");
 
-    upVotes = (upVotes == "") ? "None" : upVotes;
-    downVotes = (downVotes == "") ? "None" : downVotes;
+    upVotes = upVotes === "" ? "None" : upVotes;
+    downVotes = downVotes === "" ? "None" : downVotes;
 
     //finished embed
     const msgEmbed = new EmbedBuilder()
-        .setColor((con.size < pro.size) ? "#02B22E" : "#cc0000")
-        .setTitle((con.size < pro.size) ? "Vote accepted" : "Vote failed")
-        .addFields({name: "For", value: upVotes, inline: true}, {name: "Against", value: downVotes, inline: false})
+        .setColor(con.size < pro.size ? "#02B22E" : "#cc0000")
+        .setTitle(con.size < pro.size ? "Vote accepted" : "Vote failed")
+        .addFields(
+            { name: "For", value: upVotes, inline: true },
+            { name: "Against", value: downVotes, inline: false },
+        )
         .setTimestamp();
 
     //if a title were specified it will be displayed
-    if (title != "") {
+    if (title !== "") {
         msgEmbed.setDescription(title);
     }
     //show embed
-    await reply.edit({embeds:[msgEmbed], components:[]});
+    await reply.edit({ embeds: [msgEmbed], components: [] });
 }
 
 /**
@@ -194,8 +256,8 @@ async function printVotes(pro: Set<string>, con: Set<string>, reply: Message, ti
  * @param selectedRole the role he wants to start a vote for
  * @returns True if the member cant start a vote False if he can
  */
-function membercantstartvote (member: GuildMember, selectedRole: Role): boolean {
-    const roles = member.roles as GuildMemberRoleManager;
+function membercantstartvote(member: GuildMember, selectedRole: Role): boolean {
+    const roles = member.roles;
     return !roles.cache.has(selectedRole.id);
 }
 
@@ -208,23 +270,38 @@ function membercantstartvote (member: GuildMember, selectedRole: Role): boolean 
  * @param timestamp the timestamp of the time on that the vote ends
  * @returns the Embed and the Components (Buttons)
  */
-function getEmbedOptions(title:string, msg: string, group:Snowflake, timestamp?:number): BaseMessageOptions {
+function getEmbedOptions(
+    title: string,
+    msg: string,
+    group: Snowflake,
+    timestamp?: number,
+): BaseMessageOptions {
     const voteEmbed = new EmbedBuilder()
-        .setTitle((title == "") ? "Simple Voting ": title)
+        .setTitle(title === "" ? "Simple Voting " : title)
         .setDescription(msg)
         .setColor("#477ce0")
-        .addFields({name:"Allowed Groups", value:"Voting for Group <@&" + group + ">"});
+        .addFields({
+            name: "Allowed Groups",
+            value: "Voting for Group <@&" + group + ">",
+        });
 
-    if (timestamp != undefined) {
-        voteEmbed.addFields({name: "Vote is ending", value: "This vote ends <t:" + timestamp + ":R> \n"});
+    if (timestamp != null) {
+        voteEmbed.addFields({
+            name: "Vote is ending",
+            value: "This vote ends <t:" + timestamp + ":R> \n",
+        });
     }
 
-    const actionRow = new ActionRowBuilder<ButtonBuilder>()
-        .addComponents(
-            new ButtonBuilder().setEmoji(upEmo).setStyle(ButtonStyle.Success).setCustomId("vote_up"),
-            new ButtonBuilder().setEmoji(downEmo).setStyle(ButtonStyle.Danger).setCustomId("vote_down")
-        );
+    const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+        new ButtonBuilder()
+            .setEmoji(upEmo)
+            .setStyle(ButtonStyle.Success)
+            .setCustomId("vote_up"),
+        new ButtonBuilder()
+            .setEmoji(downEmo)
+            .setStyle(ButtonStyle.Danger)
+            .setCustomId("vote_down"),
+    );
 
-
-    return {embeds: [voteEmbed], components:[actionRow]};
+    return { embeds: [voteEmbed], components: [actionRow] };
 }

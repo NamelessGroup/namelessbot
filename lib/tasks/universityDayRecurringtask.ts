@@ -1,14 +1,13 @@
-import {RecurringTask, Weekday} from "./recurringtask";
-import {DateTime} from "luxon";
+import { RecurringTask, type Weekday } from "./recurringtask";
+import type { DateTime } from "luxon";
 import KitDateParser from "./KitDateParser";
-import {isHoliday} from "feiertagejs/build/feiertage.js";
-import {TaskExecutor} from "../../types";
+import { isHoliday } from "feiertagejs";
+import type { TaskExecutor } from "../../types";
 
 /**
  * Special kind of Recurring Task that only gets executed in weeks, where lectures are held
  */
 export default class UniversityDayRecurringTask extends RecurringTask {
-
     private static kitDates = new KitDateParser();
     private lookAheadDays: number;
 
@@ -22,7 +21,14 @@ export default class UniversityDayRecurringTask extends RecurringTask {
      * @param functionArguments Array of additional parameters to pass to the runner function
      * @param lookAheadDays Days to check in advance for being a day with lectures
      */
-    constructor(weekday: Weekday, hour: number, minute: number, runner: TaskExecutor, functionArguments?: unknown[], lookAheadDays?: number) {
+    constructor(
+        weekday: Weekday,
+        hour: number,
+        minute: number,
+        runner: TaskExecutor,
+        functionArguments?: unknown[],
+        lookAheadDays?: number,
+    ) {
         super(weekday, hour, minute, runner, functionArguments);
         if (lookAheadDays) {
             this.lookAheadDays = lookAheadDays;
@@ -36,8 +42,10 @@ export default class UniversityDayRecurringTask extends RecurringTask {
             return false;
         }
 
-        const addedTime = time.plus({days: this.lookAheadDays});
-        return UniversityDayRecurringTask.kitDates.isLectureTime(addedTime) && !isHoliday(addedTime.toJSDate(), "BW");
+        const addedTime = time.plus({ days: this.lookAheadDays });
+        return (
+            UniversityDayRecurringTask.kitDates.isLectureTime(addedTime) &&
+            !isHoliday(addedTime.toJSDate(), "BW")
+        );
     }
-
 }

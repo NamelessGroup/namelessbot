@@ -1,4 +1,4 @@
-import { IEventListener, ISlashCommand } from "../types";
+import type { IEventListener, ISlashCommand } from "../types";
 import { RecurringTask, Weekday } from "./tasks/recurringtask";
 
 import aocCommand from "../modules/aoc/aocCommand";
@@ -14,7 +14,11 @@ import attendanceTrackerButton from "../modules/attendancetracker/attendanceTrac
 import UniversityDayRecurringTask from "./tasks/universityDayRecurringtask";
 
 export const SLASH_COMMANDS: ISlashCommand[] = [
-    koeriCommand, voteCommand, truthtableCommand, aocCommand, timetableCommand
+    koeriCommand,
+    voteCommand,
+    truthtableCommand,
+    aocCommand,
+    timetableCommand,
 ];
 
 export const TASKS = [
@@ -28,14 +32,49 @@ export const TASKS = [
     new RecurringTask(Weekday.SUNDAY, 22, 5, aocTask),
 
     // Attendance-Tracker
-    new UniversityDayRecurringTask(Weekday.SUNDAY, 20, 0, attendanceTrackerTask, [Weekday.MONDAY], 1),
-    new UniversityDayRecurringTask(Weekday.MONDAY, 20, 0, attendanceTrackerTask, [Weekday.TUESDAY], 1),
-    new UniversityDayRecurringTask(Weekday.TUESDAY, 20, 0, attendanceTrackerTask, [Weekday.WEDNESDAY], 1),
-    new UniversityDayRecurringTask(Weekday.WEDNESDAY, 20, 0, attendanceTrackerTask, [Weekday.THURSDAY], 1),
-    new UniversityDayRecurringTask(Weekday.THURSDAY, 20, 0, attendanceTrackerTask, [Weekday.FRIDAY], 1),
+    new UniversityDayRecurringTask(
+        Weekday.SUNDAY,
+        20,
+        0,
+        attendanceTrackerTask,
+        [Weekday.MONDAY],
+        1,
+    ),
+    new UniversityDayRecurringTask(
+        Weekday.MONDAY,
+        20,
+        0,
+        attendanceTrackerTask,
+        [Weekday.TUESDAY],
+        1,
+    ),
+    new UniversityDayRecurringTask(
+        Weekday.TUESDAY,
+        20,
+        0,
+        attendanceTrackerTask,
+        [Weekday.WEDNESDAY],
+        1,
+    ),
+    new UniversityDayRecurringTask(
+        Weekday.WEDNESDAY,
+        20,
+        0,
+        attendanceTrackerTask,
+        [Weekday.THURSDAY],
+        1,
+    ),
+    new UniversityDayRecurringTask(
+        Weekday.THURSDAY,
+        20,
+        0,
+        attendanceTrackerTask,
+        [Weekday.FRIDAY],
+        1,
+    ),
 ];
 
 export const LISTENERS: IEventListener[] = [
     koeriSelectionMenu,
-    attendanceTrackerButton
+    attendanceTrackerButton,
 ];
