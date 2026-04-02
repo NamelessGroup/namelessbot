@@ -25,7 +25,7 @@
         "esbuild": "^0.27.2"
     },
     "dependencies": {
-        "discord.js": "^14.25.1",
+        "discord.js": "^14.26.0",
         "dotenv": "^17.2.3",
         "feiertagejs": "^1.4.1",
         "luxon": "^3.7.2",
